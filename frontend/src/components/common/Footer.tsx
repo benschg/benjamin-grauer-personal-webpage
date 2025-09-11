@@ -1,38 +1,38 @@
-import { Box, Container, Grid, Typography, Link, Divider } from '@mui/material'
+import { Box, Container, Grid, Typography, Link, Divider } from "@mui/material";
 
 const Footer = () => {
   const socialLinks = [
-    { name: 'GitHub', url: '#' },
-    { name: 'LinkedIn', url: '#' },
-    { name: 'Skype', url: '#' },
-    { name: 'Steam', url: '#' },
-    { name: 'Twitter', url: '#' },
-    { name: 'YouTube', url: '#' },
-  ]
+    { name: "GitHub", url: "#" },
+    { name: "LinkedIn", url: "#" },
+    { name: "Skype", url: "#" },
+    { name: "Steam", url: "#" },
+    { name: "Twitter", url: "#" },
+    { name: "YouTube", url: "#" },
+  ];
 
   const fitnessLinks = [
-    { name: 'Strava', url: '#' },
-    { name: 'Garmin', url: '#' },
-  ]
+    { name: "Strava", url: "#" },
+    { name: "Garmin", url: "#" },
+  ];
 
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: 'primary.main',
-        mt: 'auto',
+        backgroundColor: "primary.main",
+        mt: "auto",
         py: 3,
       }}
     >
       <Container maxWidth="lg">
         <Grid container spacing={3} sx={{ mb: 2 }}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Typography
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: '1rem',
-                color: 'white',
+                fontSize: "1rem",
+                color: "white",
               }}
             >
               Contact
@@ -46,27 +46,27 @@ const Footer = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Typography
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: '1rem',
-                color: 'white',
+                fontSize: "1rem",
+                color: "white",
               }}
             >
               Social & Professional
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
               {socialLinks.map((link, index) => (
                 <Link
                   key={index}
                   href={link.url}
                   sx={{
-                    color: 'white',
-                    fontSize: '0.9rem',
-                    textDecoration: 'none',
-                    '&:hover': {
+                    color: "white",
+                    fontSize: "0.9rem",
+                    textDecoration: "none",
+                    "&:hover": {
                       opacity: 0.8,
                     },
                   }}
@@ -77,27 +77,27 @@ const Footer = () => {
             </Box>
           </Grid>
 
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Typography
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: '1rem',
-                color: 'white',
+                fontSize: "1rem",
+                color: "white",
               }}
             >
               Fitness
             </Typography>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
               {fitnessLinks.map((link, index) => (
                 <Link
                   key={index}
                   href={link.url}
                   sx={{
-                    color: 'white',
-                    fontSize: '0.9rem',
-                    textDecoration: 'none',
-                    '&:hover': {
+                    color: "white",
+                    fontSize: "0.9rem",
+                    textDecoration: "none",
+                    "&:hover": {
                       opacity: 0.8,
                     },
                   }}
@@ -109,25 +109,25 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.2)', mb: 2 }} />
+        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.2)", mb: 2 }} />
 
         <Box
           sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexWrap: 'wrap',
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
             gap: 1,
           }}
         >
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: "flex", gap: 2 }}>
             <Link
               href="#"
               sx={{
-                color: 'white',
-                fontSize: '0.9rem',
-                textDecoration: 'none',
-                '&:hover': {
+                color: "white",
+                fontSize: "0.9rem",
+                textDecoration: "none",
+                "&:hover": {
                   opacity: 0.8,
                 },
               }}
@@ -137,10 +137,10 @@ const Footer = () => {
             <Link
               href="#"
               sx={{
-                color: 'white',
-                fontSize: '0.9rem',
-                textDecoration: 'none',
-                '&:hover': {
+                color: "white",
+                fontSize: "0.9rem",
+                textDecoration: "none",
+                "&:hover": {
                   opacity: 0.8,
                 },
               }}
@@ -152,8 +152,8 @@ const Footer = () => {
           <Typography
             variant="body2"
             sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: '0.8rem',
+              color: "rgba(255, 255, 255, 0.8)",
+              fontSize: "0.8rem",
             }}
           >
             © 2024 Benjamin Grauer. All rights reserved.
@@ -161,7 +161,7 @@ const Footer = () => {
         </Box>
       </Container>
     </Box>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;

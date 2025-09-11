@@ -1,65 +1,57 @@
-import { AppBar, Toolbar, Typography, Button, Box } from '@mui/material'
+import { useState } from 'react'
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  useTheme,
+  useMediaQuery,
+} from '@mui/material'
+import { DesktopNavigation, MobileNavigation } from '../navigation'
 
 const Header = () => {
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const theme = useTheme()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen)
+  }
+
   return (
-    <AppBar position="sticky">
-      <Toolbar>
-        <Typography
-          variant="h6"
-          component="a"
-          href="/"
-          sx={{
-            flexGrow: 1,
-            textDecoration: 'none',
-            color: 'inherit',
-            fontFamily: '"Orbitron", sans-serif',
-            fontWeight: 700,
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-          }}
-        >
-          Benjamin Grauer
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
-          <Button
-            color="inherit"
-            href="/personal-life"
+    <>
+      <AppBar position="sticky">
+        <Toolbar>
+          <Typography
+            variant="h6"
+            component="a"
+            href="/"
             sx={{
+              flexGrow: 1,
+              textDecoration: 'none',
+              color: 'inherit',
               fontFamily: '"Orbitron", sans-serif',
+              fontWeight: 700,
               textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontSize: '0.9rem',
+              letterSpacing: '2px',
+              fontSize: { xs: '1rem', md: '1.25rem' },
             }}
           >
-            Personal Life
-          </Button>
-          <Button
-            color="inherit"
-            href="/working-life"
-            sx={{
-              fontFamily: '"Orbitron", sans-serif',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontSize: '0.9rem',
-            }}
-          >
-            Working Life
-          </Button>
-          <Button
-            color="inherit"
-            href="/portfolio"
-            sx={{
-              fontFamily: '"Orbitron", sans-serif',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-              fontSize: '0.9rem',
-            }}
-          >
-            Portfolio
-          </Button>
-        </Box>
-      </Toolbar>
-    </AppBar>
+            Benjamin Grauer
+          </Typography>
+
+          {/* Desktop Menu */}
+          {!isMobile && <DesktopNavigation />}
+
+          {/* Mobile Menu */}
+          {isMobile && (
+            <MobileNavigation
+              open={mobileOpen}
+              onToggle={handleDrawerToggle}
+            />
+          )}
+        </Toolbar>
+      </AppBar>
+    </>
   )
 }
 
