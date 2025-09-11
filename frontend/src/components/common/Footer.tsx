@@ -1,20 +1,7 @@
 import { Box, Container, Grid, Typography, Link, Divider } from "@mui/material";
+import { SocialLinksGroup, socialLinks, fitnessLinks } from "../social";
 
 const Footer = () => {
-  const socialLinks = [
-    { name: "GitHub", url: "#" },
-    { name: "LinkedIn", url: "#" },
-    { name: "Skype", url: "#" },
-    { name: "Steam", url: "#" },
-    { name: "Twitter", url: "#" },
-    { name: "YouTube", url: "#" },
-  ];
-
-  const fitnessLinks = [
-    { name: "Strava", url: "#" },
-    { name: "Garmin", url: "#" },
-  ];
-
   return (
     <Box
       component="footer"
@@ -37,6 +24,7 @@ const Footer = () => {
             >
               Contact
             </Typography>
+            <Box sx={{ color: "white" }}>
               <Typography variant="body2" sx={{ mb: 0.5 }}>
                 📍 Blüemliquartier – 8048 Zürich
               </Typography>
@@ -57,24 +45,7 @@ const Footer = () => {
             >
               Social & Professional
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {socialLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.url}
-                  sx={{
-                    color: "white",
-                    fontSize: "0.9rem",
-                    textDecoration: "none",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
-                  }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </Box>
+            <SocialLinksGroup links={socialLinks} />
           </Grid>
 
           <Grid size={{ xs: 12, md: 4 }}>
@@ -88,24 +59,7 @@ const Footer = () => {
             >
               Fitness
             </Typography>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
-              {fitnessLinks.map((link, index) => (
-                <Link
-                  key={index}
-                  href={link.url}
-                  sx={{
-                    color: "white",
-                    fontSize: "0.9rem",
-                    textDecoration: "none",
-                    "&:hover": {
-                      opacity: 0.8,
-                    },
-                  }}
-                >
-                  {link.name}
-                </Link>
-              ))}
-            </Box>
+            <SocialLinksGroup links={fitnessLinks} />
           </Grid>
         </Grid>
 
