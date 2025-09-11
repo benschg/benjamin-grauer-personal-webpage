@@ -1,18 +1,19 @@
-import './App.css'
-import Header from './components/common/Header'
-import Hero from './components/home/Hero'
-import MainSections from './components/home/MainSections'
-import Footer from './components/common/Footer'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Home from './pages/Home';
+import WorkingLife from './pages/WorkingLife';
 
 function App() {
   return (
-    <div className="app">
-      <Header />
-      <Hero />
-      <MainSections />
-      <Footer />
-    </div>
-  )
+    <Router>
+      <div className="app">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/working-life" element={<WorkingLife />} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
-export default App
+export default App;

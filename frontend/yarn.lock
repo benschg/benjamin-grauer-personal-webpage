@@ -537,6 +537,18 @@
   dependencies:
     "@babel/runtime" "^7.28.3"
 
+"@mui/lab@^7.0.0-beta.17":
+  version "7.0.0-beta.17"
+  resolved "https://registry.yarnpkg.com/@mui/lab/-/lab-7.0.0-beta.17.tgz#0629b4388d16520ed95712bc2995679c2af849be"
+  integrity sha512-H8tSINm6Xgbi7o49MplAwks4tAEE6SpFNd9l7n4NURl0GSpOv0CZvgXKSJt4+6TmquDhE7pomHpHWJiVh/2aCg==
+  dependencies:
+    "@babel/runtime" "^7.28.3"
+    "@mui/system" "^7.3.2"
+    "@mui/types" "^7.4.6"
+    "@mui/utils" "^7.3.2"
+    clsx "^2.1.1"
+    prop-types "^15.8.1"
+
 "@mui/material@^7.3.2":
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/@mui/material/-/material-7.3.2.tgz#21ad66bba695e2cd36e4a93e2e4ff5e04d8636a1"
