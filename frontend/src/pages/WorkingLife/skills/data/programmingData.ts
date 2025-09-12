@@ -2,6 +2,23 @@ import type { DetailedSkill } from '../BaseSkillCard';
 
 export const programmingSkills: DetailedSkill[] = [
   {
+    name: 'JavaScript',
+    description: 'Full-stack JavaScript development for web applications and Node.js services.',
+    category: 'Language',
+    experience: '10+ years',
+    projects: ['Frontend Development', 'Node.js APIs', 'ES6+ Features', 'Async Programming'],
+    color: '#F7DF1E',
+  },
+  {
+    name: 'TypeScript',
+    description:
+      'Type-safe JavaScript development with enhanced IDE support and better maintainability.',
+    category: 'Language',
+    experience: '6+ years',
+    projects: ['React Apps', 'Angular Development', 'Type Definitions', 'Enterprise Applications'],
+    color: '#3178C6',
+  },
+  {
     name: 'Python',
     description: 'Server-side development, automation, and data processing with Python ecosystem.',
     category: 'Language',
@@ -74,5 +91,28 @@ export const programmingSkills: DetailedSkill[] = [
     experience: '6+ years',
     projects: ['3D Visualizations', 'WebGL Shaders', 'Interactive Graphics', 'Browser 3D'],
     color: '#000000',
+  },
+  {
+    name: 'Qt/WPF UI Development',
+    description:
+      'Cross-platform desktop application UI development with Qt and Windows Presentation Foundation.',
+    category: 'UI Framework',
+    experience: '12+ years',
+    projects: [
+      'Desktop Applications',
+      'Medical Simulation UI',
+      'Cross-platform UI',
+      'Custom Controls',
+    ],
+    color: '#41CD52',
+  },
+  {
+    name: 'CUDA/GPU Programming',
+    description:
+      'High-performance GPU computing and parallel processing for graphics and scientific applications.',
+    category: 'High Performance',
+    experience: '8+ years',
+    projects: ['Volume Rendering', 'Real-time Graphics', 'Medical Imaging', 'Scientific Computing'],
+    color: '#76B900',
   },
 ];
