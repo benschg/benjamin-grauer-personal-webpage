@@ -156,8 +156,10 @@ interface TimelineEvent {
 - **Vitest** for unit/component testing with React Testing Library
 - **Playwright** for E2E testing with multiple test modes
 - **Test Coverage**: All main pages (Home, Working Life, Personal Life, Portfolio)
+- **Video Testing**: Hero video loading, playback, and error handling
 - **Mobile Testing**: Responsive design and mobile navigation
 - **Error Detection**: Console error monitoring in tests
+- **Git LFS Support**: Large file handling in CI/CD pipelines
 - **CI Ready**: Headless mode for automated testing
 
 ## Component Architecture
