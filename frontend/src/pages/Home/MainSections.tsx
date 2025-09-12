@@ -60,17 +60,23 @@ const MainSections = () => {
           {sections.map((section, index) => (
             <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
               <Card
+                onClick={() => window.location.href = section.link}
                 sx={{
                   height: "100%",
                   minHeight: "350px",
                   maxWidth: "360px",
-
                   display: "flex",
                   flexDirection: "column",
                   justifySelf: "center",
                   alignItems: "center",
                   textAlign: "center",
                   overflow: "hidden",
+                  cursor: "pointer",
+                  transition: "transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out",
+                  "&:hover": {
+                    transform: "translateY(-4px)",
+                    boxShadow: 4,
+                  },
                 }}
               >
                 {/* Profile Image */}
