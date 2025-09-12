@@ -1,13 +1,14 @@
-import { Box, Container, Grid, Typography, Link, Divider } from "@mui/material";
-import { SocialLinksGroup, socialLinks, fitnessLinks } from "../social";
+import { Box, Container, Grid, Typography, Link, Divider } from '@mui/material';
+import { SocialLinksGroup } from '../social';
+import { socialLinks, fitnessLinks } from '../social/SocialLinksData';
 
 const Footer = () => {
   return (
     <Box
       component="footer"
       sx={{
-        backgroundColor: "primary.main",
-        mt: "auto",
+        backgroundColor: 'primary.main',
+        mt: 'auto',
         py: 3,
       }}
     >
@@ -18,19 +19,17 @@ const Footer = () => {
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: "1rem",
-                color: "white",
+                fontSize: '1rem',
+                color: 'white',
               }}
             >
               Contact
             </Typography>
-            <Box sx={{ color: "white" }}>
+            <Box sx={{ color: 'white' }}>
               <Typography variant="body2" sx={{ mb: 0.5 }}>
                 📍 Blüemliquartier – 8048 Zürich
               </Typography>
-              <Typography variant="body2">
-                ✉️ benjamin@benjamingrauer.ch
-              </Typography>
+              <Typography variant="body2">✉️ benjamin@benjamingrauer.ch</Typography>
             </Box>
           </Grid>
 
@@ -39,8 +38,8 @@ const Footer = () => {
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: "1rem",
-                color: "white",
+                fontSize: '1rem',
+                color: 'white',
               }}
             >
               Social & Professional
@@ -53,8 +52,8 @@ const Footer = () => {
               variant="h6"
               sx={{
                 mb: 2,
-                fontSize: "1rem",
-                color: "white",
+                fontSize: '1rem',
+                color: 'white',
               }}
             >
               Fitness
@@ -63,25 +62,25 @@ const Footer = () => {
           </Grid>
         </Grid>
 
-        <Divider sx={{ borderColor: "rgba(255, 255, 255, 0.2)", mb: 2 }} />
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.2)', mb: 2 }} />
 
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
             gap: 1,
           }}
         >
-          <Box sx={{ display: "flex", gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 2 }}>
             <Link
               href="#"
               sx={{
-                color: "white",
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                "&:hover": {
+                color: 'white',
+                fontSize: '0.9rem',
+                textDecoration: 'none',
+                '&:hover': {
                   opacity: 0.8,
                 },
               }}
@@ -91,10 +90,10 @@ const Footer = () => {
             <Link
               href="#"
               sx={{
-                color: "white",
-                fontSize: "0.9rem",
-                textDecoration: "none",
-                "&:hover": {
+                color: 'white',
+                fontSize: '0.9rem',
+                textDecoration: 'none',
+                '&:hover': {
                   opacity: 0.8,
                 },
               }}
@@ -106,8 +105,8 @@ const Footer = () => {
           <Typography
             variant="body2"
             sx={{
-              color: "rgba(255, 255, 255, 0.8)",
-              fontSize: "0.8rem",
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '0.8rem',
             }}
           >
             © 2024 Benjamin Grauer. All rights reserved.

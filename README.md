@@ -50,31 +50,26 @@ frontend/
 
 ## 🚦 Getting Started
 
+### Quick Setup (Recommended)
+
+```bash
+# Clone and set up everything automatically
+git clone https://github.com/username/benjamin-grauer-personal-webpage.git
+cd benjamin-grauer-personal-webpage
+./setup-dev.sh
+```
+
+### Manual Setup
+
+See **[SETUP.md](./SETUP.md)** for detailed setup instructions including:
+- Pre-commit hooks configuration
+- IDE setup recommendations  
+- Troubleshooting guide
+
 ### Prerequisites
 - Node.js 18+ 
 - Yarn package manager
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/username/benjamin-grauer-personal-webpage.git
-   cd benjamin-grauer-personal-webpage
-   ```
-
-2. **Install dependencies**
-   ```bash
-   cd frontend
-   yarn install
-   ```
-
-3. **Start development server**
-   ```bash
-   yarn dev
-   ```
-
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+- Git
 
 ## 📝 Available Scripts
 
@@ -84,9 +79,13 @@ yarn dev          # Start Vite dev server
 yarn build        # Build for production
 yarn preview      # Preview production build locally
 
-# Code Quality
+# Code Quality  
 yarn lint         # Run ESLint
+yarn lint:fix     # Fix ESLint issues automatically
 yarn type-check   # Run TypeScript compiler check
+yarn format       # Format code with Prettier
+yarn knip         # Find dead code and unused dependencies
+yarn knip:fix     # Auto-remove unused dependencies
 
 # Deployment (when configured)
 yarn deploy       # Deploy to Firebase
