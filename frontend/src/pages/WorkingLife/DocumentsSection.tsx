@@ -1,5 +1,5 @@
 import { Box, Typography, Grid, Card, CardContent, Button } from '@mui/material';
-import { Download, Description, Folder, ContactPage } from '@mui/icons-material';
+import { Download, Description, EmojiEvents, ContactPage } from '@mui/icons-material';
 
 const DocumentsSection = () => {
   const documents = [
@@ -8,21 +8,21 @@ const DocumentsSection = () => {
       description: 'Professional references and recommendations',
       icon: ContactPage,
       fileType: 'PDF',
-      downloadUrl: '#', // Replace with actual URL
+      downloadUrl: '/working-life/documents/References_Benjamin.Grauer_20250626.pdf',
     },
     {
       title: 'Certificates',
       description: 'Professional certifications and training certificates',
-      icon: Folder,
-      fileType: 'ZIP',
-      downloadUrl: '#', // Replace with actual URL
+      icon: EmojiEvents,
+      fileType: 'PDF',
+      downloadUrl: '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf',
     },
     {
       title: 'Full CV',
       description: 'Complete curriculum vitae with detailed work history',
       icon: Description,
       fileType: 'PDF',
-      downloadUrl: '#', // Replace with actual URL
+      downloadUrl: '/working-life/documents/CV-Benjamin.Grauer.20250801_anon_full.pdf',
     },
   ];
 
