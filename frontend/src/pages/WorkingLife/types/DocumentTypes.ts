@@ -1,7 +1,7 @@
 export interface Document {
   title: string;
   description: string;
-  icon: React.ComponentType<any>;
+  icon: React.ReactNode;
   downloadUrl: string;
   downloadAs: string;
   fileType: string;
