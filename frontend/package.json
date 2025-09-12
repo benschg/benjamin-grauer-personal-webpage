@@ -65,6 +65,9 @@
     ],
     "*.{ts,tsx,js,jsx,css,md,json}": [
       "prettier --write"
+    ],
+    "package.json": [
+      "node scripts/knip-check.js"
     ]
   }
 }
