@@ -1,15 +1,15 @@
 import { Box, Container, Typography, Grid } from "@mui/material";
+import workingLifeContent from "../../data/working-life-content.json";
 
 const ProfessionalHero = () => {
   return (
     <Box
       sx={{
-        backgroundColor: "background.default",
         py: { xs: 4, md: 6 },
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4} alignItems="center">
+        <Grid container spacing={4} alignItems="flex-end">
           <Grid size={{ xs: 12, md: 8 }}>
             <Typography
               variant="h1"
@@ -20,7 +20,7 @@ const ProfessionalHero = () => {
                 color: "text.primary",
               }}
             >
-              Working Life
+              {workingLifeContent.hero.title}
             </Typography>
             <Typography
               variant="h5"
@@ -31,21 +31,7 @@ const ProfessionalHero = () => {
                 color: "primary.main",
               }}
             >
-              Software Development & Management Professional
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{
-                fontSize: "1rem",
-                lineHeight: 1.7,
-                mb: 3,
-                color: "text.secondary",
-              }}
-            >
-              Ever since I discovered programming, I felt the urge to play,
-              craft, create. I grew with VirtaMed, trained medical residents
-              around the world, and led multiple technical teams to deliver
-              innovative solutions.
+              {workingLifeContent.hero.subtitle}
             </Typography>
             <Typography
               variant="body1"
@@ -55,14 +41,17 @@ const ProfessionalHero = () => {
                 color: "text.secondary",
               }}
             >
-              My passion lies in empowering people through technology, combining
-              creativity with technical excellence to solve complex problems and
-              build meaningful products.
+              {workingLifeContent.hero.description.split('\n\n').map((paragraph, index) => (
+                <span key={index}>
+                  {paragraph}
+                  {index < workingLifeContent.hero.description.split('\n\n').length - 1 && <><br /><br /></>}
+                </span>
+              ))}
             </Typography>
           </Grid>
           <Grid
             size={{ xs: 12, md: 4 }}
-            sx={{ display: "flex", justifyContent: "center" }}
+            sx={{ display: "flex", justifyContent: "center", alignItems: "flex-end" }}
           >
             <Box
               component="img"
