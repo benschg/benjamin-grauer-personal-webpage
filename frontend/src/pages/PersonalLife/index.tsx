@@ -1,19 +1,19 @@
-import { Box, Typography, Container } from '@mui/material';
+import { Box, Container } from '@mui/material';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
+import PersonalHero from './PersonalHero';
+import InterestsGrid from './InterestsGrid';
+import SportsTimelineSection from './SportsTimelineSection';
 
 const PersonalLife = () => {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
-      <Box component="main" sx={{ flexGrow: 1, py: 4 }}>
-        <Container maxWidth="lg">
-          <Typography variant="h2" component="h1" gutterBottom>
-            Personal Life
-          </Typography>
-          <Typography variant="body1">
-            Coming soon...
-          </Typography>
+      <Box component="main" sx={{ flexGrow: 1 }}>
+        <PersonalHero />
+        <Container maxWidth="lg" sx={{ py: 4 }}>
+          <InterestsGrid />
+          <SportsTimelineSection />
         </Container>
       </Box>
       <Footer />
