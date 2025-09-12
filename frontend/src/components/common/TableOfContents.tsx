@@ -82,6 +82,7 @@ const TableOfContents = ({ items }: TableOfContentsProps) => {
 
   return (
     <Box
+      data-testid="toc-container"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       sx={{
@@ -97,6 +98,7 @@ const TableOfContents = ({ items }: TableOfContentsProps) => {
     >
       {/* Collapsed state - thin progress bar */}
       <Box
+        data-testid="toc-collapsed"
         sx={{
           position: 'absolute',
           top: 0,
@@ -155,6 +157,7 @@ const TableOfContents = ({ items }: TableOfContentsProps) => {
 
       {/* Expanded state - full TOC */}
       <Paper
+        data-testid="toc-expanded"
         elevation={6}
         sx={{
           position: 'absolute',
