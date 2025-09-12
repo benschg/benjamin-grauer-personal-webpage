@@ -179,7 +179,7 @@ const BaseSkillCard = ({
                 onMouseEnter={() => hasDetailedSkills && handleSkillHover(skillName)}
                 variant="outlined"
                 sx={{
-                  borderColor: 'primary.main',
+                  borderColor: expandedItem === skillName ? skillColor : 'primary.main',
                   cursor: hasDetailedSkills ? 'pointer' : 'default',
                   backgroundColor: expandedItem === skillName ? skillColor : 'transparent',
                   color: expandedItem === skillName ? 'white' : 'text.primary',
@@ -192,13 +192,13 @@ const BaseSkillCard = ({
                       }
                     : {},
                   '&:hover': {
-                    backgroundColor: skillColor,
-                    color: 'white',
-                    borderColor: skillColor,
+                    backgroundColor: `${skillColor} !important`,
+                    color: 'white !important',
+                    borderColor: `${skillColor} !important`,
                     transform: hasDetailedSkills ? 'translateY(-1px)' : 'none',
                     '& svg': hasIcon
                       ? {
-                          filter: 'none',
+                          filter: 'none !important',
                         }
                       : {},
                   },
