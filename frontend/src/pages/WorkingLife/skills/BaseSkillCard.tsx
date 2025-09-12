@@ -41,13 +41,26 @@ const BaseSkillCard = ({
 }: BaseSkillCardProps) => {
   const [expandedItem, setExpandedItem] = useState<string | null>(null);
   const [isTouch, setIsTouch] = useState(false);
+  const [isSingleColumn, setIsSingleColumn] = useState(false);
   const componentRef = useRef<HTMLDivElement>(null);
+  const leaveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Detect if device supports touch
   useEffect(() => {
     const handleTouchStart = () => setIsTouch(true);
     window.addEventListener('touchstart', handleTouchStart, { once: true });
     return () => window.removeEventListener('touchstart', handleTouchStart);
+  }, []);
+
+  // Detect single-column layout (mobile)
+  useEffect(() => {
+    const checkLayout = () => {
+      setIsSingleColumn(window.innerWidth < 900); // Adjust breakpoint as needed
+    };
+
+    checkLayout();
+    window.addEventListener('resize', checkLayout);
+    return () => window.removeEventListener('resize', checkLayout);
   }, []);
 
   // Handle outside clicks for touch devices
@@ -72,8 +85,6 @@ const BaseSkillCard = ({
   const handleSkillInteraction = (skillName: string) => {
     if (isTouch) {
       setExpandedItem(expandedItem === skillName ? null : skillName);
-    } else {
-      setExpandedItem(skillName);
     }
   };
 
@@ -83,9 +94,19 @@ const BaseSkillCard = ({
     }
   };
 
+  const handleContainerEnter = () => {
+    if (!isTouch && leaveTimeoutRef.current) {
+      clearTimeout(leaveTimeoutRef.current);
+      leaveTimeoutRef.current = null;
+    }
+  };
+
   const handleContainerLeave = () => {
     if (!isTouch) {
-      setExpandedItem(null);
+      // Use a small delay to prevent flickering when moving between card and expanded content
+      leaveTimeoutRef.current = setTimeout(() => {
+        setExpandedItem(null);
+      }, 100);
     }
   };
 
@@ -123,6 +144,7 @@ const BaseSkillCard = ({
   return (
     <Card
       ref={componentRef}
+      onMouseEnter={handleContainerEnter}
       onMouseLeave={handleContainerLeave}
       sx={{
         height: '100%',
@@ -191,7 +213,7 @@ const BaseSkillCard = ({
               <Chip
                 key={skillIndex}
                 label={renderSkillLabel(skill)}
-                onClick={() => hasDetailedSkills && handleSkillInteraction(skillName)}
+                onClick={() => hasDetailedSkills && isTouch && handleSkillInteraction(skillName)}
                 onMouseEnter={() => hasDetailedSkills && handleSkillHover(skillName)}
                 variant="outlined"
                 sx={{
@@ -230,12 +252,22 @@ const BaseSkillCard = ({
         {/* Expandable details for detailed skills */}
         {hasDetailedSkills && (
           <Box
+            onMouseEnter={handleContainerEnter}
+            onMouseLeave={handleContainerLeave}
             sx={{
-              position: 'absolute',
-              top: 'calc(100% - 2px)',
-              left: -2,
-              right: -2,
-              zIndex: 1,
+              ...(isSingleColumn
+                ? {
+                    // Mobile: inline expansion
+                    mt: hasDetailedSkills ? 2 : 0,
+                  }
+                : {
+                    // Desktop: overlay expansion
+                    position: 'absolute',
+                    top: 'calc(100% - 2px)',
+                    left: -2,
+                    right: -2,
+                    zIndex: 1,
+                  }),
             }}
           >
             {skills.map((skill, index) => {
@@ -247,12 +279,13 @@ const BaseSkillCard = ({
                   <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                     <Box
                       sx={{
-                        border: '2px solid',
+                        border: isSingleColumn ? '1px solid' : '2px solid',
                         borderColor: skill.color || defaultColor,
-                        borderTop: 'none',
-                        borderRadius: '0 0 4px 4px',
+                        borderTop: isSingleColumn ? '1px solid' : 'none',
+                        borderRadius: isSingleColumn ? 1 : '0 0 4px 4px',
                         p: 2,
-                        pt: 3,
+                        pt: isSingleColumn ? 2 : 3,
+                        mt: isSingleColumn ? 1 : 0,
                         backgroundColor: '#343A40',
                       }}
                     >
