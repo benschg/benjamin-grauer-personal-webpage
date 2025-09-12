@@ -1,4 +1,4 @@
-import { Box, Link, Stack } from '@mui/material';
+import { Box, Link } from '@mui/material';
 import type { SocialLink } from './SocialLink';
 
 interface SocialLinksGroupProps {

@@ -1,11 +1,11 @@
 import { Container, Box } from '@mui/material';
-import Header from '../components/common/Header';
-import Footer from '../components/common/Footer';
-import ProfessionalHero from '../components/working-life/ProfessionalHero';
-import DocumentsSection from '../components/working-life/DocumentsSection';
-import SkillsSection from '../components/working-life/SkillsSection';
-import TimelineSection from '../components/working-life/TimelineSection';
-import CareerAspirationsSection from '../components/working-life/CareerAspirationsSection';
+import Header from '../../components/common/Header';
+import Footer from '../../components/common/Footer';
+import ProfessionalHero from './ProfessionalHero';
+import DocumentsSection from './DocumentsSection';
+import SkillsSection from './SkillsSection';
+import TimelineSection from './TimelineSection';
+import CareerAspirationsSection from './CareerAspirationsSection';
 
 const WorkingLife = () => {
   return (

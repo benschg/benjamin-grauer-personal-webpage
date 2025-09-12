@@ -1,8 +1,8 @@
 import { Box } from '@mui/material';
-import Header from '../components/common/Header';
-import Hero from '../components/home/Hero';
-import MainSections from '../components/home/MainSections';
-import Footer from '../components/common/Footer';
+import Header from '../../components/common/Header';
+import Hero from './Hero';
+import MainSections from './MainSections';
+import Footer from '../../components/common/Footer';
 
 const Home = () => {
   return (
