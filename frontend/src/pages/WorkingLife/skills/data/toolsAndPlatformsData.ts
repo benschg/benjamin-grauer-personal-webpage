@@ -1,59 +1,54 @@
 import type { DetailedSkill } from '../BaseSkillCard';
 
-export const technicalTools: DetailedSkill[] = [
+export const toolsAndPlatforms: DetailedSkill[] = [
   {
-    name: 'Dev Tools & Administration',
-    description: 'Expert-level administration of development tools and source control systems.',
-    category: 'Administration',
-    experience: '15+ years',
+    name: 'Cloud Platforms',
+    description:
+      'Multi-cloud infrastructure management and deployment across major cloud providers.',
+    category: 'Cloud',
+    experience: '7+ years',
     projects: [
-      'Atlassian Administration (expert)',
-      'Github/Gitlab/BitBucket (expert)',
-      'Azure Active Directory (managed)',
-      'Team Workflow Setup',
+      'AWS (2 years)',
+      'Azure (5+ years)',
+      'Google Firebase (3 years)',
+      'Cloud Architecture',
     ],
-    color: '#0078D4',
+    color: '#FF9900',
   },
   {
-    name: 'DevOps Engineering',
-    description: 'Infrastructure automation, CI/CD pipeline management, and cloud deployment.',
+    name: 'DevOps & CI/CD Tools',
+    description:
+      'Infrastructure automation, continuous integration, and deployment pipeline management.',
     category: 'DevOps',
     experience: '7+ years',
     projects: [
-      'Gitlab/Github (4 years)',
-      'AWS (2 years)',
-      'Google Firebase (3 years)',
-      'Azure DevOps (2 years)',
       'Jenkins (7 years)',
+      'Azure DevOps (2 years)',
+      'GitHub Actions',
       'Vercel Deployment',
     ],
     color: '#326CE5',
   },
   {
-    name: 'Cloud Development',
-    description: 'Multi-cloud development with modern frameworks and hybrid applications.',
-    category: 'Cloud',
-    experience: '7+ years',
+    name: 'Development Administration',
+    description: 'Expert-level administration of development tools and source control systems.',
+    category: 'Administration',
+    experience: '15+ years',
     projects: [
-      'Azure/AWS/Google Firebase',
-      'React+Python',
-      '.Net+Angular',
-      'Hybrid applications',
-      "SQL/DocumentDB's",
+      'Atlassian Suite (expert)',
+      'GitHub/GitLab/BitBucket (expert)',
+      'Azure Active Directory',
+      'Team Workflow Setup',
     ],
-    color: '#FF9900',
+    color: '#0078D4',
   },
   {
-    name: '3D & Graphics',
-    description: 'Comprehensive 3D development from frameworks to rendering and game engines.',
-    category: 'Graphics',
+    name: '3D & Creative Tools',
+    description:
+      'Professional 3D modeling, rendering, and creative software for visualization projects.',
+    category: 'Creative',
     experience: '10+ years',
-    projects: [
-      'Three.js/OpenGL-C++/.Net-3D',
-      'Blender/Maya',
-      'Unity/Unreal/Custom',
-      'Davincy resolve',
-    ],
+    projects: ['Blender/Maya', 'Unity/Unreal Engine', 'DaVinci Resolve', 'Custom 3D Pipelines'],
     color: '#E65100',
   },
   {
@@ -88,7 +83,7 @@ export const technicalTools: DetailedSkill[] = [
     category: 'Analytics',
     experience: '8+ years',
     projects: [
-      'Power BI – Data Visualization (2 years)',
+      'Power BI (2 years)',
       'SQL Analytics',
       'Document Database Analytics',
       'Performance Dashboards',
@@ -96,8 +91,8 @@ export const technicalTools: DetailedSkill[] = [
     color: '#F2C811',
   },
   {
-    name: 'Presentation & Productivity',
-    description: 'Comprehensive productivity and presentation tools for business communication.',
+    name: 'Productivity Tools',
+    description: 'Comprehensive productivity and collaboration tools for business communication.',
     category: 'Productivity',
     experience: '12+ years',
     projects: [
