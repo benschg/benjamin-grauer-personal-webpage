@@ -84,6 +84,8 @@ yarn lint         # Run ESLint
 yarn lint:fix     # Fix ESLint issues automatically
 yarn type-check   # Run TypeScript compiler check
 yarn format       # Format code with Prettier
+yarn knip         # Find dead code and unused dependencies
+yarn knip:fix     # Auto-remove unused dependencies
 
 # Deployment (when configured)
 yarn deploy       # Deploy to Firebase

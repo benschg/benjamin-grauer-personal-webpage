@@ -47,6 +47,7 @@ This project uses pre-commit hooks to maintain code quality. The hooks will auto
 - **ESLint**: Check and auto-fix code quality issues
 - **TypeScript**: Verify type correctness
 - **Prettier**: Format code consistently
+- **Knip**: Detect dead code and unused dependencies (on package.json changes)
 
 ### What happens during commit:
 
@@ -65,8 +66,14 @@ yarn type-check
 # Format all files
 yarn format
 
+# Check for dead code and unused dependencies
+yarn knip
+
+# Auto-remove unused dependencies (careful!)
+yarn knip:fix
+
 # Run all checks manually
-yarn lint && yarn type-check
+yarn lint && yarn type-check && yarn knip
 ```
 
 ## Development Commands
