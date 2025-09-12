@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import type { SxProps, Theme } from '@mui/material/styles';
 
 interface StreamingVideoProps {
   src: string;
   poster?: string;
   className?: string;
-  sx?: any;
+  sx?: SxProps<Theme>;
   autoPlay?: boolean;
   muted?: boolean;
   loop?: boolean;
