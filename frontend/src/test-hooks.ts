@@ -1,7 +1,6 @@
-// Test file with intentionally poor formatting
-const  test   =    "hello"   ;
-const unused = 123;
+// Test file - properly formatted
+const test = 'hello world';
 
-export   function   testFunction( )   {
-return test
+export function testFunction() {
+  return test;
 }
