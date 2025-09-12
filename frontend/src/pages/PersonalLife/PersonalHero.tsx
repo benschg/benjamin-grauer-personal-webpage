@@ -81,7 +81,7 @@ const PersonalHero = () => {
               <Typography
                 variant="h6"
                 sx={{
-                  color: 'text.primary',
+                  color: '#333',
                   fontWeight: 600,
                   mb: 2,
                   textAlign: 'center',
@@ -92,14 +92,14 @@ const PersonalHero = () => {
 
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <LocationOn sx={{ color: 'primary.main', mr: 1 }} />
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                <Typography variant="body2" sx={{ color: '#555' }}>
                   Blüemliquartier – 8048 Zürich
                 </Typography>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Email sx={{ color: 'primary.main', mr: 1 }} />
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                <Typography variant="body2" sx={{ color: '#555' }}>
                   benjamin@benjamingrauer.ch
                 </Typography>
               </Box>

@@ -89,7 +89,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Switzerland',
     description:
       'Reaching the Schilthorn for the second time, I focused on finding inner peace and setting clear goals. This race emphasized the importance of mental preparation and having support from the people around me during these extreme challenges.',
-    image: '/personal-life/sports-inferno-triathlon.png',
+    image: '/personal-life/sports-inferno-2015.jpg',
     achievement: 'Second Inferno with mental mastery',
     distance: 'Olympic+ distance with extreme elevation',
   },
