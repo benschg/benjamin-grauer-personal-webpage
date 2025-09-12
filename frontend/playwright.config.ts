@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5174',
+    baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:5174',
     trace: 'on-first-retry',
   },
   projects: [
@@ -19,8 +19,8 @@ export default defineConfig({
   ],
   webServer: process.env.CI 
     ? {
-        command: 'yarn preview --port 5174',
-        port: 5174,
+        command: 'yarn preview --port 4173',
+        port: 4173,
         reuseExistingServer: false,
         timeout: 120 * 1000,
       }
