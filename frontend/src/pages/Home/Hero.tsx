@@ -1,4 +1,5 @@
 import { Box, Container, Typography } from "@mui/material";
+import StreamingVideo from "../../components/common/StreamingVideo";
 
 const Hero = () => {
   return (
@@ -15,8 +16,8 @@ const Hero = () => {
       }}
     >
       {/* Video Background */}
-      <Box
-        component="video"
+      <StreamingVideo
+        src="/Benjamin.Grauer.3D.Show_6.mp4"
         autoPlay
         muted
         loop
@@ -27,14 +28,13 @@ const Hero = () => {
           left: 0,
           width: "100%",
           height: "100%",
-          objectFit: "cover",
           zIndex: 0,
           opacity: 0.3,
         }}
-      >
-        <source src="/Benjamin.Grauer.3D.Show_6.mp4" type="video/mp4" />
-        Your browser does not support the video tag.
-      </Box>
+        onLoadStart={() => console.log('Video loading started')}
+        onCanPlay={() => console.log('Video ready to play')}
+        onError={(error) => console.error('Video error:', error)}
+      />
 
       {/* Overlay for better text readability */}
       <Box
