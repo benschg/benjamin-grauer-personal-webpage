@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc --project tsconfig.app.json --noEmit",
     "format": "prettier --write .",
     "knip": "knip",
     "knip:fix": "knip --fix",
@@ -36,10 +36,7 @@
   "devDependencies": {
     "@eslint/js": "^9.33.0",
     "@playwright/test": "^1.55.0",
-    "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.8.0",
-    "@testing-library/react": "^16.3.0",
-    "@testing-library/user-event": "^14.6.1",
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@types/webfontloader": "^1.6.38",
@@ -51,7 +48,6 @@
     "husky": "^9.1.7",
     "jsdom": "^26.1.0",
     "knip": "^5.63.1",
-    "lint-staged": "^16.1.6",
     "prettier": "^3.6.2",
     "typescript": "~5.8.3",
     "typescript-eslint": "^8.39.1",
@@ -61,7 +57,7 @@
   "lint-staged": {
     "*.{ts,tsx}": [
       "eslint --fix",
-      "tsc --noEmit"
+      "node scripts/tsc-check.js"
     ],
     "*.{ts,tsx,js,jsx,css,md,json}": [
       "prettier --write"
