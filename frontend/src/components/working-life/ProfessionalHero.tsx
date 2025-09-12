@@ -9,7 +9,7 @@ const ProfessionalHero = () => {
       }}
     >
       <Container maxWidth="lg">
-        <Grid container spacing={4}>
+        <Grid container spacing={4} alignItems="center">
           <Grid size={{ xs: 12, md: 8 }}>
             <Typography
               variant="h1"
@@ -57,6 +57,19 @@ const ProfessionalHero = () => {
               My passion lies in empowering people through technology, combining creativity 
               with technical excellence to solve complex problems and build meaningful products.
             </Typography>
+          </Grid>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box
+              component="img"
+              src="/Benjamin_Grauer_ProfilePic_2_Transparent_1024.png"
+              alt="Benjamin Grauer Profile Picture"
+              sx={{
+                width: { xs: 200, sm: 250, md: 300 },
+                height: 'auto',
+                borderRadius: 2,
+                boxShadow: 3,
+              }}
+            />
           </Grid>
         </Grid>
       </Container>
