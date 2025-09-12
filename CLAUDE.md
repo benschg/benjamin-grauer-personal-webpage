@@ -113,6 +113,14 @@ interface TimelineEvent {
 - **Lint**: `yarn lint`
 - **Type Check**: `yarn type-check`
 
+## Testing Commands
+- **Unit Tests**: `yarn test` (Vitest unit tests)
+- **Unit Tests UI**: `yarn test:ui` (Vitest with UI)
+- **Unit Tests Run**: `yarn test:run` (Vitest single run)
+- **E2E Tests**: `yarn test:e2e` (Playwright E2E tests headless)
+- **E2E Tests UI**: `yarn test:e2e:ui` (Playwright with UI)
+- **E2E Tests Headed**: `yarn test:e2e:headed` (Playwright with visible browser)
+
 ## Setup Instructions
 1. Create React + TypeScript + Vite project: `yarn create vite frontend --template react-ts`
 2. Install MUI dependencies: `yarn add @mui/material @emotion/react @emotion/styled @mui/icons-material`
@@ -130,6 +138,14 @@ interface TimelineEvent {
 - Custom MUI theme matching original design (dark theme, Orbitron/Quicksand fonts, brown accent)
 - Responsive hamburger menu for mobile devices
 - Modular navigation components
+
+✅ **Testing Setup Complete**: Full testing suite configured
+- **Vitest** for unit/component testing with React Testing Library
+- **Playwright** for E2E testing with multiple test modes
+- **Test Coverage**: All main pages (Home, Working Life, Personal Life, Portfolio)
+- **Mobile Testing**: Responsive design and mobile navigation
+- **Error Detection**: Console error monitoring in tests
+- **CI Ready**: Headless mode for automated testing
 
 ## Component Architecture
 ### Navigation Components (`frontend/src/components/navigation/`)
