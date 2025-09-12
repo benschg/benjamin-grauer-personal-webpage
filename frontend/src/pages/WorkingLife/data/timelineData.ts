@@ -4,121 +4,178 @@ export const timelineEvents: TimelineEvent[] = [
   {
     id: '2023-verity',
     year: '2023',
-    title: 'Head of Frameworks',
+    title: 'Head of Frameworks and Applications',
     company: 'Verity',
-    description: 'Leading framework development and technical architecture for autonomous drone systems',
+    description: 'Leading framework development and applications for autonomous drone systems',
     type: 'work',
-    skills: ['Technical Leadership', 'Framework Development', 'Architecture Design'],
-    achievements: ['Established technical standards', 'Led cross-functional teams']
+    skills: ['Technical Leadership', 'Framework Development', 'Architecture Design', 'Autonomous Systems'],
+    achievements: ['Established technical standards', 'Led cross-functional teams'],
+    image: '/working-life/verity-1024x496.png'
   },
   {
-    id: '2021-2023-9tlabs',
-    year: '2021-2023',
+    id: '2021-9tlabs',
+    year: '2021',
     title: 'Head of Software',
     company: '9T Labs',
-    description: 'Led software development for innovative 3D printing and manufacturing solutions',
+    description: 'Joined a fast-growing startup delivering new 3D printing composites. Tasks included organizing software team and scaling processes.',
     type: 'work',
-    skills: ['Software Development', 'Team Management', '3D Graphics', 'Manufacturing Tech'],
-    achievements: ['Scaled development team', 'Delivered manufacturing software platform']
+    skills: ['Software Development', 'Team Management', '3D Graphics', 'Manufacturing Tech', 'Process Scaling'],
+    achievements: ['Organized software team', 'Scaled development processes', 'Delivered 3D printing solutions'],
+    image: '/working-life/9TLabs_logo-white2x.png'
   },
   {
-    id: '2017-2021-virtamed-head',
-    year: '2017-2021',
-    title: 'Head of Data Services',
-    company: 'VirtaMed',
-    description: 'Managed data services and technical teams for medical training solutions',
-    type: 'work',
-    skills: ['Data Management', 'Medical Technology', 'Team Leadership'],
-    achievements: ['Implemented data analytics platform', 'Trained medical residents worldwide']
-  },
-  {
-    id: '2011-2017-virtamed-eng',
-    year: '2011-2017',
-    title: 'Engineering Manager',
-    company: 'VirtaMed',
-    description: 'Grew with the company from startup to established medical training provider',
-    type: 'work',
-    skills: ['Engineering Management', 'Medical Simulation', 'Product Development'],
-    achievements: ['Built engineering processes', 'Scaled from startup to enterprise']
-  },
-  {
-    id: '2010-eth-masters',
-    year: '2010',
-    title: 'Masters in Information Technology',
-    company: 'ETH Zürich',
-    description: 'Advanced studies in computer science, information systems, and technology management',
-    type: 'education',
-    skills: ['Computer Science', 'Information Systems', 'Research'],
-    achievements: ['Masters Thesis on 3D Graphics', 'Academic Excellence']
-  },
-  {
-    id: '2008-eth-bachelors',
-    year: '2008',
-    title: 'Bachelor in Electrical Engineering',
-    company: 'ETH Zürich',
-    description: 'Foundation in electrical engineering with focus on computer systems',
-    type: 'education',
-    skills: ['Electrical Engineering', 'Computer Systems', 'Mathematics'],
-    achievements: ['Strong technical foundation', 'Programming skills development']
-  },
-  {
-    id: '2015-scrum-master',
-    year: '2015',
-    title: 'Scrum Master Certification',
-    company: 'Scrum Alliance',
-    description: 'Certified Scrum Master for agile project management',
-    type: 'certification',
-    skills: ['Agile Methodology', 'Project Management', 'Team Facilitation'],
-    achievements: ['Implemented Scrum practices', 'Improved team velocity']
-  },
-  {
-    id: '2018-aws-solutions',
-    year: '2018',
-    title: 'AWS Solutions Architect',
-    company: 'Amazon Web Services',
-    description: 'Cloud architecture certification for scalable systems design',
-    type: 'certification',
-    skills: ['Cloud Architecture', 'AWS Services', 'System Design'],
-    achievements: ['Cloud migration expertise', 'Scalable system design']
-  },
-  {
-    id: '2020-orxonox',
-    year: '2020',
-    title: 'Orxonox Game Engine',
-    company: 'Open Source Project',
-    description: 'Contributed to open-source 3D game engine development',
-    type: 'project',
-    skills: ['C++', '3D Graphics', 'Game Development', 'Open Source'],
-    achievements: ['Major feature contributions', 'Community leadership']
-  },
-  {
-    id: '2019-virtamed-connect',
+    id: '2019-shiftup',
     year: '2019',
-    title: 'VirtaMed Connect Platform',
-    company: 'VirtaMed',
-    description: 'Developed cloud-based platform for medical training analytics',
-    type: 'project',
-    skills: ['Cloud Development', 'Medical Technology', 'Analytics', 'Full-Stack'],
-    achievements: ['Launched successful platform', 'Improved training outcomes']
+    title: 'Shift-up Business Agility and Innovation Leader Workshop',
+    company: 'Professional Development',
+    description: 'Certificate in Leading Digital Transformation. Sparked interest in business ideas and agile models.',
+    type: 'certification',
+    skills: ['Digital Transformation', 'Business Agility', 'Innovation Leadership', 'Agile Models'],
+    achievements: ['Digital transformation expertise', 'Business agility knowledge', 'Innovation leadership skills']
   },
   {
-    id: '2022-triathlon',
-    year: '2022',
-    title: 'Ironman Switzerland',
-    company: 'Personal Achievement',
-    description: 'Completed full Ironman triathlon, demonstrating perseverance and discipline',
-    type: 'personal',
-    skills: ['Endurance', 'Discipline', 'Goal Setting', 'Time Management'],
-    achievements: ['Completed 3.8km swim, 180km bike, 42km run', 'Mental resilience']
+    id: '2017-head-data',
+    year: '2017',
+    title: 'Head of Data Services',
+    company: 'VirtaMed AG',
+    description: 'Developed cloud services for managing simulator fleets. Supported company expansion into new territories.',
+    type: 'work',
+    skills: ['Cloud Services', 'Data Management', 'Fleet Management', 'Business Expansion'],
+    achievements: ['Built cloud services platform', 'Enabled global expansion', 'Managed simulator fleets']
   },
   {
-    id: '2021-father',
-    year: '2021',
+    id: '2017-ireb',
+    year: '2017',
+    title: 'IREB (Requirements Engineer)',
+    company: 'Zühlke',
+    description: 'Requirements engineering certification focused on systematic approach to software specifications.',
+    type: 'certification',
+    skills: ['Requirements Engineering', 'Business Analysis', 'System Design', 'Software Specifications'],
+    achievements: ['Requirements engineering expertise', 'Systematic specification approach']
+  },
+  {
+    id: '2016-father',
+    year: '2016',
     title: 'Became a Father',
     company: 'Family Life',
-    description: 'Life-changing experience that brought new perspective on priorities and time management',
+    description: 'Son Arthur Isidor Faehndrich born. Life-changing experience bringing new perspective on priorities.',
     type: 'personal',
-    skills: ['Time Management', 'Prioritization', 'Patience', 'Multitasking'],
-    achievements: ['Work-life balance mastery', 'Increased efficiency']
+    skills: ['Time Management', 'Prioritization', 'Patience', 'Work-Life Balance'],
+    achievements: ['Gained new life perspective', 'Enhanced time management', 'Work-life balance mastery'],
+    image: '/working-life/ben-and-arthur.jpg'
+  },
+  {
+    id: '2016-management3',
+    year: '2016',
+    title: 'Management 3.0',
+    company: 'Pragmatic Solutions',
+    description: 'Gained insights into scalable team organizations. Helped reshape development team structure.',
+    type: 'certification',
+    skills: ['Team Organization', 'Scalable Management', 'Team Structure', 'Modern Leadership'],
+    achievements: ['Reshaped team structure', 'Scalable organization insights', 'Enhanced team management'],
+    image: '/working-life/mgt3.0.jpg'
+  },
+  {
+    id: '2012-scrum',
+    year: '2012',
+    title: 'Certified Scrum Master',
+    company: 'The Knowledge Hut',
+    description: 'Focused on automation, testing procedures, and meeting optimization.',
+    type: 'certification',
+    skills: ['Scrum Methodology', 'Process Automation', 'Testing Procedures', 'Meeting Optimization'],
+    achievements: ['Implemented automation', 'Optimized testing procedures', 'Improved meeting efficiency'],
+    image: '/working-life/Scrum_Pic-1024x782.png'
+  },
+  {
+    id: '2012-leading-applied',
+    year: '2012',
+    title: '"Leading applied" Management Course',
+    company: 'Rudolf Obrecht AG',
+    description: 'Management course focusing on applied leadership techniques and practical management skills.',
+    type: 'certification',
+    skills: ['Applied Leadership', 'Management Techniques', 'Practical Leadership', 'Team Development'],
+    achievements: ['Applied leadership skills', 'Practical management expertise'],
+    image: '/working-life/rudolf-obrecht.png'
+  },
+  {
+    id: '2011-eng-manager',
+    year: '2011',
+    title: 'Engineering Manager',
+    company: 'VirtaMed AG',
+    description: 'Promoted to engineering management role, leading technical teams and development processes.',
+    type: 'work',
+    skills: ['Engineering Management', 'Technical Leadership', 'Team Management', 'Process Development'],
+    achievements: ['Led technical teams', 'Established development processes', 'Scaled engineering operations']
+  },
+  {
+    id: '2008-software-eng',
+    year: '2008',
+    title: 'Software Engineer',
+    company: 'VirtaMed AG',
+    description: 'Expanded doctorate thesis framework. Worked on software compatibility and porting.',
+    type: 'work',
+    skills: ['Software Development', 'Framework Development', 'Software Compatibility', 'Code Porting'],
+    achievements: ['Extended thesis framework', 'Improved software compatibility', 'Successful code porting']
+  },
+  {
+    id: '2007-masters-thesis',
+    year: '2007',
+    title: 'Masters Thesis',
+    company: 'Surgical Planning Lab, Boston',
+    description: 'GPGPU Accelerated Volume Renderer for surgical guidance. Advanced research in medical technology.',
+    type: 'education',
+    skills: ['GPGPU Programming', 'Volume Rendering', 'Medical Technology', 'Surgical Guidance'],
+    achievements: ['Advanced medical research', 'GPGPU expertise', 'Surgical guidance innovation']
+  },
+  {
+    id: '2007-internship',
+    year: '2007',
+    title: 'Software Developer Internship',
+    company: 'Cymicon, New Zealand',
+    description: 'International internship experience in software development, gaining global perspective.',
+    type: 'work',
+    skills: ['Software Development', 'International Experience', 'Cross-cultural Communication', 'Adaptation'],
+    achievements: ['International work experience', 'Global perspective', 'Cross-cultural skills']
+  },
+  {
+    id: '2006-semester-thesis',
+    year: '2006',
+    title: 'Semester Thesis: "Scalable Multiplayer Game Networks"',
+    company: 'ETH Zürich',
+    description: 'Research on network architecture and scalability solutions for multiplayer gaming systems.',
+    type: 'project',
+    skills: ['Network Architecture', 'Game Development', 'Scalability', 'Research Methodology'],
+    achievements: ['Network scalability research', 'Gaming architecture expertise', 'Academic excellence']
+  },
+  {
+    id: '2004-orxonox',
+    year: '2004',
+    title: 'Inventor/Lead of Open Source Project "Orxonox"',
+    company: 'ETH Zürich',
+    description: 'Developed learning platform for electrical engineers. Founded and led open-source 3D game engine development.',
+    type: 'project',
+    skills: ['Open Source Development', '3D Engine Development', 'Educational Platforms', 'Project Leadership'],
+    achievements: ['Created educational platform', 'Led open-source community', 'Innovative learning tools'],
+    image: '/working-life/orxonoxfighter-inside-small.jpg'
+  },
+  {
+    id: '2001-education',
+    year: '2001',
+    title: 'Masters in Information Technology and Electrical Engineering',
+    company: 'ETH Zürich',
+    description: 'Comprehensive education combining information technology and electrical engineering disciplines.',
+    type: 'education',
+    skills: ['Information Technology', 'Electrical Engineering', 'Computer Science', 'Systems Engineering'],
+    achievements: ['Masters degree from top university', 'Interdisciplinary expertise', 'Strong technical foundation']
+  },
+  {
+    id: '1980-birth',
+    year: '1980',
+    title: 'Born',
+    company: 'Personal Milestone',
+    description: 'Born in April - the beginning of the journey.',
+    type: 'personal',
+    skills: [],
+    achievements: ['Life begins']
   }
 ];

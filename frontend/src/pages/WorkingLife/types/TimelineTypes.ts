@@ -9,4 +9,5 @@ export interface TimelineEvent {
   type: TimelineEventType;
   skills?: string[];
   achievements?: string[];
+  image?: string;
 }
