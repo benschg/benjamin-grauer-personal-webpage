@@ -4,6 +4,7 @@ import {
   Grid,
   Card,
   CardContent,
+  CardMedia,
   Typography,
   Button,
 } from "@mui/material";
@@ -16,6 +17,8 @@ const MainSections = () => {
         "Professional experience in software development, project management, and technical leadership. Explore my career journey and achievements.",
       link: "/working-life",
       buttonText: "Learn More",
+      image: "/welcome/work_01.jpg",
+      imageAlt: "Benjamin Grauer - Professional",
     },
     {
       title: "Personal Life",
@@ -23,6 +26,8 @@ const MainSections = () => {
         "Beyond work, I'm a father, triathlete, and someone passionate about sustainable technology and making the world better.",
       link: "/personal-life",
       buttonText: "Learn More",
+      image: "/welcome/personal_01.jpg",
+      imageAlt: "Benjamin Grauer - Personal",
     },
     {
       title: "Portfolio",
@@ -30,6 +35,8 @@ const MainSections = () => {
         "A showcase of my projects spanning 3D animations, software development, web design, and creative endeavors.",
       link: "/portfolio",
       buttonText: "View Projects",
+      image: "/welcome/portfolio_01.jpg",
+      imageAlt: "Benjamin Grauer - Portfolio",
     },
   ];
 
@@ -41,27 +48,53 @@ const MainSections = () => {
         backgroundColor: "background.default",
       }}
     >
-      <Container maxWidth="lg">
-        <Grid container spacing={3}>
+      <Container
+        maxWidth="lg"
+        sx={{ display: "flex", justifyContent: "center" }}
+      >
+        <Grid
+          container
+          spacing={3}
+          sx={{ justifyContent: "center", justifyItems: "center" }}
+        >
           {sections.map((section, index) => (
             <Grid size={{ xs: 12, sm: 6, lg: 4 }} key={index}>
               <Card
                 sx={{
                   height: "100%",
-                  minHeight: "280px",
+                  minHeight: "350px",
+                  maxWidth: "360px",
+
                   display: "flex",
                   flexDirection: "column",
+                  justifySelf: "center",
+                  alignItems: "center",
                   textAlign: "center",
-                  p: 1.5,
+                  overflow: "hidden",
                 }}
               >
-                <CardContent sx={{ flexGrow: 1 }}>
+                {/* Profile Image */}
+                <CardMedia
+                  component="img"
+                  sx={{
+                    height: 400,
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    width: "100%",
+                    backgroundColor: "background.paper",
+                  }}
+                  image={section.image}
+                  alt={section.imageAlt}
+                />
+
+                <CardContent sx={{ flexGrow: 1, px: 2 }}>
                   <Typography
                     variant="h4"
                     component="h2"
                     sx={{
                       fontSize: { xs: "1.3rem", md: "1.5rem" },
                       mb: 2,
+                      mt: 1,
                       color: "text.primary",
                     }}
                   >
