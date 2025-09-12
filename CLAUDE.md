@@ -113,6 +113,27 @@ interface TimelineEvent {
 - **Lint**: `yarn lint`
 - **Type Check**: `yarn type-check`
 
+## Testing Commands
+- **Unit Tests**: `yarn test` (Vitest unit tests)
+- **Unit Tests UI**: `yarn test:ui` (Vitest with UI)
+- **Unit Tests Run**: `yarn test:run` (Vitest single run)
+- **E2E Tests**: `yarn test:e2e` (Playwright E2E tests headless)
+- **E2E Tests UI**: `yarn test:e2e:ui` (Playwright with UI)
+- **E2E Tests Headed**: `yarn test:e2e:headed` (Playwright with visible browser)
+
+## GitHub Actions CI/CD
+- **Automated Testing**: Tests run on every push/PR to main/master branches
+- **Test Pipeline**: Linting → Unit Tests → Build → E2E Tests
+- **Browser Caching**: Playwright browsers cached for faster CI runs
+- **Test Reports**: HTML reports and artifacts available for 30 days
+
+### Viewing Test Results on GitHub:
+1. **Actions Tab**: Go to repository → Actions → Click any workflow run
+2. **Live Results**: See individual test results in GitHub Actions logs  
+3. **Download Reports**: Click "playwright-report" artifact → extract → open `index.html`
+4. **PR Integration**: Test status shows automatically on pull requests
+5. **Branch Protection**: Failed tests can block merging (configure in Settings)
+
 ## Setup Instructions
 1. Create React + TypeScript + Vite project: `yarn create vite frontend --template react-ts`
 2. Install MUI dependencies: `yarn add @mui/material @emotion/react @emotion/styled @mui/icons-material`
@@ -130,6 +151,14 @@ interface TimelineEvent {
 - Custom MUI theme matching original design (dark theme, Orbitron/Quicksand fonts, brown accent)
 - Responsive hamburger menu for mobile devices
 - Modular navigation components
+
+✅ **Testing Setup Complete**: Full testing suite configured
+- **Vitest** for unit/component testing with React Testing Library
+- **Playwright** for E2E testing with multiple test modes
+- **Test Coverage**: All main pages (Home, Working Life, Personal Life, Portfolio)
+- **Mobile Testing**: Responsive design and mobile navigation
+- **Error Detection**: Console error monitoring in tests
+- **CI Ready**: Headless mode for automated testing
 
 ## Component Architecture
 ### Navigation Components (`frontend/src/components/navigation/`)

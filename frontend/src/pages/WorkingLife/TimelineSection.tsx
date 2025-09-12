@@ -49,7 +49,7 @@ const TimelineSection = () => {
     }
   };
 
-  const getColor = (type: TimelineEventType) => {
+  const getColor = (type: TimelineEventType): 'primary' | 'secondary' | 'error' | 'info' | 'success' | 'warning' => {
     switch (type) {
       case 'education':
         return 'secondary';
@@ -142,7 +142,7 @@ const TimelineSection = () => {
             return (
               <TimelineItem key={event.id}>
                 <TimelineSeparator>
-                  <TimelineDot color={getColor(event.type) as any} sx={{ cursor: 'pointer' }}>
+                  <TimelineDot color={getColor(event.type)} sx={{ cursor: 'pointer' }}>
                     {getIcon(event.type)}
                   </TimelineDot>
                   {index < filteredEvents.length - 1 && <TimelineConnector />}
