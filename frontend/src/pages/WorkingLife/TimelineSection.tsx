@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Box, Typography, Paper, Chip, Stack, Fade, Collapse, FormControl, Select, MenuItem } from '@mui/material';
+import { Box, Typography, Paper, Chip, Stack, Fade, Collapse, FormControl, Select, MenuItem, CardMedia } from '@mui/material';
 import { Timeline, TimelineItem, TimelineSeparator, TimelineConnector, TimelineContent, TimelineDot } from '@mui/lab';
 import { Work, School, Star, Build, Assignment, Person, ExpandMore, ExpandLess } from '@mui/icons-material';
 import type { TimelineEventType } from './types/TimelineTypes';
@@ -205,6 +205,22 @@ const TimelineSection = () => {
                         >
                           {event.description}
                         </Typography>
+                        {event.image && (
+                          <Box sx={{ mt: 2 }}>
+                            <CardMedia
+                              component="img"
+                              sx={{
+                                height: 120,
+                                objectFit: 'contain',
+                                objectPosition: index % 2 === 0 ? 'left' : 'right',
+                                borderRadius: 1,
+                                backgroundColor: 'transparent',
+                              }}
+                              image={event.image}
+                              alt={event.title}
+                            />
+                          </Box>
+                        )}
                       </Box>
                       <Box sx={{ ml: 1 }}>
                         {isExpanded ? <ExpandLess /> : <ExpandMore />}
