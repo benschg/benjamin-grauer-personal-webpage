@@ -17,9 +17,17 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: 'yarn dev',
-    url: 'http://localhost:5174',
-    reuseExistingServer: !process.env.CI,
-  },
+  webServer: process.env.CI 
+    ? {
+        command: 'yarn preview --port 5174',
+        port: 5174,
+        reuseExistingServer: false,
+        timeout: 120 * 1000,
+      }
+    : {
+        command: 'yarn dev',
+        url: 'http://localhost:5174',
+        reuseExistingServer: true,
+        timeout: 120 * 1000,
+      },
 });

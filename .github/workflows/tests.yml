@@ -37,10 +37,24 @@ jobs:
         cd frontend
         yarn test:run
     
-    - name: Install Playwright Browsers
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: |
+          ~/.cache/ms-playwright/
+        key: ${{ runner.os }}-playwright-${{ hashFiles('frontend/yarn.lock') }}
+    
+    - name: Build application
       run: |
         cd frontend
-        npx playwright install --with-deps
+        yarn build
+        
+    - name: Install Playwright Browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        cd frontend
+        npx playwright install chromium
     
     - name: Run E2E tests
       run: |
@@ -54,8 +68,3 @@ jobs:
         name: playwright-report
         path: frontend/playwright-report/
         retention-days: 30
-        
-    - name: Build application
-      run: |
-        cd frontend
-        yarn build
