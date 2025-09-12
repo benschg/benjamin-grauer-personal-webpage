@@ -8,11 +8,15 @@
     ],
     "headers": [
       {
-        "source": "**/*.@(mp4|webm|ogg|avi|mov)",
+        "source": "**/*.mp4",
         "headers": [
           {
-            "key": "Content-Type",
+            "key": "Content-Type", 
             "value": "video/mp4"
+          },
+          {
+            "key": "Accept-Ranges",
+            "value": "bytes"
           },
           {
             "key": "Cache-Control",
@@ -23,7 +27,7 @@
     ],
     "rewrites": [
       {
-        "source": "!/**/*.@(mp4|webm|ogg|avi|mov|png|jpg|jpeg|gif|svg|ico|css|js|json|xml|txt|woff|woff2|ttf|eot)",
+        "source": "!**/*.@(jpg|jpeg|png|gif|svg|mp4|webm|css|js|ico|woff|woff2|ttf|eot|json|xml|txt)",
         "destination": "/index.html"
       }
     ]
