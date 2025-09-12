@@ -1,5 +1,15 @@
-import { Card, CardContent, Typography, Chip, Stack, Box, Link, Collapse, IconButton } from '@mui/material';
-import { OpenInNew, ExpandMore, ExpandLess } from '@mui/icons-material';
+import {
+  Card,
+  CardContent,
+  Typography,
+  Chip,
+  Stack,
+  Box,
+  Link,
+  Collapse,
+  IconButton,
+} from '@mui/material';
+import { OpenInNew, ExpandLess } from '@mui/icons-material';
 import { useState, useRef, useEffect } from 'react';
 
 interface GallupStrength {
@@ -75,39 +85,44 @@ const GallupStrengthsCard = () => {
   const gallupStrengths: GallupStrength[] = [
     {
       name: 'Individualization',
-      description: 'People exceptionally talented in the Individualization theme are intrigued with the unique qualities of each person. They have a gift for figuring out how different people can work together productively.',
+      description:
+        'People exceptionally talented in the Individualization theme are intrigued with the unique qualities of each person. They have a gift for figuring out how different people can work together productively.',
       domain: 'Relationship Building',
       keyTalents: ['Focus on Uniqueness', 'Customized Approach', 'Team Building'],
-      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252272/individualization-theme.aspx'
+      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252272/individualization-theme.aspx',
     },
     {
       name: 'Ideation',
-      description: 'People exceptionally talented in the Ideation theme are fascinated by ideas. They are able to find connections between seemingly disparate phenomena.',
+      description:
+        'People exceptionally talented in the Ideation theme are fascinated by ideas. They are able to find connections between seemingly disparate phenomena.',
       domain: 'Strategic Thinking',
       keyTalents: ['Innovation', 'Creative Connections', 'Problem Solving'],
-      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252260/ideation-theme.aspx'
+      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252260/ideation-theme.aspx',
     },
     {
       name: 'Learner',
-      description: 'People exceptionally talented in the Learner theme have a great desire to learn and want to continuously improve. The process of learning, rather than the outcome, excites them.',
+      description:
+        'People exceptionally talented in the Learner theme have a great desire to learn and want to continuously improve. The process of learning, rather than the outcome, excites them.',
       domain: 'Strategic Thinking',
       keyTalents: ['Continuous Improvement', 'Process Focus', 'Knowledge Acquisition'],
-      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252293/learner-theme.aspx'
+      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252293/learner-theme.aspx',
     },
     {
       name: 'Input',
-      description: 'People exceptionally talented in the Input theme have a need to collect and archive. They may accumulate information, ideas, artifacts or even relationships.',
+      description:
+        'People exceptionally talented in the Input theme have a need to collect and archive. They may accumulate information, ideas, artifacts or even relationships.',
       domain: 'Strategic Thinking',
       keyTalents: ['Information Gathering', 'Resourcefulness', 'Curiosity'],
-      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252278/input-theme.aspx'
+      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252278/input-theme.aspx',
     },
     {
       name: 'Positivity',
-      description: 'People exceptionally talented in the Positivity theme have contagious enthusiasm. They are upbeat and can get others excited about what they are going to do.',
+      description:
+        'People exceptionally talented in the Positivity theme have contagious enthusiasm. They are upbeat and can get others excited about what they are going to do.',
       domain: 'Relationship Building',
       keyTalents: ['Enthusiasm', 'Optimism', 'Team Energy'],
-      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252305/positivity-theme.aspx'
-    }
+      gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252305/positivity-theme.aspx',
+    },
   ];
 
   const getDomainColor = (domain: string) => {
@@ -175,7 +190,8 @@ const GallupStrengthsCard = () => {
               onClick={() => handleStrengthInteraction(strength.name)}
               onMouseEnter={() => handleStrengthHover(strength.name)}
               sx={{
-                backgroundColor: expandedItem === strength.name ? getDomainColor(strength.domain) : 'transparent',
+                backgroundColor:
+                  expandedItem === strength.name ? getDomainColor(strength.domain) : 'transparent',
                 color: expandedItem === strength.name ? 'white' : 'text.primary',
                 border: '1px solid',
                 borderColor: 'primary.main',
@@ -192,7 +208,6 @@ const GallupStrengthsCard = () => {
             />
           ))}
         </Stack>
-
 
         {/* Expandable details */}
         <Stack spacing={1}>
@@ -211,7 +226,14 @@ const GallupStrengthsCard = () => {
                       mb: 1,
                     }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        mb: 1,
+                      }}
+                    >
                       <Box sx={{ display: 'flex', alignItems: 'center' }}>
                         <Typography
                           variant="h6"
@@ -264,7 +286,7 @@ const GallupStrengthsCard = () => {
                         )}
                       </Box>
                     </Box>
-                    
+
                     <Typography
                       variant="body2"
                       sx={{
@@ -276,7 +298,7 @@ const GallupStrengthsCard = () => {
                     >
                       {strength.description}
                     </Typography>
-                    
+
                     <Typography
                       variant="subtitle2"
                       sx={{
