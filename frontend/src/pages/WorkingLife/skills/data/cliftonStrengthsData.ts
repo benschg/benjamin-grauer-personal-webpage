@@ -1,9 +1,8 @@
 import type { DetailedSkill } from '../BaseSkillCard';
 
-export interface GallupStrength extends DetailedSkill {
+export interface CliftonStrength extends DetailedSkill {
   domain: string;
   keyTalents: string[];
-  gallupUrl: string;
 }
 
 const getDomainColor = (domain: string) => {
@@ -21,7 +20,7 @@ const getDomainColor = (domain: string) => {
   }
 };
 
-export const gallupStrengths: GallupStrength[] = [
+export const cliftonStrengths: CliftonStrength[] = [
   {
     name: 'Individualization',
     description:
@@ -32,7 +31,6 @@ export const gallupStrengths: GallupStrength[] = [
     keyTalents: ['Focus on Uniqueness', 'Customized Approach', 'Team Building'],
     color: getDomainColor('Relationship Building'),
     externalUrl: 'https://www.gallup.com/cliftonstrengths/en/252272/individualization-theme.aspx',
-    gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252272/individualization-theme.aspx',
   },
   {
     name: 'Ideation',
@@ -44,7 +42,6 @@ export const gallupStrengths: GallupStrength[] = [
     keyTalents: ['Innovation', 'Creative Connections', 'Problem Solving'],
     color: getDomainColor('Strategic Thinking'),
     externalUrl: 'https://www.gallup.com/cliftonstrengths/en/252260/ideation-theme.aspx',
-    gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252260/ideation-theme.aspx',
   },
   {
     name: 'Learner',
@@ -56,7 +53,6 @@ export const gallupStrengths: GallupStrength[] = [
     keyTalents: ['Continuous Improvement', 'Process Focus', 'Knowledge Acquisition'],
     color: getDomainColor('Strategic Thinking'),
     externalUrl: 'https://www.gallup.com/cliftonstrengths/en/252293/learner-theme.aspx',
-    gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252293/learner-theme.aspx',
   },
   {
     name: 'Input',
@@ -68,7 +64,6 @@ export const gallupStrengths: GallupStrength[] = [
     keyTalents: ['Information Gathering', 'Resourcefulness', 'Curiosity'],
     color: getDomainColor('Strategic Thinking'),
     externalUrl: 'https://www.gallup.com/cliftonstrengths/en/252278/input-theme.aspx',
-    gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252278/input-theme.aspx',
   },
   {
     name: 'Positivity',
@@ -80,6 +75,5 @@ export const gallupStrengths: GallupStrength[] = [
     keyTalents: ['Enthusiasm', 'Optimism', 'Team Energy'],
     color: getDomainColor('Relationship Building'),
     externalUrl: 'https://www.gallup.com/cliftonstrengths/en/252305/positivity-theme.aspx',
-    gallupUrl: 'https://www.gallup.com/cliftonstrengths/en/252305/positivity-theme.aspx',
   },
 ];

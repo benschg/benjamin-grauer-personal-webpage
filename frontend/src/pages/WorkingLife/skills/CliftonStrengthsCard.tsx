@@ -1,9 +1,9 @@
 import BaseSkillCard from './BaseSkillCard';
-import { gallupStrengths } from './data/gallupStrengthsData';
+import { cliftonStrengths } from './data/cliftonStrengthsData';
 
-const GallupStrengthsCard = () => {
+const CliftonStrengthsCard = () => {
   // Add rank numbers to the strength names
-  const numberedStrengths = gallupStrengths.map((strength, index) => ({
+  const numberedStrengths = cliftonStrengths.map((strength, index) => ({
     ...strength,
     name: `${index + 1}. ${strength.name}`,
   }));
@@ -17,4 +17,4 @@ const GallupStrengthsCard = () => {
   );
 };
 
-export default GallupStrengthsCard;
+export default CliftonStrengthsCard;

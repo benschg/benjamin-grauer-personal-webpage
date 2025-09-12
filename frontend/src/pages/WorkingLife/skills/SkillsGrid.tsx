@@ -1,11 +1,11 @@
 import { Grid } from '@mui/material';
 import ProgrammingLanguagesCard from './ProgrammingLanguagesCard';
-import FrameworksCard from './FrameworksCard';
+import FrameworksAndTechnologiesCard from './FrameworksAndTechnologiesCard';
 import ToolsAndPlatformsCard from './ToolsAndPlatformsCard';
 import SoftSkillsCard from './SoftSkillsCard';
 import DomainExpertiseCard from './DomainExpertiseCard';
 import LanguagesCard from './LanguagesCard';
-import GallupStrengthsCard from './GallupStrengthsCard';
+import CliftonStrengthsCard from './CliftonStrengthsCard';
 
 const SkillsGrid = () => {
   return (
@@ -17,7 +17,7 @@ const SkillsGrid = () => {
         <ToolsAndPlatformsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <FrameworksCard />
+        <FrameworksAndTechnologiesCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <ProgrammingLanguagesCard />
@@ -27,7 +27,7 @@ const SkillsGrid = () => {
       </Grid>
 
       <Grid size={{ xs: 12, md: 6 }}>
-        <GallupStrengthsCard />
+        <CliftonStrengthsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <LanguagesCard monochrome={true} />
