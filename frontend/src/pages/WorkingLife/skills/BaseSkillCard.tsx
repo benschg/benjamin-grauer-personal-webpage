@@ -1,11 +1,11 @@
 import { Card, CardContent, Typography, Chip, Stack } from '@mui/material';
-import type { SkillCategory } from './types/SkillTypes';
 
-interface SkillCardProps {
-  category: SkillCategory;
+interface BaseSkillCardProps {
+  title: string;
+  skills: string[];
 }
 
-const SkillCard = ({ category }: SkillCardProps) => {
+const BaseSkillCard = ({ title, skills }: BaseSkillCardProps) => {
   return (
     <Card
       sx={{
@@ -23,10 +23,10 @@ const SkillCard = ({ category }: SkillCardProps) => {
             color: 'primary.main',
           }}
         >
-          {category.title}
+          {title}
         </Typography>
         <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap', gap: 1 }}>
-          {category.skills.map((skill, skillIndex) => (
+          {skills.map((skill, skillIndex) => (
             <Chip
               key={skillIndex}
               label={skill}
@@ -48,4 +48,4 @@ const SkillCard = ({ category }: SkillCardProps) => {
   );
 };
 
-export default SkillCard;
+export default BaseSkillCard;
