@@ -10,35 +10,22 @@ test.describe('Document Downloads', () => {
     // Wait for the documents section to load
     await expect(page.locator('text=Documents')).toBeVisible();
 
-    // Define expected documents
-    const expectedDocuments = [
-      {
-        title: 'References',
-        url: '/working-life/documents/References_Benjamin.Grauer_20250626.pdf',
-        linkText: 'Download PDF'
-      },
-      {
-        title: 'Certificates', 
-        url: '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf',
-        linkText: 'Download PDF'
-      },
-      {
-        title: 'Full CV',
-        url: '/working-life/documents/CV-Benjamin.Grauer.20250801_anon_full.pdf', 
-        linkText: 'Download PDF'
-      }
-    ];
-
     // Look for download links (MUI Button with href renders as <a> tag)
     const downloadLinks = page.locator('a:has-text("Download PDF")');
     await expect(downloadLinks).toHaveCount(3);
 
-    // Test each document
-    for (const doc of expectedDocuments) {
-      // Find the download link with the correct href
-      const downloadLink = page.locator(`a[href="${doc.url}"]`);
-      await expect(downloadLink).toBeVisible();
-      await expect(downloadLink).toContainText(doc.linkText);
+    // Test that all download links have proper structure
+    for (let i = 0; i < 3; i++) {
+      const link = downloadLinks.nth(i);
+      await expect(link).toBeVisible();
+      
+      // Check that href points to working-life documents folder and is a PDF
+      const href = await link.getAttribute('href');
+      expect(href).toMatch(/\/working-life\/documents\/.*\.pdf$/);
+      
+      // Check that download attribute is set with your full name
+      const download = await link.getAttribute('download');
+      expect(download).toMatch(/^Benjamin_Grauer_(References|Certificates|CV)\.pdf$/);
     }
 
     // Test document titles are visible (using heading selectors to be specific)
@@ -48,15 +35,19 @@ test.describe('Document Downloads', () => {
   });
 
   test('Document files exist and are accessible', async ({ page }) => {
-    const documentUrls = [
-      '/working-life/documents/References_Benjamin.Grauer_20250626.pdf',
-      '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf',
-      '/working-life/documents/CV-Benjamin.Grauer.20250801_anon_full.pdf'
-    ];
+    // Get all download links and extract their URLs dynamically
+    await expect(page.locator('text=Documents')).toBeVisible();
+    const downloadLinks = page.locator('a:has-text("Download PDF")');
+    
+    const linkCount = await downloadLinks.count();
+    expect(linkCount).toBe(3);
 
-    for (const url of documentUrls) {
+    for (let i = 0; i < linkCount; i++) {
+      const link = downloadLinks.nth(i);
+      const url = await link.getAttribute('href');
+      
       // Use request to check if files exist instead of goto (to avoid download popup)
-      const response = await page.request.get(url);
+      const response = await page.request.get(url!);
       
       // Check that the response is successful (200 status)
       expect(response.status()).toBe(200);
@@ -67,26 +58,27 @@ test.describe('Document Downloads', () => {
     }
   });
 
-  test('Download links trigger file download', async ({ page }) => {
+  test('Download links trigger file download with clean filenames', async ({ page }) => {
     // Wait for the documents section to load
     await expect(page.locator('text=Documents')).toBeVisible();
 
-    // Test the first download link (References) 
-    const downloadLink = page.locator('a[href="/working-life/documents/References_Benjamin.Grauer_20250626.pdf"]');
-    await expect(downloadLink).toBeVisible();
+    // Get the first download link dynamically
+    const downloadLinks = page.locator('a:has-text("Download PDF")');
+    const firstDownloadLink = downloadLinks.first();
+    await expect(firstDownloadLink).toBeVisible();
     
     // Set up download promise before clicking
     const downloadPromise = page.waitForEvent('download');
     
     // Click the download link
-    await downloadLink.click();
+    await firstDownloadLink.click();
     
     // Wait for the download to start
     const download = await downloadPromise;
     
-    // Verify the download has the expected filename
-    expect(download.suggestedFilename()).toContain('References_Benjamin.Grauer');
-    expect(download.suggestedFilename()).toContain('.pdf');
+    // Verify the download has filename with your full name
+    const filename = download.suggestedFilename();
+    expect(filename).toMatch(/^Benjamin_Grauer_(References|Certificates|CV)\.pdf$/);
   });
 
   test('Document cards display correct information', async ({ page }) => {

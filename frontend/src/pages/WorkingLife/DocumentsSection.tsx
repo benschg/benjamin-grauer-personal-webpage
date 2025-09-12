@@ -9,6 +9,7 @@ const DocumentsSection = () => {
       icon: ContactPage,
       fileType: 'PDF',
       downloadUrl: '/working-life/documents/References_Benjamin.Grauer_20250626.pdf',
+      downloadAs: 'Benjamin_Grauer_References.pdf',
     },
     {
       title: 'Certificates',
@@ -16,6 +17,7 @@ const DocumentsSection = () => {
       icon: EmojiEvents,
       fileType: 'PDF',
       downloadUrl: '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf',
+      downloadAs: 'Benjamin_Grauer_Certificates.pdf',
     },
     {
       title: 'Full CV',
@@ -23,6 +25,7 @@ const DocumentsSection = () => {
       icon: Description,
       fileType: 'PDF',
       downloadUrl: '/working-life/documents/CV-Benjamin.Grauer.20250801_anon_full.pdf',
+      downloadAs: 'Benjamin_Grauer_CV.pdf',
     },
   ];
 
@@ -91,6 +94,7 @@ const DocumentsSection = () => {
                   variant="contained"
                   startIcon={<Download />}
                   href={doc.downloadUrl}
+                  download={doc.downloadAs}
                   sx={{
                     mt: 'auto',
                     mx: 2,
