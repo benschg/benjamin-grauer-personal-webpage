@@ -118,6 +118,8 @@ const BaseSkillCard = ({
     );
   };
 
+  const hasExpandedItem = expandedItem !== null;
+
   return (
     <Card
       ref={componentRef}
@@ -125,6 +127,20 @@ const BaseSkillCard = ({
       sx={{
         height: '100%',
         p: 2,
+        position: 'relative',
+        overflow: 'visible',
+        border: '2px solid transparent',
+        ...(hasExpandedItem && {
+          borderColor:
+            expandedItem && hasDetailedSkills
+              ? getSkillColor(
+                  skills.find((skill) => isDetailedSkill(skill) && skill.name === expandedItem) ||
+                    ''
+                )
+              : 'primary.main',
+          zIndex: 10,
+        }),
+        transition: 'all 0.3s ease',
       }}
     >
       <CardContent>
@@ -213,7 +229,15 @@ const BaseSkillCard = ({
 
         {/* Expandable details for detailed skills */}
         {hasDetailedSkills && (
-          <Stack spacing={1}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: 'calc(100% - 2px)',
+              left: -2,
+              right: -2,
+              zIndex: 1,
+            }}
+          >
             {skills.map((skill, index) => {
               if (!isDetailedSkill(skill)) return null;
 
@@ -223,12 +247,13 @@ const BaseSkillCard = ({
                   <Collapse in={isExpanded} timeout="auto" unmountOnExit>
                     <Box
                       sx={{
-                        border: '1px solid',
+                        border: '2px solid',
                         borderColor: skill.color || defaultColor,
-                        borderRadius: 1,
+                        borderTop: 'none',
+                        borderRadius: '0 0 4px 4px',
                         p: 2,
-                        backgroundColor: 'action.hover',
-                        mb: 1,
+                        pt: 3,
+                        backgroundColor: '#343A40',
                       }}
                     >
                       <Typography
@@ -365,7 +390,7 @@ const BaseSkillCard = ({
                 </Box>
               );
             })}
-          </Stack>
+          </Box>
         )}
       </CardContent>
     </Card>
