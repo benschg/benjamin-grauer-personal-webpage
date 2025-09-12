@@ -6,7 +6,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? [['github'], ['html']] : 'html',
+  reporter: process.env.CI ? [['github'], ['html'], ['junit', { outputFile: 'test-results/results.xml' }]] : 'html',
   use: {
     baseURL: process.env.CI ? 'http://localhost:4173' : 'http://localhost:5174',
     trace: 'on-first-retry',
