@@ -1,22 +1,5 @@
-import type { ComponentType } from 'react';
 import type { DetailedSkill } from '../BaseSkillCard';
-import * as Flags from 'country-flag-icons/react/3x2';
-
-interface FlagProps {
-  style?: React.CSSProperties;
-  title?: string;
-  className?: string;
-}
-
-const createFlagIcon = (CountryFlag: ComponentType<FlagProps>) => (
-  <CountryFlag
-    style={{
-      width: '100%',
-      height: '100%',
-      borderRadius: '2px',
-    }}
-  />
-);
+import { SwissFlag, BritishFlag, FrenchFlag } from './FlagComponents';
 
 export const languages: DetailedSkill[] = [
   {
@@ -24,7 +7,7 @@ export const languages: DetailedSkill[] = [
     description: 'Native fluency in German with professional and academic experience.',
     category: 'Native',
     experience: 'Lifetime',
-    icon: createFlagIcon(Flags.CH),
+    icon: <SwissFlag />,
     color: '#DC143C',
   },
   {
@@ -32,7 +15,7 @@ export const languages: DetailedSkill[] = [
     description: 'Professional proficiency in English for business and technical communication.',
     category: 'Proficient',
     experience: '15+ years',
-    icon: createFlagIcon(Flags.GB),
+    icon: <BritishFlag />,
     color: '#012169',
   },
   {
@@ -40,7 +23,7 @@ export const languages: DetailedSkill[] = [
     description: 'Conversational French for everyday communication and travel.',
     category: 'Casual',
     experience: '8+ years',
-    icon: createFlagIcon(Flags.FR),
+    icon: <FrenchFlag />,
     color: '#0055A4',
   },
 ];

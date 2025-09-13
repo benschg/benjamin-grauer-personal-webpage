@@ -17,7 +17,7 @@ const PersonalHero = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: `url('/personal-life/hero-background.jpg')`,
+          backgroundImage: `url('/personal-life/hero-background.webp')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.2,

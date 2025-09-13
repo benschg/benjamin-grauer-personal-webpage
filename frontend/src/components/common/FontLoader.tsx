@@ -1,58 +1,34 @@
-import { useEffect, useState } from 'react';
-import WebFont from 'webfontloader';
+import { useEffect } from 'react';
 
 interface FontLoaderProps {
   children: React.ReactNode;
 }
 
 const FontLoader: React.FC<FontLoaderProps> = ({ children }) => {
-  const [fontsLoaded, setFontsLoaded] = useState(false);
-
   useEffect(() => {
-    WebFont.load({
-      google: {
-        families: [
-          'Orbitron:400,700,900',
-          'Quicksand:300,400,500,600,700'
-        ]
-      },
-      active: () => {
-        setFontsLoaded(true);
-      },
-      inactive: () => {
-        // Show content even if fonts fail to load
-        setTimeout(() => setFontsLoaded(true), 2000);
-      },
-      timeout: 3000
-    });
+    // Check if fonts are already loaded (to avoid duplicates)
+    if (document.querySelector('link[href*="fonts.googleapis.com"]')) {
+      return;
+    }
+
+    // Create link element for Google Fonts
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Quicksand:wght@300;400;500;600;700&display=swap';
+
+    // Add to document head - fonts will load asynchronously in background
+    document.head.appendChild(link);
+
+    return () => {
+      // Clean up link element
+      if (document.head.contains(link)) {
+        document.head.removeChild(link);
+      }
+    };
   }, []);
 
-  if (!fontsLoaded) {
-    return (
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-        backgroundColor: '#343A40',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 9999,
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        color: '#ffffff'
-      }}>
-        <div style={{
-          fontSize: '1.2rem',
-          opacity: 0.8
-        }}>
-          Loading...
-        </div>
-      </div>
-    );
-  }
-
+  // Always render children immediately - no waiting for fonts
   return <>{children}</>;
 };
 
