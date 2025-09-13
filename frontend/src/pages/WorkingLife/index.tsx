@@ -1,4 +1,5 @@
 import { Container, Box } from '@mui/material';
+import { motion } from 'framer-motion';
 import Header from '../../components/common/Header';
 import Footer from '../../components/common/Footer';
 import TableOfContents from '../../components/common/TableOfContents';
@@ -15,6 +16,28 @@ const WorkingLife = () => {
     { id: 'timeline', title: 'Career Timeline', level: 1 },
     { id: 'aspirations', title: 'Career Aspirations', level: 1 },
   ];
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, x: -50 },
+    visible: {
+      opacity: 1,
+      x: 0,
+      transition: {
+        duration: 0.6,
+      },
+    },
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -58,25 +81,41 @@ const WorkingLife = () => {
             },
           }}
         >
-          <ProfessionalHero />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          >
+            <ProfessionalHero />
+          </motion.div>
           <Container maxWidth="lg" sx={{ pb: 4 }}>
-            <div id="documents">
+            <motion.div
+              id="documents"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.4, ease: 'easeOut' }}
+            >
               <DocumentsSection />
-            </div>
+            </motion.div>
           </Container>
         </Box>
         <Container maxWidth="lg" sx={{ py: 4 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <div id="skills">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
+          >
+            <motion.div variants={itemVariants} id="skills">
               <SkillsSection />
-            </div>
-            <div id="timeline">
+            </motion.div>
+            <motion.div variants={itemVariants} id="timeline">
               <TimelineSection />
-            </div>
-            <div id="aspirations">
+            </motion.div>
+            <motion.div variants={itemVariants} id="aspirations">
               <CareerAspirationsSection />
-            </div>
-          </Box>
+            </motion.div>
+          </motion.div>
           <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
             <TableOfContents items={tocItems} />
           </Box>
