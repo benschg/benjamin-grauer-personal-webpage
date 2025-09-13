@@ -27,7 +27,7 @@ export const interests: Interest[] = [
     description:
       'Being a devoted husband and father is my top priority. Family time creates the foundation for everything else in life.',
     icon: FamilyRestroom,
-    image: '/personal-life/interest-family.jpg',
+    image: '/personal-life/interest-family.webp',
   },
   {
     id: 'winter-swimming',
@@ -35,7 +35,7 @@ export const interests: Interest[] = [
     description:
       'The invigorating challenge of cold water swimming builds mental resilience and physical strength.',
     icon: Pool,
-    image: '/personal-life/interest-winter-swimming.jpg',
+    image: '/personal-life/interest-winter-swimming.webp',
   },
   {
     id: 'triathlon',
@@ -61,7 +61,7 @@ export const interests: Interest[] = [
     description:
       'Science fiction books expand the imagination and explore possibilities beyond our current reality.',
     icon: MenuBook,
-    image: '/personal-life/interest-reading.jpg',
+    image: '/personal-life/interest-reading.webp',
   },
   {
     id: 'diving',
@@ -69,7 +69,7 @@ export const interests: Interest[] = [
     description:
       'Exploring underwater worlds brings peace and wonder, discovering life beneath the surface.',
     icon: DivingIcon,
-    image: '/personal-life/interest-diving.jpg',
+    image: '/personal-life/interest-diving.webp',
   },
   {
     id: 'traveling',
@@ -77,14 +77,14 @@ export const interests: Interest[] = [
     description:
       'Experiencing different cultures and landscapes broadens perspectives and creates lasting memories.',
     icon: Flight,
-    image: '/personal-life/interest-travel.jpg',
+    image: '/personal-life/interest-travel.webp',
   },
   {
     id: 'cooking',
     title: 'Cooking',
     description: 'Creating delicious meals brings joy and nourishment to family and friends.',
     icon: Restaurant,
-    image: '/personal-life/interest-cooking.jpg',
+    image: '/personal-life/interest-cooking.webp',
   },
   {
     id: 'hiking',
@@ -92,6 +92,6 @@ export const interests: Interest[] = [
     description:
       'Mountain adventures and winter activities connect me with nature and provide physical challenges.',
     icon: Hiking,
-    image: '/personal-life/interest-hiking.jpg',
+    image: '/personal-life/interest-hiking.webp',
   },
 ];

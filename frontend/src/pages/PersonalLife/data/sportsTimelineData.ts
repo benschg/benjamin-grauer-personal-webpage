@@ -20,7 +20,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Zürich, Switzerland',
     description:
       'I liked this initiative, and together with my brother we did the entire course. We switched running and cycling throughout the race, and it was a great experience sharing this challenge as a team.',
-    image: '/personal-life/sports-green-city-marathon-2017.jpg',
+    image: '/personal-life/sports-green-city-marathon-2017.webp',
     distance: '42.195 km',
     achievement: 'Family team marathon completion',
   },
@@ -31,7 +31,7 @@ export const sportsTimeline: SportsEvent[] = [
     title: 'Gigathlon 2017',
     location: 'Switzerland',
     description: 'Multi-stage endurance event across Switzerland with experience report shared.',
-    image: '/personal-life/sports-gigathlon-2017.jpg',
+    image: '/personal-life/sports-gigathlon-2017.webp',
     achievement: 'Multi-day endurance completion',
   },
   {
@@ -42,7 +42,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Zürich, Switzerland',
     description:
       'On my birthday, I finished the Zürich Marathon. My goal was to maintain a 5:30 pace, which I achieved. It was a mental challenge, but I was ready and recovered quickly afterward.',
-    image: '/personal-life/sports-zurich-marathon-2017.jpg',
+    image: '/personal-life/sports-zurich-marathon-2017.webp',
     distance: '42.195 km',
     time: '5:30 pace',
     achievement: 'Birthday marathon with perfect pacing',
@@ -55,7 +55,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Switzerland',
     description:
       'A long day with many experiences, together with all my supporters at Swissman 2016. Due to thunderstorms, the swim was cancelled turning it into a duathlon. Despite overcoming a previous muscle fiber tear, I cycled challenging mountain passes including Gotthard, Furka, and Grimsel, then completed a demanding 42.2km marathon. The beauty of such competitions is not the goal, but the journey there.',
-    image: '/personal-life/sports-swissman-2016.jpg',
+    image: '/personal-life/sports-swissman-2016.webp',
     distance: '4km run + 180km bike + 42.2km run',
     achievement: 'Completed extreme duathlon in challenging conditions',
   },
@@ -67,7 +67,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Switzerland',
     description:
       'Mountain marathon with significant elevation gain through scenic Swiss landscapes.',
-    image: '/personal-life/sports-transruinaulta-marathon-2015.jpg',
+    image: '/personal-life/sports-transruinaulta-marathon-2015.webp',
     distance: '42.195 km',
     achievement: 'Mountain marathon completion',
   },
@@ -78,7 +78,7 @@ export const sportsTimeline: SportsEvent[] = [
     title: 'Cologne Triathlon Weekend',
     location: 'Cologne, Germany',
     description: 'Participated just two weeks after the Inferno Triathlon.',
-    image: '/personal-life/sports-cologne-triathlon-2015.jpg',
+    image: '/personal-life/sports-cologne-triathlon-2015.webp',
     achievement: 'Back-to-back triathlon completion',
   },
   {
@@ -89,7 +89,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Switzerland',
     description:
       'Reaching the Schilthorn for the second time, I focused on finding inner peace and setting clear goals. This race emphasized the importance of mental preparation and having support from the people around me during these extreme challenges.',
-    image: '/personal-life/sports-inferno-2015.jpg',
+    image: '/personal-life/sports-inferno-2015.webp',
     achievement: 'Second Inferno with mental mastery',
     distance: 'Olympic+ distance with extreme elevation',
   },
@@ -112,7 +112,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Interlaken, Switzerland',
     description:
       'For my first marathon, I chose quite a challenge. Thanks to Martin, I got one of the coveted starting spots for the Jungfrau Marathon. The day before, I still had ankle pain - a slight irritation of the posterior tibial tendon, but I completed this demanding mountain course.',
-    image: '/personal-life/sports-jungfrau-marathon-2014.jpg',
+    image: '/personal-life/sports-jungfrau-marathon-2014.webp',
     distance: '42.195 km',
     achievement: 'First marathon despite injury',
   },
