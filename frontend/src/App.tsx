@@ -18,7 +18,7 @@ const PageLoader = () => (
       top: 0,
       left: 0,
       right: 0,
-      height: '2px',
+      height: '100%',
       backgroundColor: 'primary.main',
       opacity: 0.6,
       animation: 'pulse 1s ease-in-out infinite',
