@@ -46,7 +46,7 @@ const WorkingLife = () => {
         <Box
           sx={{
             backgroundColor: '#e0e0e0',
-            backgroundImage: 'url(/working-life/background-wall-repeating.jpg.webp)',
+            backgroundImage: 'url(/working-life/background-wall.webp)',
             backgroundRepeat: 'repeat',
             backgroundSize: 'auto',
             '& .MuiTypography-root': {
