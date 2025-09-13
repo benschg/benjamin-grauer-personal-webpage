@@ -8,16 +8,40 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
+        manualChunks: (id) => {
           // Vendor chunks
-          'react-vendor': ['react', 'react-dom'],
-          'mui-vendor': [
-            '@mui/material',
-            '@mui/icons-material',
-            '@emotion/react',
-            '@emotion/styled',
-          ],
-          'router-vendor': ['react-router-dom'],
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'react-vendor';
+            }
+            if (id.includes('@mui') || id.includes('@emotion')) {
+              return 'mui-vendor';
+            }
+            if (id.includes('react-router-dom')) {
+              return 'router-vendor';
+            }
+            if (id.includes('framer-motion')) {
+              return 'framer-vendor';
+            }
+            return 'vendor';
+          }
+
+          // Component-based chunks
+          if (id.includes('components/common/Timeline')) {
+            return 'timeline-components';
+          }
+          if (id.includes('pages/WorkingLife') && !id.includes('index.tsx')) {
+            return 'working-life-components';
+          }
+          if (id.includes('pages/PersonalLife') && !id.includes('index.tsx')) {
+            return 'personal-life-components';
+          }
+          if (id.includes('pages/Portfolio') && !id.includes('index.tsx')) {
+            return 'portfolio-components';
+          }
+          if (id.includes('skills/data') || id.includes('skills/')) {
+            return 'skills-data';
+          }
         },
       },
       // Enable tree-shaking
