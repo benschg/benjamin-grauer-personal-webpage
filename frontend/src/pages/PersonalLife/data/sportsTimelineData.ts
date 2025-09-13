@@ -124,7 +124,7 @@ export const sportsTimeline: SportsEvent[] = [
     location: 'Switzerland',
     description:
       'Two years after first encountering triathlon at the Uster Triathlon 2012, where I rode a route with what seemed like an incredible number of elevation meters in a relay, I never would have thought what would come next in my athletic journey. This marked the beginning of my serious triathlon pursuits.',
-    image: '/personal-life/sports-inferno-triathlon.png',
+    image: '/personal-life/sports-inferno-triathlon.webp',
     achievement: 'First Inferno completion - journey begins',
     distance: 'Olympic+ distance with extreme elevation',
   },

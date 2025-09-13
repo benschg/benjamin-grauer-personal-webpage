@@ -43,7 +43,7 @@ export const interests: Interest[] = [
     description:
       'Triathlon is a vent for me. Doing a tough training in the morning is probably the best way to start my day.',
     icon: DirectionsRun,
-    image: '/personal-life/interest-triathlon.png',
+    image: '/personal-life/interest-triathlon.webp',
     quote:
       'Triathlon is a vent for me. Doing a tough training in the morning is probably the best way to start my day.',
   },
@@ -53,7 +53,7 @@ export const interests: Interest[] = [
     description:
       'Creating and visualizing in three dimensions combines technical skills with artistic expression.',
     icon: View3D,
-    image: '/personal-life/interest-3d-design.png',
+    image: '/personal-life/interest-3d-design.webp',
   },
   {
     id: 'reading',
