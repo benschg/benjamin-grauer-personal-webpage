@@ -22,7 +22,8 @@ const WorkingLife = () => {
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Box
           sx={{
-            backgroundImage: 'url(/working-life/background-wall-repeating.jpg)',
+            backgroundColor: '#e0e0e0',
+            backgroundImage: 'url(/working-life/background-wall-repeating.jpg.webp)',
             backgroundRepeat: 'repeat',
             backgroundSize: 'auto',
             '& .MuiTypography-root': {
