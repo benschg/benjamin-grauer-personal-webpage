@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "WebSearch",
-      "Bash(yarn test:*)"
+      "Bash(yarn test:*)",
+      "Bash(yarn type-check)",
+      "Bash(yarn lint)"
     ],
     "deny": [],
     "ask": []

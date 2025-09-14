@@ -1,18 +1,33 @@
-import { Card, CardContent, Typography, Box, LinearProgress, Chip, Tooltip, Grid, IconButton } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, Tooltip, Grid, Collapse } from '@mui/material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import {
   Code,
   Web,
-  Storage,
   CloudQueue,
   DesktopMac,
   Architecture,
   Memory,
   Speed,
   Language,
-  Star
+  Star,
+  ExpandMore
 } from '@mui/icons-material';
+
+// Import technology brand icons from react-icons
+import {
+  FaReact,
+  FaAngular,
+  FaNodeJs,
+  FaDocker,
+} from 'react-icons/fa';
+import {
+  SiDotnet,
+  SiThreedotjs,
+  SiBlender,
+  SiQt,
+  SiNvidia
+} from 'react-icons/si';
 
 interface Framework {
   name: string;
@@ -26,6 +41,7 @@ interface Framework {
   keyFeatures?: string[];
   complexity: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
   isFavorite?: boolean;
+  icon?: string;
 }
 
 // Function to determine if text should be dark or light based on background color
@@ -50,6 +66,7 @@ const frameworks: Framework[] = [
     keyFeatures: ['Hooks', 'Context API', 'Redux', 'React Router'],
     complexity: 'Advanced',
     isFavorite: true,
+    icon: 'react',
   },
   {
     name: '.NET',
@@ -63,6 +80,7 @@ const frameworks: Framework[] = [
     keyFeatures: ['ASP.NET Core', 'Entity Framework', 'Web API', 'Blazor'],
     complexity: 'Expert',
     isFavorite: true,
+    icon: 'dotnet',
   },
   {
     name: 'Angular',
@@ -75,6 +93,7 @@ const frameworks: Framework[] = [
     lastUsed: '2023',
     keyFeatures: ['TypeScript', 'RxJS', 'Angular CLI', 'Material'],
     complexity: 'Advanced',
+    icon: 'angular',
   },
   {
     name: 'Three.js & WebGL',
@@ -88,6 +107,20 @@ const frameworks: Framework[] = [
     keyFeatures: ['WebGL Shaders', 'PBR Rendering', '3D Physics', 'VR/AR'],
     complexity: 'Expert',
     isFavorite: true,
+    icon: 'threejs',
+  },
+  {
+    name: 'Blender',
+    proficiency: 75,
+    experience: '5+ years',
+    category: '3D/Graphics',
+    primaryProjects: ['3D Modeling', 'Animation', 'Rendering', 'Asset Creation'],
+    color: '#E87D0D',
+    description: 'Professional 3D creation suite for modeling, animation, rendering, and visual effects',
+    lastUsed: 'Currently using',
+    keyFeatures: ['Modeling', 'Sculpting', 'Animation', 'Cycles Rendering'],
+    complexity: 'Advanced',
+    icon: 'blender',
   },
   {
     name: 'Qt/WPF',
@@ -101,6 +134,7 @@ const frameworks: Framework[] = [
     keyFeatures: ['MVVM', 'Custom Controls', 'Data Binding', 'Cross-platform'],
     complexity: 'Expert',
     isFavorite: true,
+    icon: 'desktop',
   },
   {
     name: 'CUDA/GPU Computing',
@@ -113,6 +147,7 @@ const frameworks: Framework[] = [
     lastUsed: '2023',
     keyFeatures: ['Parallel Computing', 'Memory Optimization', 'Kernel Programming', 'Graphics Pipeline'],
     complexity: 'Expert',
+    icon: 'gpu',
   },
   {
     name: 'Node.js',
@@ -125,6 +160,7 @@ const frameworks: Framework[] = [
     lastUsed: 'Currently using',
     keyFeatures: ['Express.js', 'Socket.io', 'PM2', 'NPM Ecosystem'],
     complexity: 'Advanced',
+    icon: 'nodejs',
   },
   {
     name: 'Docker',
@@ -137,8 +173,36 @@ const frameworks: Framework[] = [
     lastUsed: 'Currently using',
     keyFeatures: ['Containerization', 'Multi-stage Builds', 'Docker Compose', 'Orchestration'],
     complexity: 'Intermediate',
+    icon: 'docker',
   },
 ];
+
+const getFrameworkIcon = (iconName?: string) => {
+  const iconStyle = { fontSize: 20 };
+
+  switch (iconName) {
+    case 'react':
+      return <FaReact style={iconStyle} />; // Official React icon
+    case 'dotnet':
+      return <SiDotnet style={iconStyle} />; // Official .NET icon
+    case 'angular':
+      return <FaAngular style={iconStyle} />; // Official Angular icon
+    case 'threejs':
+      return <SiThreedotjs style={iconStyle} />; // Official Three.js icon
+    case 'blender':
+      return <SiBlender style={iconStyle} />; // Official Blender icon
+    case 'desktop':
+      return <SiQt style={iconStyle} />; // Official Qt icon
+    case 'gpu':
+      return <SiNvidia style={iconStyle} />; // NVIDIA/CUDA icon
+    case 'nodejs':
+      return <FaNodeJs style={iconStyle} />; // Official Node.js icon
+    case 'docker':
+      return <FaDocker style={iconStyle} />; // Official Docker icon
+    default:
+      return getCategoryIcon('default');
+  }
+};
 
 const getCategoryIcon = (category: string) => {
   switch (category) {
@@ -239,57 +303,88 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
           ))}
         </Box>
 
-        {/* Frameworks Grid */}
-        <Grid container spacing={2}>
-          {sortedFrameworks.map((framework, index) => (
-            <Grid size={{ xs: 12, lg: 6 }} key={framework.name}>
+        {/* Frameworks List */}
+        <Box sx={{ mb: 3 }}>
+          {sortedFrameworks.map((framework, index) => {
+            const isExpanded = hoveredFramework === framework.name;
+            return (
               <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                key={framework.name}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.05 }}
-                whileHover={{ scale: 1.02 }}
-                onHoverStart={() => setHoveredFramework(framework.name)}
-                onHoverEnd={() => setHoveredFramework(null)}
+                transition={{ delay: index * 0.03 }}
               >
                 <Box
+                  onClick={() => setHoveredFramework(isExpanded ? null : framework.name)}
                   sx={{
-                    p: 2.5,
+                    p: 1.5,
+                    mb: 1,
                     borderRadius: 2,
-                    backgroundColor: hoveredFramework === framework.name
-                      ? 'rgba(137, 102, 93, 0.1)'
+                    backgroundColor: isExpanded
+                      ? 'rgba(137, 102, 93, 0.08)'
                       : 'rgba(255, 255, 255, 0.02)',
                     border: '1px solid',
-                    borderColor: hoveredFramework === framework.name
+                    borderColor: isExpanded
                       ? framework.color
                       : 'rgba(255, 255, 255, 0.1)',
+                    cursor: 'pointer',
                     transition: 'all 0.3s ease',
-                    position: 'relative',
-                    overflow: 'hidden',
+                    '&:hover': {
+                      backgroundColor: 'rgba(137, 102, 93, 0.05)',
+                      borderColor: framework.color,
+                    },
                   }}
                 >
-                  {/* Framework Header */}
-                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', mb: 1.5 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography
-                        variant="h6"
-                        sx={{
-                          fontSize: '1.1rem',
-                          fontWeight: 600,
-                          color: framework.color,
-                        }}
-                      >
-                        {framework.name}
-                      </Typography>
-                      {framework.isFavorite && (
-                        <Star sx={{ fontSize: 18, color: '#ffd700' }} />
-                      )}
-                      <Tooltip title={framework.category}>
-                        <Box sx={{ color: 'text.secondary' }}>
-                          {getCategoryIcon(framework.category)}
-                        </Box>
-                      </Tooltip>
+                  {/* Compact Framework Header */}
+                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+                      {/* Name & Icon */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
+                        <Tooltip title={`${framework.name} - ${framework.category}`}>
+                          <Box sx={{ color: framework.color, flexShrink: 0 }}>
+                            {getFrameworkIcon(framework.icon)}
+                          </Box>
+                        </Tooltip>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            fontSize: '1rem',
+                            fontWeight: 600,
+                            color: framework.color,
+                            whiteSpace: 'nowrap',
+                          }}
+                        >
+                          {framework.name}
+                        </Typography>
+                        {framework.isFavorite && (
+                          <Star sx={{ fontSize: 16, color: '#ffd700', flexShrink: 0 }} />
+                        )}
+                      </Box>
+
+                      {/* Status Indicator */}
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        {framework.lastUsed === 'Currently using' && (
+                          <Box
+                            sx={{
+                              width: 8,
+                              height: 8,
+                              borderRadius: '50%',
+                              backgroundColor: '#4caf50',
+                              animation: 'pulse 2s infinite',
+                              '@keyframes pulse': {
+                                '0%': { opacity: 1 },
+                                '50%': { opacity: 0.5 },
+                                '100%': { opacity: 1 },
+                              },
+                            }}
+                          />
+                        )}
+                      </Box>
+
                     </Box>
-                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 0.5 }}>
+
+                    {/* Experience & Expand Icon */}
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Chip
                         label={framework.experience}
                         size="small"
@@ -297,150 +392,129 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                           backgroundColor: framework.color,
                           color: getContrastColor(framework.color),
                           fontSize: '0.7rem',
-                          height: '20px',
+                          height: '22px',
                           fontWeight: 600,
                         }}
                       />
-                      <Chip
-                        label={framework.complexity}
-                        size="small"
+                      <Box
                         sx={{
-                          backgroundColor: getComplexityColor(framework.complexity),
-                          color: 'white',
-                          fontSize: '0.65rem',
-                          height: '18px',
-                          fontWeight: 500,
+                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease',
                         }}
-                      />
-                    </Box>
-                  </Box>
-
-                  {/* Status Indicator */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                    {framework.lastUsed === 'Currently using' && (
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                        <Box
-                          sx={{
-                            width: 8,
-                            height: 8,
-                            borderRadius: '50%',
-                            backgroundColor: '#4caf50',
-                            animation: 'pulse 2s infinite',
-                            '@keyframes pulse': {
-                              '0%': { opacity: 1 },
-                              '50%': { opacity: 0.5 },
-                              '100%': { opacity: 1 },
-                            },
-                          }}
-                        />
-                        <Typography variant="caption" sx={{ color: '#4caf50', fontSize: '0.7rem' }}>
-                          Active
-                        </Typography>
+                      >
+                        <ExpandMore sx={{ color: 'text.secondary' }} />
                       </Box>
-                    )}
-                    {framework.lastUsed && framework.lastUsed !== 'Currently using' && (
-                      <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-                        Last used: {framework.lastUsed}
-                      </Typography>
-                    )}
-                  </Box>
-
-                  {/* Proficiency Bar */}
-                  <Box sx={{ mb: 1.5 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 0.5 }}>
-                      <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
-                        Proficiency
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: framework.color, fontWeight: 600 }}>
-                        {framework.proficiency}%
-                      </Typography>
                     </Box>
-                    <LinearProgress
-                      variant="determinate"
-                      value={framework.proficiency}
-                      sx={{
-                        height: 6,
-                        borderRadius: 3,
-                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: framework.color,
-                          borderRadius: 3,
-                        },
-                      }}
-                    />
                   </Box>
 
-                  {/* Description */}
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      fontSize: '0.8rem',
-                      color: 'text.secondary',
-                      mb: 1.5,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    {framework.description}
-                  </Typography>
+                  {/* Expandable Content */}
+                  <Collapse in={isExpanded} timeout="auto" unmountOnExit>
+                    <Box sx={{ mt: 2, pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
+                      {/* Description */}
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          fontSize: '0.85rem',
+                          color: 'text.secondary',
+                          mb: 2,
+                          lineHeight: 1.5,
+                        }}
+                      >
+                        {framework.description}
+                      </Typography>
 
-                  {/* Key Features & Projects */}
-                  {hoveredFramework === framework.name && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: 'auto' }}
-                      exit={{ opacity: 0, height: 0 }}
-                    >
-                      {framework.keyFeatures && (
-                        <Box sx={{ mb: 1.5 }}>
-                          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-                            Key Features:
+                      <Grid container spacing={2}>
+                        {/* Key Features */}
+                        {framework.keyFeatures && (
+                          <Grid size={{ xs: 12, md: 6 }}>
+                            <Typography
+                              variant="subtitle2"
+                              sx={{
+                                fontSize: '0.8rem',
+                                fontWeight: 600,
+                                mb: 1,
+                                color: 'text.primary',
+                              }}
+                            >
+                              Key Features:
+                            </Typography>
+                            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                              {framework.keyFeatures.map((feature) => (
+                                <Chip
+                                  key={feature}
+                                  label={feature}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    fontSize: '0.7rem',
+                                    height: '20px',
+                                    borderColor: framework.color,
+                                    color: 'text.primary',
+                                  }}
+                                />
+                              ))}
+                            </Box>
+                          </Grid>
+                        )}
+
+                        {/* Primary Projects */}
+                        <Grid size={{ xs: 12, md: 6 }}>
+                          <Typography
+                            variant="subtitle2"
+                            sx={{
+                              fontSize: '0.8rem',
+                              fontWeight: 600,
+                              mb: 1,
+                              color: 'text.primary',
+                            }}
+                          >
+                            Primary Projects:
                           </Typography>
-                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
-                            {framework.keyFeatures.map((feature) => (
+                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+                            {framework.primaryProjects.map((project) => (
                               <Chip
-                                key={feature}
-                                label={feature}
+                                key={project}
+                                label={project}
                                 size="small"
                                 variant="outlined"
                                 sx={{
-                                  fontSize: '0.65rem',
-                                  height: '18px',
-                                  borderColor: framework.color,
-                                  color: 'text.primary',
+                                  fontSize: '0.7rem',
+                                  height: '20px',
+                                  borderColor: 'rgba(255, 255, 255, 0.3)',
+                                  color: 'text.secondary',
                                 }}
                               />
                             ))}
                           </Box>
-                        </Box>
-                      )}
-                      <Box>
-                        <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
-                          Primary Projects:
-                        </Typography>
-                        <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap', mt: 0.5 }}>
-                          {framework.primaryProjects.map((project) => (
-                            <Chip
-                              key={project}
-                              label={project}
-                              size="small"
-                              variant="outlined"
-                              sx={{
-                                fontSize: '0.65rem',
-                                height: '18px',
-                                borderColor: 'rgba(255, 255, 255, 0.3)',
-                                color: 'text.secondary',
-                              }}
-                            />
-                          ))}
-                        </Box>
+                        </Grid>
+                      </Grid>
+
+                      {/* Additional Info */}
+                      <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+                        <Chip
+                          label={framework.complexity}
+                          size="small"
+                          sx={{
+                            backgroundColor: getComplexityColor(framework.complexity),
+                            color: 'white',
+                            fontSize: '0.7rem',
+                            height: '22px',
+                            fontWeight: 500,
+                          }}
+                        />
+                        {framework.lastUsed && framework.lastUsed !== 'Currently using' && (
+                          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                            Last used: {framework.lastUsed}
+                          </Typography>
+                        )}
                       </Box>
-                    </motion.div>
-                  )}
+                    </Box>
+                  </Collapse>
                 </Box>
               </motion.div>
-            </Grid>
-          ))}
-        </Grid>
+            );
+          })}
+        </Box>
 
         {/* Summary Stats */}
         <Box

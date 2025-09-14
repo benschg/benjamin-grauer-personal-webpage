@@ -1,34 +1,32 @@
 import { Grid } from '@mui/material';
 import EnhancedProgrammingLanguagesCard from './EnhancedProgrammingLanguagesCard';
 import EnhancedFrameworksAndTechnologiesCard from './EnhancedFrameworksAndTechnologiesCard';
-import ToolsAndPlatformsCard from './ToolsAndPlatformsCard';
+import EnhancedToolsAndPlatformsCard from './EnhancedToolsAndPlatformsCard';
 import SoftSkillsCard from './SoftSkillsCard';
-import DomainExpertiseCard from './DomainExpertiseCard';
+import EnhancedDomainExpertiseCard from './EnhancedDomainExpertiseCard';
 import LanguagesCard from './LanguagesCard';
 import CliftonStrengthsCard from './CliftonStrengthsCard';
 
 const SkillsGrid = () => {
   return (
     <Grid container spacing={3}>
-      {/* Enhanced Programming Languages Card - Full Width */}
-      <Grid size={{ xs: 12 }}>
-        <EnhancedProgrammingLanguagesCard />
-      </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <SoftSkillsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <ToolsAndPlatformsCard />
+        <CliftonStrengthsCard />
       </Grid>
-      {/* Enhanced Frameworks & Technologies Card - Full Width */}
-      <Grid size={{ xs: 12 }}>
+      <Grid size={{ xs: 12, md: 6 }}>
+        <EnhancedProgrammingLanguagesCard />
+      </Grid>
+      <Grid size={{ xs: 12, md: 6 }}>
         <EnhancedFrameworksAndTechnologiesCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <DomainExpertiseCard />
+        <EnhancedToolsAndPlatformsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <CliftonStrengthsCard />
+        <EnhancedDomainExpertiseCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <LanguagesCard monochrome={true} />
