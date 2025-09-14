@@ -1,7 +1,18 @@
 {
   "hero": {
     "title": "Working Life",
-    "subtitle": "Software Development & Management Professional",
-    "description": "Ever since I discovered programming, I felt the urge to play, craft, create. I grew with VirtaMed, trained medical residents around the world, and led multiple technical teams to deliver innovative solutions.\n\nMy passion lies in empowering people through technology, combining creativity with technical excellence to solve complex problems and build meaningful products."
+    "subtitle": "Head of Applications and Frameworks | Software Development & Management Professional",
+    "description": "Ever since I discovered programming, I felt the urge to play, craft, create, to shape solutions and to make new things possible, to have an impact on the world with a group of people that I love to share my enthusiasm with.\n\nI grew with empathy, building connections and honoring talent and accepting the weakness both in myself and the people around me. During my career, I've trained hundreds of medical residents and decision makers, built diverse teams for dev-ops, testers, framework, web-technology, and UI/UX engineers, and grown organizations from startup to well-oiled machine."
+  },
+  "impact": {
+    "title": "My Impact",
+    "description": "While working in three diverse companies I was able to build my skills and strengths as an engineer and a leader. I grew with empathy, building connections and honoring talent and accepting the weakness both in myself and the people around me.",
+    "highlights": [
+      "Initiated value stream-oriented development setup with lean agile cross-functional teams",
+      "Built diverse teams for dev-ops, testers, framework, web-technology, UI/UX engineers",
+      "Steered projects into modern ecosystems with the right infrastructure and user experience",
+      "Trained hundreds of medical residents and decision makers at hospitals and conferences",
+      "Led transformation from 30 CLI tools to one intuitive web application"
+    ]
   }
 }
