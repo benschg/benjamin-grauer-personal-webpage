@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import EnhancedProgrammingLanguagesCard from './EnhancedProgrammingLanguagesCard';
 import EnhancedFrameworksAndTechnologiesCard from './EnhancedFrameworksAndTechnologiesCard';
 import EnhancedToolsAndPlatformsCard from './EnhancedToolsAndPlatformsCard';
-import SoftSkillsCard from './SoftSkillsCard';
+import EnhancedSoftSkillsCard from './EnhancedSoftSkillsCard';
 import EnhancedDomainExpertiseCard from './EnhancedDomainExpertiseCard';
 import LanguagesCard from './LanguagesCard';
 import CliftonStrengthsCard from './CliftonStrengthsCard';
@@ -11,7 +11,7 @@ const SkillsGrid = () => {
   return (
     <Grid container spacing={3}>
       <Grid size={{ xs: 12, md: 6 }}>
-        <SoftSkillsCard />
+        <EnhancedSoftSkillsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <CliftonStrengthsCard />
