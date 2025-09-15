@@ -13,7 +13,6 @@ import {
   Groups,
   Psychology,
   Refresh,
-  School,
   EmojiObjects,
   Business,
   ExpandMore,
@@ -49,11 +48,15 @@ const EnhancedSoftSkillsCard = () => {
     return Math.min((years / 15) * 100, 100);
   };
 
-  const categories = ['All', ...Array.from(new Set(softSkills.map(skill => skill.category || 'Other')))];
+  const categories = [
+    'All',
+    ...Array.from(new Set(softSkills.map((skill) => skill.category || 'Other'))),
+  ];
 
-  const filteredSkills = selectedCategory === 'All'
-    ? softSkills
-    : softSkills.filter(skill => skill.category === selectedCategory);
+  const filteredSkills =
+    selectedCategory === 'All'
+      ? softSkills
+      : softSkills.filter((skill) => skill.category === selectedCategory);
 
   const sortedSkills = [...filteredSkills].sort((a, b) => {
     const aYears = parseInt(a.experience?.match(/\d+/)?.[0] || '0');
@@ -62,14 +65,17 @@ const EnhancedSoftSkillsCard = () => {
   });
 
   const getCategoryIcon = (category?: string) => {
-    return categoryIcons[category as keyof typeof categoryIcons] || <StarRate sx={{ fontSize: 20 }} />;
+    return (
+      categoryIcons[category as keyof typeof categoryIcons] || <StarRate sx={{ fontSize: 20 }} />
+    );
   };
 
   return (
     <Card
       sx={{
         p: 2,
-        background: 'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
         border: '2px solid rgba(137, 102, 93, 0.3)',
       }}
     >
@@ -132,9 +138,7 @@ const EnhancedSoftSkillsCard = () => {
                       ? 'rgba(137, 102, 93, 0.08)'
                       : 'rgba(255, 255, 255, 0.02)',
                     border: '1px solid',
-                    borderColor: isExpanded
-                      ? skill.color
-                      : 'rgba(255, 255, 255, 0.1)',
+                    borderColor: isExpanded ? skill.color : 'rgba(255, 255, 255, 0.1)',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
                     '&:hover': {
@@ -144,7 +148,9 @@ const EnhancedSoftSkillsCard = () => {
                   }}
                 >
                   {/* Compact Skill Header */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
                       {/* Name & Icon */}
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
@@ -225,10 +231,16 @@ const EnhancedSoftSkillsCard = () => {
                       {/* Experience Level Bar */}
                       <Box sx={{ mb: 2 }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: 'text.secondary', fontSize: '0.8rem' }}
+                          >
                             Experience Level
                           </Typography>
-                          <Typography variant="caption" sx={{ color: skill.color, fontWeight: 600 }}>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: skill.color, fontWeight: 600 }}
+                          >
                             {getExperienceLevel(skill.experience || '0')}%
                           </Typography>
                         </Box>
