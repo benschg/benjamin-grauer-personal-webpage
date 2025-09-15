@@ -1,5 +1,5 @@
 import type { DetailedSkill } from '../BaseSkillCard';
-import { SwissFlag, BritishFlag, FrenchFlag } from './FlagComponents';
+import { SwissFlag, BritishFlag, FrenchFlag } from '../../../../components/FlagComponents';
 
 export const languages: DetailedSkill[] = [
   {
