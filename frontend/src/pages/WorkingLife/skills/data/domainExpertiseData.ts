@@ -46,7 +46,7 @@ export const domainExpertise: DomainExpertise[] = [
     isFavorite: true,
   },
   {
-    name: '3D Graphics & Visualization',
+    name: 'Computer Graphics',
     description:
       'Advanced three-dimensional graphics, rendering systems, and interactive visual applications.',
     category: 'Graphics',
