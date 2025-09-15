@@ -1,61 +1,111 @@
-import type { DetailedSkill } from '../BaseSkillCard';
+export interface ProgrammingLanguage {
+  name: string;
+  logo?: string;
+  proficiency: number; // 0-100
+  experience: string;
+  category: 'Frontend' | 'Backend' | 'Systems' | 'Database' | 'Web';
+  primaryProjects: string[];
+  color: string;
+  description: string;
+  lastUsed?: string;
+  frameworks?: string[];
+  icon?: string;
+}
 
-export const programmingLanguages: DetailedSkill[] = [
+export const programmingLanguages: ProgrammingLanguage[] = [
   {
-    name: 'JavaScript',
-    description: 'Full-stack JavaScript development for web applications and Node.js services.',
-    category: 'Language',
-    experience: '10+ years',
-    projects: ['Frontend Development', 'Node.js APIs', 'ES6+ Features', 'Async Programming'],
-    color: '#F7DF1E',
+    name: 'C#',
+    proficiency: 95,
+    experience: '15+ years',
+    category: 'Backend',
+    primaryProjects: ['VirtaMed Simulators', 'Enterprise Applications', '.NET APIs'],
+    color: '#239120',
+    description: 'Primary language for enterprise development',
+    lastUsed: 'Currently using',
+    frameworks: ['.NET Core', 'ASP.NET', 'WPF', 'Unity'],
+    icon: 'csharp',
   },
   {
     name: 'TypeScript',
-    description:
-      'Type-safe JavaScript development with enhanced IDE support and better maintainability.',
-    category: 'Language',
+    proficiency: 85,
     experience: '6+ years',
-    projects: ['React Apps', 'Angular Development', 'Type Definitions', 'Enterprise Applications'],
+    category: 'Frontend',
+    primaryProjects: ['Verity Web Apps', 'React Applications', 'Cloud Dashboards'],
     color: '#3178C6',
-  },
-  {
-    name: 'C#',
-    description: 'Enterprise application development, desktop applications, and .NET ecosystem.',
-    category: 'Language',
-    experience: '15+ years',
-    projects: ['Enterprise Applications', 'Windows Applications', 'Web APIs', 'Desktop Software'],
-    color: '#239120',
+    description: 'Modern web development with type safety',
+    lastUsed: 'Currently using',
+    frameworks: ['React', 'Angular', 'Node.js'],
+    icon: 'typescript',
   },
   {
     name: 'C++',
-    description: 'High-performance applications, game development, and graphics programming.',
-    category: 'Language',
+    proficiency: 85,
     experience: '12+ years',
-    projects: ['OpenGL Graphics', 'Game Engines', 'Performance Critical Apps', 'Custom Engines'],
+    category: 'Systems',
+    primaryProjects: ['3D Graphics', 'Game Engines', 'Performance Critical Apps'],
     color: '#00599C',
+    description: 'High-performance systems and graphics',
+    lastUsed: '2023',
+    frameworks: ['OpenGL', 'CUDA', 'Qt'],
+    icon: 'cplusplus',
   },
   {
     name: 'Python',
-    description: 'Server-side development, automation, and data processing with Python ecosystem.',
-    category: 'Language',
+    proficiency: 80,
     experience: '8+ years',
-    projects: ['Backend APIs', 'Data Processing', 'Automation Scripts', 'Cloud Functions'],
+    category: 'Backend',
+    primaryProjects: ['Automation', 'Data Processing', 'Cloud Functions'],
     color: '#3776AB',
+    description: 'Scripting and backend services',
+    lastUsed: 'Currently using',
+    frameworks: ['FastAPI', 'Django', 'NumPy'],
+    icon: 'python',
+  },
+  {
+    name: 'JavaScript',
+    proficiency: 90,
+    experience: '10+ years',
+    category: 'Frontend',
+    primaryProjects: ['Web Applications', 'Node.js Services', 'Frontend Development'],
+    color: '#F7DF1E',
+    description: 'Full-stack web development',
+    lastUsed: 'Currently using',
+    frameworks: ['React', 'Vue', 'Express'],
+    icon: 'javascript',
   },
   {
     name: 'SQL',
-    description: 'Database design, optimization, and both SQL and NoSQL database management.',
-    category: 'Database Language',
+    proficiency: 85,
     experience: '15+ years',
-    projects: ['Database Design', 'Query Optimization', 'Stored Procedures', 'Data Architecture'],
+    category: 'Database',
+    primaryProjects: ['Database Design', 'Query Optimization', 'Data Architecture'],
     color: '#336791',
+    description: 'Database management and optimization',
+    lastUsed: 'Currently using',
+    frameworks: ['PostgreSQL', 'MySQL', 'SQL Server'],
+    icon: 'sql',
   },
   {
     name: 'HTML/CSS',
-    description: 'Modern web markup and styling with responsive design and CSS frameworks.',
-    category: 'Web Language',
+    proficiency: 90,
     experience: '12+ years',
-    projects: ['Responsive Design', 'CSS Grid/Flexbox', 'SASS/SCSS', 'Web Components'],
+    category: 'Web',
+    primaryProjects: ['Responsive Design', 'Web Components', 'UI Development'],
     color: '#E34F26',
+    description: 'Modern web markup and styling',
+    lastUsed: 'Currently using',
+    frameworks: ['Tailwind', 'Material-UI', 'SASS'],
+    icon: 'html',
+  },
+  {
+    name: 'C',
+    proficiency: 70,
+    experience: '10+ years',
+    category: 'Systems',
+    primaryProjects: ['Embedded Systems', 'Low-level Programming'],
+    color: '#A8B9CC',
+    description: 'Systems programming',
+    lastUsed: '2022',
+    icon: 'c',
   },
 ];

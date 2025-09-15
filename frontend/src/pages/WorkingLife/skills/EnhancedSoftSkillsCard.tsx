@@ -1,4 +1,5 @@
 import { Card, CardContent, Typography, Chip, Box, Grid, Collapse, Tooltip } from '@mui/material';
+import { getContrastColor } from '../../../utils/colorUtils';
 import {
   Groups,
   Psychology,
@@ -18,15 +19,6 @@ const categoryIcons = {
   Management: <Business sx={{ fontSize: 20 }} />,
   Innovation: <EmojiObjects sx={{ fontSize: 20 }} />,
   Strategic: <Psychology sx={{ fontSize: 20 }} />,
-};
-
-// Function to determine if text should be dark or light based on background color
-const getContrastColor = (hexColor: string): string => {
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? '#000000' : '#ffffff';
 };
 
 const EnhancedSoftSkillsCard = () => {
