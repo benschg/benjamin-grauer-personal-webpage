@@ -57,7 +57,7 @@ export const toolsAndPlatforms: ToolPlatform[] = [
     isFavorite: true,
   },
   {
-    name: 'Development Administration',
+    name: 'Development Admin',
     description: 'Expert-level administration of development tools and source control systems.',
     category: 'Administration',
     experience: '15+ years',
