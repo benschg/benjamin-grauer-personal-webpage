@@ -5,6 +5,7 @@ import Footer from '../../components/common/Footer';
 import TableOfContents from '../../components/common/TableOfContents';
 import ProfessionalHero from './ProfessionalHero';
 import DocumentsSection from './DocumentsSection';
+import ImpactSection from './ImpactSection';
 import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import CareerAspirationsSection from './CareerAspirationsSection';
@@ -12,6 +13,7 @@ import CareerAspirationsSection from './CareerAspirationsSection';
 const WorkingLife = () => {
   const tocItems = [
     { id: 'documents', title: 'Documents', level: 1 },
+    { id: 'impact', title: 'My Impact', level: 1 },
     { id: 'skills', title: 'Skills & Expertise', level: 1 },
     { id: 'timeline', title: 'Career Timeline', level: 1 },
     { id: 'aspirations', title: 'Career Aspirations', level: 1 },
@@ -106,6 +108,9 @@ const WorkingLife = () => {
             animate="visible"
             style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}
           >
+            <motion.div variants={itemVariants} id="impact">
+              <ImpactSection />
+            </motion.div>
             <motion.div variants={itemVariants} id="skills">
               <SkillsSection />
             </motion.div>
