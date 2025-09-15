@@ -84,26 +84,31 @@ test.describe('Document Downloads', () => {
   test('Document cards display correct information', async ({ page }) => {
     // Wait for the documents section to load
     await expect(page.getByRole('heading', { name: 'Documents' })).toBeVisible();
-    const documentsSection = page.getByRole('heading', { name: 'Documents' }).locator('..');
+    const documentsSection = page.locator('#documents');
 
     // Check References card
     const referencesCard = documentsSection
       .locator('.MuiCard-root')
-      .filter({ hasText: 'References' });
+      .filter({ hasText: 'References' })
+      .filter({ hasText: 'Professional references and recommendations' });
     await expect(referencesCard).toBeVisible();
     await expect(referencesCard).toContainText('Professional references and recommendations');
 
     // Check Certificates card
     const certificatesCard = documentsSection
       .locator('.MuiCard-root')
-      .filter({ hasText: 'Certificates' });
+      .filter({ hasText: 'Certificates' })
+      .filter({ hasText: 'Professional certifications and training certificates' });
     await expect(certificatesCard).toBeVisible();
     await expect(certificatesCard).toContainText(
       'Professional certifications and training certificates'
     );
 
     // Check Full CV card
-    const cvCard = documentsSection.locator('.MuiCard-root').filter({ hasText: 'Full CV' });
+    const cvCard = documentsSection
+      .locator('.MuiCard-root')
+      .filter({ hasText: 'Full CV' })
+      .filter({ hasText: 'Complete curriculum vitae with detailed work history' });
     await expect(cvCard).toBeVisible();
     await expect(cvCard).toContainText('Complete curriculum vitae with detailed work history');
   });
@@ -111,7 +116,7 @@ test.describe('Document Downloads', () => {
   test('Document cards have proper icons', async ({ page }) => {
     // Wait for the documents section to load
     await expect(page.getByRole('heading', { name: 'Documents' })).toBeVisible();
-    const documentsSection = page.getByRole('heading', { name: 'Documents' }).locator('..');
+    const documentsSection = page.locator('#documents');
 
     // Check that each document card has an icon (MUI icons render as SVG)
     const documentCards = documentsSection.locator('.MuiCard-root');
@@ -130,7 +135,7 @@ test.describe('Document Downloads', () => {
   test('Documents section is properly styled', async ({ page }) => {
     // Wait for the documents section to load
     await expect(page.getByRole('heading', { name: 'Documents' })).toBeVisible();
-    const documentsSection = page.getByRole('heading', { name: 'Documents' }).locator('..');
+    const documentsSection = page.locator('#documents');
 
     // Check that document cards have hover effects
     const documentCards = documentsSection.locator('.MuiCard-root');
@@ -144,7 +149,7 @@ test.describe('Document Downloads', () => {
     await expect(firstCard).toBeVisible();
 
     // Check that download links are styled correctly
-    const downloadLinks = page.locator('a:has-text("Download PDF")');
+    const downloadLinks = documentsSection.locator('a:has-text("Download PDF")');
     await expect(downloadLinks).toHaveCount(3);
 
     for (let i = 0; i < 3; i++) {

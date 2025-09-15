@@ -6,7 +6,8 @@ export const timelineEvents: TimelineEvent[] = [
     year: '2023-2025',
     title: 'Head of Applications and Frameworks',
     company: 'Verity AG',
-    description: 'Member of a team of 5 dev heads. Focused on leveling up user experience and simplicity of applications throughout the entire product lifecycle and streamlining teams toward client-oriented impact. Successfully spearheaded value-stream aligned teams and transformed 30 CLI tools into one intuitive web application for rollout.',
+    description:
+      'Member of a team of 5 dev heads. Focused on leveling up user experience and simplicity of applications throughout the entire product lifecycle and streamlining teams toward client-oriented impact. Successfully spearheaded value-stream aligned teams and transformed 30 CLI tools into one intuitive web application for rollout.',
     type: 'work',
     skills: [
       'AWS',
@@ -16,13 +17,14 @@ export const timelineEvents: TimelineEvent[] = [
       'UX/3D Visualization',
       'Skills Hubs Leadership',
       'Drone & Robotics Tech',
+      'Logistics',
     ],
     achievements: [
-      'Initiated value stream-oriented development with lean agile cross-functional teams',
-      'Transformed stack of 30 CLI tools into intuitive web application',
-      'Built diverse teams for dev-ops, testers, framework, web-technology, UI/UX engineers',
+      'Initiated value stream-oriented development with lean agile cross-functional/full stack teams',
       'Introduced product managers in each value-stream team',
-      'Led skills hubs for domain-specific knowledge sharing',
+      'Led skills hubs to build up knowledge sharing groups',
+      'Redefined UX standards with engaging 3D visualizations improving the ease of use of the system',
+      'Transformed stack of 30 CLI and mixed technology tools into one intuitive single page web application',
     ],
     image: '/working-life/verity-1024x496.webp',
   },
@@ -73,7 +75,7 @@ export const timelineEvents: TimelineEvent[] = [
     title: 'Head of Data Services',
     company: 'VirtaMed AG',
     description:
-      'Entrusted with development lead of VirtaMed\'s data services, aiming to interconnect simulators globally, manage updates remotely, and store training results in centralized databases in strict compliance with data protection regulations. Managed digitalization IoT project with nearshoring team.',
+      "Entrusted with development lead of VirtaMed's data services, aiming to interconnect simulators globally, manage updates remotely, and store training results in centralized databases in strict compliance with data protection regulations. Managed digitalization IoT project with nearshoring team.",
     type: 'work',
     skills: [
       'Cloud & IoT Technologies',

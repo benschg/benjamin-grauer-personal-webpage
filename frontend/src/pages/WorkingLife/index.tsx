@@ -8,6 +8,7 @@ import DocumentsSection from './DocumentsSection';
 import ImpactSection from './ImpactSection';
 import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
+import RecommendationsSection from './RecommendationsSection';
 import CareerAspirationsSection from './CareerAspirationsSection';
 
 const WorkingLife = () => {
@@ -16,6 +17,7 @@ const WorkingLife = () => {
     { id: 'impact', title: 'My Impact', level: 1 },
     { id: 'skills', title: 'Skills & Expertise', level: 1 },
     { id: 'timeline', title: 'Career Timeline', level: 1 },
+    { id: 'recommendations', title: 'Recommendations', level: 1 },
     { id: 'aspirations', title: 'Career Aspirations', level: 1 },
   ];
 
@@ -116,6 +118,9 @@ const WorkingLife = () => {
             </motion.div>
             <motion.div variants={itemVariants} id="timeline">
               <TimelineSection />
+            </motion.div>
+            <motion.div variants={itemVariants} id="recommendations">
+              <RecommendationsSection />
             </motion.div>
             <motion.div variants={itemVariants} id="aspirations">
               <CareerAspirationsSection />
