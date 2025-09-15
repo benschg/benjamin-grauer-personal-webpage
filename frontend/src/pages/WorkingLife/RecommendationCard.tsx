@@ -15,6 +15,7 @@ const RecommendationCard = ({ recommendation, index }: RecommendationCardProps) 
     recommenderCompany,
     relationship,
     recommendationText,
+    highlightText,
     date,
     linkedInUrl,
     avatar,
@@ -82,14 +83,29 @@ const RecommendationCard = ({ recommendation, index }: RecommendationCardProps) 
             height: 'calc(100% - 24px)',
           }}
         >
+          {/* Highlight text */}
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: 600,
+              color: 'primary.main',
+              mb: 2,
+              lineHeight: 1.4,
+              fontSize: '1.1rem',
+            }}
+          >
+            "{highlightText}"
+          </Typography>
+
           {/* Recommendation text */}
           <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
             <Typography
-              variant="body1"
+              variant="body2"
               sx={{
-                lineHeight: 1.7,
+                lineHeight: 1.6,
                 fontStyle: 'italic',
                 color: 'text.secondary',
+                fontSize: '0.875rem',
               }}
             >
               "{recommendationText}"
