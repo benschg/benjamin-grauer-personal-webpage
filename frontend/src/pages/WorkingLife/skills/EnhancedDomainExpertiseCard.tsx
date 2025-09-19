@@ -37,12 +37,7 @@ const EnhancedDomainExpertiseCard = () => {
   const [expandedDomain, setExpandedDomain] = useState<string | null>(null);
   const [hoveredDomain, setHoveredDomain] = useState<string | null>(null);
 
-  const sortedDomains = [...domainExpertise].sort((a, b) => {
-    // Sort by favorites first, then by proficiency
-    if (a.isFavorite && !b.isFavorite) return -1;
-    if (!a.isFavorite && b.isFavorite) return 1;
-    return (b.proficiency || 0) - (a.proficiency || 0);
-  });
+  const sortedDomains = [...domainExpertise];
 
   return (
     <Card
@@ -71,7 +66,17 @@ const EnhancedDomainExpertiseCard = () => {
         </Typography>
 
         {/* Domains Grid/List */}
-        <Box sx={{ position: 'relative' }}>
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              lg: '1fr 1fr',
+            },
+            gap: 2,
+          }}
+        >
           {sortedDomains.map((domain, index) => {
             const isExpanded = expandedDomain === domain.name;
             const isHovered = hoveredDomain === domain.name;
@@ -88,7 +93,6 @@ const EnhancedDomainExpertiseCard = () => {
                 <Box
                   onClick={() => setExpandedDomain(isExpanded ? null : domain.name)}
                   sx={{
-                    mb: 2,
                     p: 2,
                     borderRadius: 2,
                     backgroundColor:
