@@ -3,7 +3,7 @@ export interface ProgrammingLanguage {
   logo?: string;
   proficiency: number; // 0-100
   experience: string;
-  category: 'Frontend' | 'Backend' | 'Systems' | 'Database' | 'Web';
+  category: 'Frontend' | 'Backend' | 'Systems' | 'Web';
   primaryProjects: string[];
   color: string;
   description: string;
@@ -20,7 +20,8 @@ export const programmingLanguages: ProgrammingLanguage[] = [
     category: 'Backend',
     primaryProjects: ['VirtaMed Simulators', 'Enterprise Applications', '.NET APIs'],
     color: '#239120',
-    description: 'Primary language for enterprise development',
+    description:
+      'Deep hands-on understanding of desktop application stack; Managed cloud applications',
     lastUsed: 'Currently using',
     frameworks: ['.NET Core', 'ASP.NET', 'WPF', 'Unity'],
     icon: 'csharp',
@@ -32,7 +33,7 @@ export const programmingLanguages: ProgrammingLanguage[] = [
     category: 'Frontend',
     primaryProjects: ['Verity Web Apps', 'React Applications', 'Cloud Dashboards'],
     color: '#3178C6',
-    description: 'Modern web development with type safety',
+    description: 'Designed rich user experience web applications in multiple contexts',
     lastUsed: 'Currently using',
     frameworks: ['React', 'Angular', 'Node.js'],
     icon: 'typescript',
@@ -44,7 +45,7 @@ export const programmingLanguages: ProgrammingLanguage[] = [
     category: 'Systems',
     primaryProjects: ['3D Graphics', 'Game Engines', 'Performance Critical Apps'],
     color: '#00599C',
-    description: 'High-performance systems and graphics',
+    description: 'High-performance game engine and graphics development.',
     lastUsed: '2023',
     frameworks: ['OpenGL', 'CUDA', 'Qt'],
     icon: 'cplusplus',
@@ -56,56 +57,9 @@ export const programmingLanguages: ProgrammingLanguage[] = [
     category: 'Backend',
     primaryProjects: ['Automation', 'Data Processing', 'Cloud Functions'],
     color: '#3776AB',
-    description: 'Scripting and backend services',
+    description: 'Scripting and backend cloud services as well as local applications',
     lastUsed: 'Currently using',
-    frameworks: ['FastAPI', 'Django', 'NumPy'],
+    frameworks: ['FastAPI'],
     icon: 'python',
-  },
-  {
-    name: 'JavaScript',
-    proficiency: 90,
-    experience: '10+ years',
-    category: 'Frontend',
-    primaryProjects: ['Web Applications', 'Node.js Services', 'Frontend Development'],
-    color: '#F7DF1E',
-    description: 'Full-stack web development',
-    lastUsed: 'Currently using',
-    frameworks: ['React', 'Vue', 'Express'],
-    icon: 'javascript',
-  },
-  {
-    name: 'SQL',
-    proficiency: 85,
-    experience: '15+ years',
-    category: 'Database',
-    primaryProjects: ['Database Design', 'Query Optimization', 'Data Architecture'],
-    color: '#336791',
-    description: 'Database management and optimization',
-    lastUsed: 'Currently using',
-    frameworks: ['PostgreSQL', 'MySQL', 'SQL Server'],
-    icon: 'sql',
-  },
-  {
-    name: 'HTML/CSS',
-    proficiency: 90,
-    experience: '12+ years',
-    category: 'Web',
-    primaryProjects: ['Responsive Design', 'Web Components', 'UI Development'],
-    color: '#E34F26',
-    description: 'Modern web markup and styling',
-    lastUsed: 'Currently using',
-    frameworks: ['Tailwind', 'Material-UI', 'SASS'],
-    icon: 'html',
-  },
-  {
-    name: 'C',
-    proficiency: 70,
-    experience: '10+ years',
-    category: 'Systems',
-    primaryProjects: ['Embedded Systems', 'Low-level Programming'],
-    color: '#A8B9CC',
-    description: 'Systems programming',
-    lastUsed: '2022',
-    icon: 'c',
   },
 ];

@@ -103,12 +103,7 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
       ? frameworksAndTechnologies
       : frameworksAndTechnologies.filter((fw) => fw.category === selectedCategory);
 
-  const sortedFrameworks = [...filteredFrameworks].sort((a, b) => {
-    // Sort by favorites first, then by proficiency
-    if (a.isFavorite && !b.isFavorite) return -1;
-    if (!a.isFavorite && b.isFavorite) return 1;
-    return (b.proficiency || 0) - (a.proficiency || 0);
-  });
+  const sortedFrameworks = [...filteredFrameworks];
 
   return (
     <Card

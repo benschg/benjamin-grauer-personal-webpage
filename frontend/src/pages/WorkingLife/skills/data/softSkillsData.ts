@@ -81,7 +81,7 @@ export const softSkills: DetailedSkill[] = [
   {
     name: 'Growth Management',
     description:
-      'Strategic outsourcing management and cross-cultural team coordination across global teams.',
+      'Strategic outsourcing and cross-cultural team training and coordination across near-shore teams.',
     category: 'Management',
     experience: '8+ years',
     projects: [

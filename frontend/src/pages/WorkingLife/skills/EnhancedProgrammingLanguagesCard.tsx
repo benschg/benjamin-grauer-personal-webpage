@@ -59,7 +59,7 @@ const EnhancedProgrammingLanguagesCard = () => {
   const [hoveredLanguage, setHoveredLanguage] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Frontend', 'Backend', 'Systems', 'Database', 'Web'];
+  const categories = ['All', 'Frontend', 'Backend', 'Systems', 'Web'];
 
   const filteredLanguages =
     selectedCategory === 'All'
