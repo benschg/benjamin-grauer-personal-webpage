@@ -57,17 +57,8 @@ const getCategoryIcon = (category: string) => {
 
 const EnhancedProgrammingLanguagesCard = () => {
   const [hoveredLanguage, setHoveredLanguage] = useState<string | null>(null);
-  const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const categories = ['All', 'Frontend', 'Backend', 'Systems', 'Web'];
-
-  const filteredLanguages =
-    selectedCategory === 'All'
-      ? programmingLanguages
-      : programmingLanguages.filter((lang) => lang.category === selectedCategory);
 
   // Keep the original order from the data file
-  const sortedLanguages = [...filteredLanguages];
 
   return (
     <Card
@@ -91,34 +82,13 @@ const EnhancedProgrammingLanguagesCard = () => {
             gap: 1,
           }}
         >
-          <Code /> Programming Languages
+          <Code />
+          Proficient Coding Languages
         </Typography>
-
-        {/* Category Filter */}
-        <Box sx={{ mb: 3, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          {categories.map((category) => (
-            <Chip
-              key={category}
-              label={category}
-              onClick={() => setSelectedCategory(category)}
-              variant={selectedCategory === category ? 'filled' : 'outlined'}
-              sx={{
-                borderColor: 'primary.main',
-                backgroundColor: selectedCategory === category ? 'primary.main' : 'transparent',
-                color: selectedCategory === category ? 'white' : 'text.primary',
-                '&:hover': {
-                  backgroundColor: 'primary.main',
-                  color: 'white',
-                },
-                transition: 'all 0.3s ease',
-              }}
-            />
-          ))}
-        </Box>
 
         {/* Languages List */}
         <Box sx={{ mb: 3 }}>
-          {sortedLanguages.map((language, index) => {
+          {programmingLanguages.map((language, index) => {
             const isExpanded = hoveredLanguage === language.name;
             return (
               <motion.div
@@ -328,7 +298,7 @@ const EnhancedProgrammingLanguagesCard = () => {
           }}
         >
           <Grid container spacing={2}>
-            <Grid size={{ xs: 6, sm: 3 }}>
+            <Grid size={{ xs: 6, sm: 4 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
                 {programmingLanguages.length}
               </Typography>
@@ -336,23 +306,7 @@ const EnhancedProgrammingLanguagesCard = () => {
                 Languages
               </Typography>
             </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                15+
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Years Experience
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
-              <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                {programmingLanguages.filter((l) => l.lastUsed === 'Currently using').length}
-              </Typography>
-              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                Active Languages
-              </Typography>
-            </Grid>
-            <Grid size={{ xs: 6, sm: 3 }}>
+            <Grid size={{ xs: 6, sm: 4 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
                 100+
               </Typography>
@@ -360,6 +314,14 @@ const EnhancedProgrammingLanguagesCard = () => {
                 Projects Delivered
               </Typography>
             </Grid>
+            <Grid size={{ xs: 6, sm: 4 }}>
+              <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
+                500K+
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                Lines of code written
+              </Typography>
+            </Grid>{' '}
           </Grid>
         </Box>
       </CardContent>

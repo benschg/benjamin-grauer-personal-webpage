@@ -4,8 +4,8 @@ import EnhancedFrameworksAndTechnologiesCard from './EnhancedFrameworksAndTechno
 import EnhancedToolsAndPlatformsCard from './EnhancedToolsAndPlatformsCard';
 import EnhancedSoftSkillsCard from './EnhancedSoftSkillsCard';
 import EnhancedDomainExpertiseCard from './EnhancedDomainExpertiseCard';
-import LanguagesCard from './LanguagesCard';
-import CliftonStrengthsCard from './CliftonStrengthsCard';
+import EnhancedLanguagesCard from './EnhancedLanguagesCard';
+import EnhancedCliftonStrengthsCard from './EnhancedCliftonStrengthsCard';
 
 const SkillsGrid = () => {
   return (
@@ -17,7 +17,7 @@ const SkillsGrid = () => {
         <EnhancedSoftSkillsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <CliftonStrengthsCard />
+        <EnhancedCliftonStrengthsCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
         <EnhancedFrameworksAndTechnologiesCard />
@@ -29,7 +29,7 @@ const SkillsGrid = () => {
         <EnhancedProgrammingLanguagesCard />
       </Grid>
       <Grid size={{ xs: 12, md: 6 }}>
-        <LanguagesCard monochrome={true} />
+        <EnhancedLanguagesCard />
       </Grid>
     </Grid>
   );

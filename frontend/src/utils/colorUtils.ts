@@ -4,7 +4,10 @@
  * @param hexColor - Hex color string (e.g., "#FF5733")
  * @returns "#000000" for light backgrounds, "#ffffff" for dark backgrounds
  */
-export const getContrastColor = (hexColor: string): string => {
+export const getContrastColor = (hexColor?: string): string => {
+  if (!hexColor) {
+    return '#000000';
+  }
   // Convert hex to RGB
   const r = parseInt(hexColor.slice(1, 3), 16);
   const g = parseInt(hexColor.slice(3, 5), 16);
