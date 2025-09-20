@@ -109,7 +109,7 @@ const Footer = () => {
               fontSize: '0.8rem',
             }}
           >
-            © 2024 Benjamin Grauer. All rights reserved.
+            © 2025 Benjamin Grauer. All rights reserved.
           </Typography>
         </Box>
       </Container>
