@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Box, Chip, LinearProgress, Collapse } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, Collapse } from '@mui/material';
 import { getContrastColor } from '../../../utils/colorUtils';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
@@ -7,8 +7,8 @@ import { domainExpertise } from './data/domainExpertiseData';
 
 // Import domain-specific icons from react-icons
 import { GiGamepad, GiMedicalPack, GiDeliveryDrone } from 'react-icons/gi';
-import { MdPrint, MdDeviceHub, MdLocalShipping } from 'react-icons/md';
-import { BiCube } from 'react-icons/bi';
+import { MdPrint, MdDeviceHub, MdLocalShipping, MdWeb } from 'react-icons/md';
+import { BiCube, BiBrain } from 'react-icons/bi';
 
 const getDomainIcon = (iconName?: string) => {
   const iconStyle = { fontSize: 24 };
@@ -28,6 +28,10 @@ const getDomainIcon = (iconName?: string) => {
       return <GiDeliveryDrone style={iconStyle} />; // Drone icon
     case 'logistics':
       return <MdLocalShipping style={iconStyle} />; // Shipping/logistics icon
+    case 'web':
+      return <MdWeb style={iconStyle} />; // Web technologies icon
+    case 'ai':
+      return <BiBrain style={iconStyle} />; // AI/Brain icon
     default:
       return <Domain sx={{ fontSize: 24 }} />;
   }
@@ -167,35 +171,14 @@ const EnhancedDomainExpertiseCard = () => {
                       </Box>
                     </Box>
 
-                    {/* Proficiency & Expand */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      {/* Mini Proficiency Bar */}
-                      {!isExpanded && (
-                        <Box sx={{ width: 60, display: { xs: 'none', sm: 'block' } }}>
-                          <LinearProgress
-                            variant="determinate"
-                            value={domain.proficiency || 0}
-                            sx={{
-                              height: 4,
-                              borderRadius: 2,
-                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                              '& .MuiLinearProgress-bar': {
-                                backgroundColor: domain.color,
-                                borderRadius: 2,
-                              },
-                            }}
-                          />
-                        </Box>
-                      )}
-
-                      <Box
-                        sx={{
-                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.3s ease',
-                        }}
-                      >
-                        <ExpandMore sx={{ color: 'text.secondary' }} />
-                      </Box>
+                    {/* Expand Arrow */}
+                    <Box
+                      sx={{
+                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    >
+                      <ExpandMore sx={{ color: 'text.secondary' }} />
                     </Box>
                   </Box>
 
@@ -214,36 +197,6 @@ const EnhancedDomainExpertiseCard = () => {
                       >
                         {domain.description}
                       </Typography>
-
-                      {/* Proficiency Bar (Expanded) */}
-                      {domain.proficiency && (
-                        <Box sx={{ mb: 3 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                              Expertise Level
-                            </Typography>
-                            <Typography
-                              variant="caption"
-                              sx={{ color: domain.color, fontWeight: 600 }}
-                            >
-                              {domain.proficiency}%
-                            </Typography>
-                          </Box>
-                          <LinearProgress
-                            variant="determinate"
-                            value={domain.proficiency}
-                            sx={{
-                              height: 8,
-                              borderRadius: 4,
-                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                              '& .MuiLinearProgress-bar': {
-                                backgroundColor: domain.color,
-                                borderRadius: 4,
-                              },
-                            }}
-                          />
-                        </Box>
-                      )}
 
                       {/* Key Projects */}
                       <Box>

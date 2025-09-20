@@ -12,21 +12,43 @@ interface DomainExpertise {
 
 export const domainExpertise: DomainExpertise[] = [
   {
-    name: 'Game Development',
+    name: 'Web Technologies',
     description:
-      'Leadership in game development projects from concept to completion, including team coordination and technical architecture.',
+      'Full-stack web development expertise with modern frameworks, cloud services, and progressive web applications.',
     category: 'Development',
-    experience: '15+ years',
-    projects: [
-      'Orxonox Open-Source Project',
-      'Multiplayer Game Networks',
-      '3D Game Engines',
-      'Team Leadership',
-    ],
-    color: '#9C27B0',
-    icon: 'game',
-    proficiency: 95,
+    experience: '10+ years',
+    projects: ['React/Angular SPAs', 'RESTful APIs', 'Cloud Integration', 'Progressive Web Apps'],
+    color: '#00BCD4',
+    icon: 'web',
+    proficiency: 88,
     isFavorite: true,
+  },
+  {
+    name: 'IoT Devices',
+    description:
+      'Connected device development and sensor integration for data collection and monitoring.',
+    category: 'Technology',
+    experience: '8+ years',
+    projects: [
+      'Sensor Integration',
+      'Data Collection Systems',
+      'Device Connectivity',
+      'Monitoring Solutions',
+    ],
+    color: '#2196F3',
+    icon: 'iot',
+    proficiency: 65,
+  },
+  {
+    name: 'AI & Machine Learning',
+    description:
+      'Applied AI integration in software applications, including LLM implementations and computer vision solutions.',
+    category: 'Technology',
+    experience: '5+ years',
+    projects: ['LLM Integration', 'Computer Vision', 'Automated Testing', 'Predictive Analytics'],
+    color: '#673AB7',
+    icon: 'ai',
+    proficiency: 75,
   },
   {
     name: 'Medical Simulation',
@@ -63,6 +85,23 @@ export const domainExpertise: DomainExpertise[] = [
     isFavorite: true,
   },
   {
+    name: 'Game Development',
+    description:
+      'Leadership in game development projects from concept to completion, including team coordination and technical architecture.',
+    category: 'Development',
+    experience: '15+ years',
+    projects: [
+      'Orxonox Open-Source Project',
+      'Multiplayer Game Networks',
+      '3D Game Engines',
+      'Team Leadership',
+    ],
+    color: '#9C27B0',
+    icon: 'game',
+    proficiency: 95,
+    isFavorite: true,
+  },
+  {
     name: '3D Printing',
     description:
       'Experience with 3D printing technologies and rapid prototyping for product development.',
@@ -78,22 +117,7 @@ export const domainExpertise: DomainExpertise[] = [
     icon: 'print3d',
     proficiency: 70,
   },
-  {
-    name: 'IoT Development',
-    description:
-      'Connected device development and sensor integration for data collection and monitoring.',
-    category: 'Technology',
-    experience: '3+ years',
-    projects: [
-      'Sensor Integration',
-      'Data Collection Systems',
-      'Device Connectivity',
-      'Monitoring Solutions',
-    ],
-    color: '#2196F3',
-    icon: 'iot',
-    proficiency: 65,
-  },
+
   {
     name: 'Drone Applications',
     description:
