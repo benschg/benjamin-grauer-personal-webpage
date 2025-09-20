@@ -1,14 +1,5 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Chip,
-  Box,
-  LinearProgress,
-  Grid,
-  Collapse,
-  Tooltip,
-} from '@mui/material';
+import { Card, CardContent, Typography, Chip, Box, Grid, Collapse, Tooltip } from '@mui/material';
+import { getContrastColor } from '../../../utils/colorUtils';
 import {
   Groups,
   Psychology,
@@ -30,23 +21,9 @@ const categoryIcons = {
   Strategic: <Psychology sx={{ fontSize: 20 }} />,
 };
 
-// Function to determine if text should be dark or light based on background color
-const getContrastColor = (hexColor: string): string => {
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-};
-
 const EnhancedSoftSkillsCard = () => {
   const [expandedSkill, setExpandedSkill] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-
-  const getExperienceLevel = (experience: string) => {
-    const years = parseInt(experience.match(/\d+/)?.[0] || '0');
-    return Math.min((years / 15) * 100, 100);
-  };
 
   const categories = [
     'All',
@@ -58,11 +35,8 @@ const EnhancedSoftSkillsCard = () => {
       ? softSkills
       : softSkills.filter((skill) => skill.category === selectedCategory);
 
-  const sortedSkills = [...filteredSkills].sort((a, b) => {
-    const aYears = parseInt(a.experience?.match(/\d+/)?.[0] || '0');
-    const bYears = parseInt(b.experience?.match(/\d+/)?.[0] || '0');
-    return bYears - aYears;
-  });
+  // Keep the original order from the data file
+  const sortedSkills = [...filteredSkills];
 
   const getCategoryIcon = (category?: string) => {
     return (
@@ -227,37 +201,6 @@ const EnhancedSoftSkillsCard = () => {
                       >
                         {skill.description}
                       </Typography>
-
-                      {/* Experience Level Bar */}
-                      <Box sx={{ mb: 2 }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                          <Typography
-                            variant="caption"
-                            sx={{ color: 'text.secondary', fontSize: '0.8rem' }}
-                          >
-                            Experience Level
-                          </Typography>
-                          <Typography
-                            variant="caption"
-                            sx={{ color: skill.color, fontWeight: 600 }}
-                          >
-                            {getExperienceLevel(skill.experience || '0')}%
-                          </Typography>
-                        </Box>
-                        <LinearProgress
-                          variant="determinate"
-                          value={getExperienceLevel(skill.experience || '0')}
-                          sx={{
-                            height: 6,
-                            borderRadius: 3,
-                            backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                            '& .MuiLinearProgress-bar': {
-                              backgroundColor: skill.color,
-                              borderRadius: 3,
-                            },
-                          }}
-                        />
-                      </Box>
 
                       {/* Key Projects */}
                       {skill.projects && skill.projects.length > 0 && (

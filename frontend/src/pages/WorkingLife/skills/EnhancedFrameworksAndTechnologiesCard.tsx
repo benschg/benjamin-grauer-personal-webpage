@@ -1,6 +1,8 @@
 import { Card, CardContent, Typography, Box, Chip, Tooltip, Grid, Collapse } from '@mui/material';
+import { getContrastColor } from '../../../utils/colorUtils';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import { frameworksAndTechnologies } from './data/frameworksAndTechnologiesData';
 import {
   Code,
   Web,
@@ -11,171 +13,12 @@ import {
   Speed,
   Language,
   Star,
-  ExpandMore
+  ExpandMore,
 } from '@mui/icons-material';
 
 // Import technology brand icons from react-icons
-import {
-  FaReact,
-  FaAngular,
-  FaNodeJs,
-  FaDocker,
-} from 'react-icons/fa';
-import {
-  SiDotnet,
-  SiThreedotjs,
-  SiBlender,
-  SiQt,
-  SiNvidia
-} from 'react-icons/si';
-
-interface Framework {
-  name: string;
-  proficiency: number; // 0-100
-  experience: string;
-  category: 'Frontend' | 'Backend' | 'Desktop' | '3D/Graphics' | 'DevOps' | 'High Performance' | 'Runtime';
-  primaryProjects: string[];
-  color: string;
-  description: string;
-  lastUsed?: string;
-  keyFeatures?: string[];
-  complexity: 'Beginner' | 'Intermediate' | 'Advanced' | 'Expert';
-  isFavorite?: boolean;
-  icon?: string;
-}
-
-// Function to determine if text should be dark or light based on background color
-const getContrastColor = (hexColor: string): string => {
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-};
-
-const frameworks: Framework[] = [
-  {
-    name: 'React',
-    proficiency: 90,
-    experience: '6+ years',
-    category: 'Frontend',
-    primaryProjects: ['Single Page Apps', 'Component Libraries', 'Hooks', 'State Management'],
-    color: '#61DAFB',
-    description: 'Modern frontend development with React ecosystem and component-based architecture',
-    lastUsed: 'Currently using',
-    keyFeatures: ['Hooks', 'Context API', 'Redux', 'React Router'],
-    complexity: 'Advanced',
-    isFavorite: true,
-    icon: 'react',
-  },
-  {
-    name: '.NET',
-    proficiency: 95,
-    experience: '15+ years',
-    category: 'Backend',
-    primaryProjects: ['Enterprise Apps', 'Web APIs', 'Desktop Applications', '.Net-3D'],
-    color: '#512BD4',
-    description: 'Enterprise application development with .NET framework and C# programming',
-    lastUsed: 'Currently using',
-    keyFeatures: ['ASP.NET Core', 'Entity Framework', 'Web API', 'Blazor'],
-    complexity: 'Expert',
-    isFavorite: true,
-    icon: 'dotnet',
-  },
-  {
-    name: 'Angular',
-    proficiency: 80,
-    experience: '5+ years',
-    category: 'Frontend',
-    primaryProjects: ['Web Applications', 'TypeScript', 'RxJS', 'Material Design'],
-    color: '#DD0031',
-    description: 'Component-based web applications with TypeScript and Angular ecosystem',
-    lastUsed: '2023',
-    keyFeatures: ['TypeScript', 'RxJS', 'Angular CLI', 'Material'],
-    complexity: 'Advanced',
-    icon: 'angular',
-  },
-  {
-    name: 'Three.js & WebGL',
-    proficiency: 85,
-    experience: '6+ years',
-    category: '3D/Graphics',
-    primaryProjects: ['3D Visualizations', 'WebGL Shaders', 'Interactive Graphics', 'Browser 3D'],
-    color: '#000000',
-    description: '3D web graphics, interactive visualizations, and browser-based 3D applications',
-    lastUsed: 'Currently using',
-    keyFeatures: ['WebGL Shaders', 'PBR Rendering', '3D Physics', 'VR/AR'],
-    complexity: 'Expert',
-    isFavorite: true,
-    icon: 'threejs',
-  },
-  {
-    name: 'Blender',
-    proficiency: 75,
-    experience: '5+ years',
-    category: '3D/Graphics',
-    primaryProjects: ['3D Modeling', 'Animation', 'Rendering', 'Asset Creation'],
-    color: '#E87D0D',
-    description: 'Professional 3D creation suite for modeling, animation, rendering, and visual effects',
-    lastUsed: 'Currently using',
-    keyFeatures: ['Modeling', 'Sculpting', 'Animation', 'Cycles Rendering'],
-    complexity: 'Advanced',
-    icon: 'blender',
-  },
-  {
-    name: 'Qt/WPF',
-    proficiency: 88,
-    experience: '12+ years',
-    category: 'Desktop',
-    primaryProjects: ['Desktop Applications', 'Medical Simulation UI', 'Cross-platform UI', 'Custom Controls'],
-    color: '#41CD52',
-    description: 'Cross-platform desktop application UI development with Qt and WPF',
-    lastUsed: 'Currently using',
-    keyFeatures: ['MVVM', 'Custom Controls', 'Data Binding', 'Cross-platform'],
-    complexity: 'Expert',
-    isFavorite: true,
-    icon: 'desktop',
-  },
-  {
-    name: 'CUDA/GPU Computing',
-    proficiency: 82,
-    experience: '8+ years',
-    category: 'High Performance',
-    primaryProjects: ['Volume Rendering', 'Real-time Graphics', 'Medical Imaging', 'Scientific Computing'],
-    color: '#76B900',
-    description: 'High-performance GPU computing and parallel processing for graphics and scientific applications',
-    lastUsed: '2023',
-    keyFeatures: ['Parallel Computing', 'Memory Optimization', 'Kernel Programming', 'Graphics Pipeline'],
-    complexity: 'Expert',
-    icon: 'gpu',
-  },
-  {
-    name: 'Node.js',
-    proficiency: 85,
-    experience: '8+ years',
-    category: 'Runtime',
-    primaryProjects: ['REST APIs', 'Microservices', 'Real-time Applications', 'Cloud Functions'],
-    color: '#339933',
-    description: 'Server-side JavaScript runtime for building scalable network applications',
-    lastUsed: 'Currently using',
-    keyFeatures: ['Express.js', 'Socket.io', 'PM2', 'NPM Ecosystem'],
-    complexity: 'Advanced',
-    icon: 'nodejs',
-  },
-  {
-    name: 'Docker',
-    proficiency: 78,
-    experience: '5+ years',
-    category: 'DevOps',
-    primaryProjects: ['Container Deployment', 'Microservices Architecture', 'Development Environments', 'CI/CD'],
-    color: '#2496ED',
-    description: 'Application containerization and deployment using Docker and orchestration tools',
-    lastUsed: 'Currently using',
-    keyFeatures: ['Containerization', 'Multi-stage Builds', 'Docker Compose', 'Orchestration'],
-    complexity: 'Intermediate',
-    icon: 'docker',
-  },
-];
+import { FaReact, FaAngular, FaNodeJs, FaDocker } from 'react-icons/fa';
+import { SiDotnet, SiThreedotjs, SiBlender, SiQt, SiNvidia } from 'react-icons/si';
 
 const getFrameworkIcon = (iconName?: string) => {
   const iconStyle = { fontSize: 20 };
@@ -244,24 +87,30 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
   const [hoveredFramework, setHoveredFramework] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
 
-  const categories = ['All', 'Frontend', 'Backend', 'Desktop', '3D/Graphics', 'DevOps', 'High Performance', 'Runtime'];
+  const categories = [
+    'All',
+    'Frontend',
+    'Backend',
+    'Desktop',
+    '3D/Graphics',
+    'DevOps',
+    'High Performance',
+    'Runtime',
+  ];
 
-  const filteredFrameworks = selectedCategory === 'All'
-    ? frameworks
-    : frameworks.filter(fw => fw.category === selectedCategory);
+  const filteredFrameworks =
+    selectedCategory === 'All'
+      ? frameworksAndTechnologies
+      : frameworksAndTechnologies.filter((fw) => fw.category === selectedCategory);
 
-  const sortedFrameworks = [...filteredFrameworks].sort((a, b) => {
-    // Sort by favorites first, then by proficiency
-    if (a.isFavorite && !b.isFavorite) return -1;
-    if (!a.isFavorite && b.isFavorite) return 1;
-    return b.proficiency - a.proficiency;
-  });
+  const sortedFrameworks = [...filteredFrameworks];
 
   return (
     <Card
       sx={{
         p: 2,
-        background: 'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
         border: '2px solid rgba(137, 102, 93, 0.3)',
       }}
     >
@@ -324,9 +173,7 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                       ? 'rgba(137, 102, 93, 0.08)'
                       : 'rgba(255, 255, 255, 0.02)',
                     border: '1px solid',
-                    borderColor: isExpanded
-                      ? framework.color
-                      : 'rgba(255, 255, 255, 0.1)',
+                    borderColor: isExpanded ? framework.color : 'rgba(255, 255, 255, 0.1)',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
                     '&:hover': {
@@ -336,7 +183,9 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                   }}
                 >
                   {/* Compact Framework Header */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
                       {/* Name & Icon */}
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
@@ -380,7 +229,6 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                           />
                         )}
                       </Box>
-
                     </Box>
 
                     {/* Experience & Expand Icon */}
@@ -503,7 +351,10 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                           }}
                         />
                         {framework.lastUsed && framework.lastUsed !== 'Currently using' && (
-                          <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                          <Typography
+                            variant="caption"
+                            sx={{ color: 'text.secondary', fontSize: '0.75rem' }}
+                          >
                             Last used: {framework.lastUsed}
                           </Typography>
                         )}
@@ -529,7 +380,7 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
           <Grid container spacing={2}>
             <Grid size={{ xs: 6, sm: 3 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                {frameworks.length}
+                {frameworksAndTechnologies.length}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Technologies
@@ -537,7 +388,7 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                {frameworks.filter(f => f.isFavorite).length}
+                {frameworksAndTechnologies.filter((f) => f.isFavorite).length}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Specialties
@@ -545,7 +396,7 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                {frameworks.filter(f => f.lastUsed === 'Currently using').length}
+                {frameworksAndTechnologies.filter((f) => f.lastUsed === 'Currently using').length}
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Active Tech
@@ -553,7 +404,11 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
             </Grid>
             <Grid size={{ xs: 6, sm: 3 }}>
               <Typography variant="h4" sx={{ color: 'primary.main', fontWeight: 700 }}>
-                {Math.round(frameworks.reduce((sum, f) => sum + f.proficiency, 0) / frameworks.length)}%
+                {Math.round(
+                  frameworksAndTechnologies.reduce((sum, f) => sum + (f.proficiency || 0), 0) /
+                    frameworksAndTechnologies.length
+                )}
+                %
               </Typography>
               <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                 Avg. Proficiency

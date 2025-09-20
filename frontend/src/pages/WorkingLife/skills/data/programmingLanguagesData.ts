@@ -1,61 +1,65 @@
-import type { DetailedSkill } from '../BaseSkillCard';
+export interface ProgrammingLanguage {
+  name: string;
+  logo?: string;
+  proficiency: number; // 0-100
+  experience: string;
+  category: 'Frontend' | 'Backend' | 'Systems' | 'Web';
+  primaryProjects: string[];
+  color: string;
+  description: string;
+  lastUsed?: string;
+  frameworks?: string[];
+  icon?: string;
+}
 
-export const programmingLanguages: DetailedSkill[] = [
-  {
-    name: 'JavaScript',
-    description: 'Full-stack JavaScript development for web applications and Node.js services.',
-    category: 'Language',
-    experience: '10+ years',
-    projects: ['Frontend Development', 'Node.js APIs', 'ES6+ Features', 'Async Programming'],
-    color: '#F7DF1E',
-  },
-  {
-    name: 'TypeScript',
-    description:
-      'Type-safe JavaScript development with enhanced IDE support and better maintainability.',
-    category: 'Language',
-    experience: '6+ years',
-    projects: ['React Apps', 'Angular Development', 'Type Definitions', 'Enterprise Applications'],
-    color: '#3178C6',
-  },
+export const programmingLanguages: ProgrammingLanguage[] = [
   {
     name: 'C#',
-    description: 'Enterprise application development, desktop applications, and .NET ecosystem.',
-    category: 'Language',
+    proficiency: 95,
     experience: '15+ years',
-    projects: ['Enterprise Applications', 'Windows Applications', 'Web APIs', 'Desktop Software'],
+    category: 'Backend',
+    primaryProjects: ['VirtaMed Simulators', 'Enterprise Applications', '.NET APIs'],
     color: '#239120',
+    description:
+      'Deep hands-on understanding of desktop application stack; Managed cloud applications',
+    lastUsed: 'Currently using',
+    frameworks: ['.NET Core', 'ASP.NET', 'WPF', 'Unity'],
+    icon: 'csharp',
   },
   {
     name: 'C++',
-    description: 'High-performance applications, game development, and graphics programming.',
-    category: 'Language',
+    proficiency: 85,
     experience: '12+ years',
-    projects: ['OpenGL Graphics', 'Game Engines', 'Performance Critical Apps', 'Custom Engines'],
+    category: 'Systems',
+    primaryProjects: ['3D Graphics', 'Game Engines', 'Performance Critical Apps'],
     color: '#00599C',
+    description: 'High-performance game engine and graphics development.',
+    lastUsed: '2023',
+    frameworks: ['OpenGL', 'CUDA', 'Qt'],
+    icon: 'cplusplus',
+  },
+  {
+    name: 'TypeScript',
+    proficiency: 85,
+    experience: '6+ years',
+    category: 'Frontend',
+    primaryProjects: ['Verity Web Apps', 'React Applications', 'Cloud Dashboards'],
+    color: '#3178C6',
+    description: 'Designed rich user experience web applications in multiple contexts',
+    lastUsed: 'Currently using',
+    frameworks: ['React', 'Angular', 'Node.js'],
+    icon: 'typescript',
   },
   {
     name: 'Python',
-    description: 'Server-side development, automation, and data processing with Python ecosystem.',
-    category: 'Language',
+    proficiency: 80,
     experience: '8+ years',
-    projects: ['Backend APIs', 'Data Processing', 'Automation Scripts', 'Cloud Functions'],
+    category: 'Backend',
+    primaryProjects: ['Automation', 'Data Processing', 'Cloud Functions'],
     color: '#3776AB',
-  },
-  {
-    name: 'SQL',
-    description: 'Database design, optimization, and both SQL and NoSQL database management.',
-    category: 'Database Language',
-    experience: '15+ years',
-    projects: ['Database Design', 'Query Optimization', 'Stored Procedures', 'Data Architecture'],
-    color: '#336791',
-  },
-  {
-    name: 'HTML/CSS',
-    description: 'Modern web markup and styling with responsive design and CSS frameworks.',
-    category: 'Web Language',
-    experience: '12+ years',
-    projects: ['Responsive Design', 'CSS Grid/Flexbox', 'SASS/SCSS', 'Web Components'],
-    color: '#E34F26',
+    description: 'Scripting and backend cloud services as well as local applications',
+    lastUsed: 'Currently using',
+    frameworks: ['FastAPI'],
+    icon: 'python',
   },
 ];

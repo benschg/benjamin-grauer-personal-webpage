@@ -1,158 +1,14 @@
-import { Card, CardContent, Typography, Box, Chip, LinearProgress, Collapse } from '@mui/material';
+import { Card, CardContent, Typography, Box, Chip, Collapse } from '@mui/material';
+import { getContrastColor } from '../../../utils/colorUtils';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import {
-  ExpandMore,
-  Domain,
-  Star
-} from '@mui/icons-material';
+import { ExpandMore, Domain, Star } from '@mui/icons-material';
+import { domainExpertise } from './data/domainExpertiseData';
 
 // Import domain-specific icons from react-icons
-import {
-  GiGamepad,
-  GiMedicalPack,
-  GiDeliveryDrone
-} from 'react-icons/gi';
-import {
-  MdPrint,
-  MdDeviceHub,
-  MdLocalShipping
-} from 'react-icons/md';
-import {
-  BiCube
-} from 'react-icons/bi';
-
-interface DomainExpertise {
-  name: string;
-  description: string;
-  category: string;
-  experience: string;
-  projects: string[];
-  color: string;
-  icon?: string;
-  proficiency?: number;
-  isFavorite?: boolean;
-}
-
-// Function to determine if text should be dark or light based on background color
-const getContrastColor = (hexColor: string): string => {
-  const r = parseInt(hexColor.slice(1, 3), 16);
-  const g = parseInt(hexColor.slice(3, 5), 16);
-  const b = parseInt(hexColor.slice(5, 7), 16);
-  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-  return luminance > 0.5 ? '#000000' : '#ffffff';
-};
-
-const domainExpertise: DomainExpertise[] = [
-  {
-    name: 'Game Development',
-    description: 'Leadership in game development projects from concept to completion, including team coordination and technical architecture.',
-    category: 'Development',
-    experience: '15+ years',
-    projects: [
-      'Orxonox Open-Source Project',
-      'Multiplayer Game Networks',
-      '3D Game Engines',
-      'Team Leadership',
-    ],
-    color: '#9C27B0',
-    icon: 'game',
-    proficiency: 95,
-    isFavorite: true,
-  },
-  {
-    name: 'Medical Simulation',
-    description: 'Specialized expertise in medical training simulation systems and healthcare technology applications.',
-    category: 'Domain Expertise',
-    experience: '12+ years',
-    projects: [
-      'Surgical Training Systems',
-      'Medical Instrument Simulation',
-      'Healthcare IoT',
-      'Clinical Integration',
-    ],
-    color: '#F44336',
-    icon: 'medical',
-    proficiency: 92,
-    isFavorite: true,
-  },
-  {
-    name: '3D Graphics & Visualization',
-    description: 'Advanced three-dimensional graphics, rendering systems, and interactive visual applications.',
-    category: 'Graphics',
-    experience: '15+ years',
-    projects: [
-      'Real-time Rendering',
-      '3D Medical Visualization',
-      'Custom Graphics Engines',
-      'Interactive 3D Web Apps',
-    ],
-    color: '#E65100',
-    icon: '3d',
-    proficiency: 90,
-    isFavorite: true,
-  },
-  {
-    name: '3D Printing',
-    description: 'Experience with 3D printing technologies and rapid prototyping for product development.',
-    category: 'Manufacturing',
-    experience: '4+ years',
-    projects: [
-      'Prototype Development',
-      'CAD Model Preparation',
-      '3D Print Optimization',
-      'Material Selection',
-    ],
-    color: '#4CAF50',
-    icon: 'print3d',
-    proficiency: 70,
-  },
-  {
-    name: 'IoT Development',
-    description: 'Connected device development and sensor integration for data collection and monitoring.',
-    category: 'Technology',
-    experience: '3+ years',
-    projects: [
-      'Sensor Integration',
-      'Data Collection Systems',
-      'Device Connectivity',
-      'Monitoring Solutions',
-    ],
-    color: '#2196F3',
-    icon: 'iot',
-    proficiency: 65,
-  },
-  {
-    name: 'Drone Applications',
-    description: 'Experience with drone technology for aerial photography and data collection applications.',
-    category: 'Technology',
-    experience: '2+ years',
-    projects: [
-      'Aerial Photography',
-      'Data Collection',
-      'Flight Planning',
-      'Image Processing',
-    ],
-    color: '#FF9800',
-    icon: 'drone',
-    proficiency: 60,
-  },
-  {
-    name: 'Logistics Software',
-    description: 'Development of software solutions for logistics and supply chain management.',
-    category: 'Operations',
-    experience: '3+ years',
-    projects: [
-      'Tracking Systems',
-      'Inventory Management',
-      'Route Optimization',
-      'Data Analytics',
-    ],
-    color: '#795548',
-    icon: 'logistics',
-    proficiency: 68,
-  },
-];
+import { GiGamepad, GiMedicalPack, GiDeliveryDrone } from 'react-icons/gi';
+import { MdPrint, MdDeviceHub, MdLocalShipping, MdWeb } from 'react-icons/md';
+import { BiCube, BiBrain } from 'react-icons/bi';
 
 const getDomainIcon = (iconName?: string) => {
   const iconStyle = { fontSize: 24 };
@@ -172,6 +28,10 @@ const getDomainIcon = (iconName?: string) => {
       return <GiDeliveryDrone style={iconStyle} />; // Drone icon
     case 'logistics':
       return <MdLocalShipping style={iconStyle} />; // Shipping/logistics icon
+    case 'web':
+      return <MdWeb style={iconStyle} />; // Web technologies icon
+    case 'ai':
+      return <BiBrain style={iconStyle} />; // AI/Brain icon
     default:
       return <Domain sx={{ fontSize: 24 }} />;
   }
@@ -181,18 +41,14 @@ const EnhancedDomainExpertiseCard = () => {
   const [expandedDomain, setExpandedDomain] = useState<string | null>(null);
   const [hoveredDomain, setHoveredDomain] = useState<string | null>(null);
 
-  const sortedDomains = [...domainExpertise].sort((a, b) => {
-    // Sort by favorites first, then by proficiency
-    if (a.isFavorite && !b.isFavorite) return -1;
-    if (!a.isFavorite && b.isFavorite) return 1;
-    return (b.proficiency || 0) - (a.proficiency || 0);
-  });
+  const sortedDomains = [...domainExpertise];
 
   return (
     <Card
       sx={{
         p: 2,
-        background: 'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
+        background:
+          'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
         border: '2px solid rgba(137, 102, 93, 0.3)',
         height: '100%',
       }}
@@ -214,7 +70,17 @@ const EnhancedDomainExpertiseCard = () => {
         </Typography>
 
         {/* Domains Grid/List */}
-        <Box sx={{ position: 'relative' }}>
+        <Box
+          sx={{
+            position: 'relative',
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              lg: '1fr 1fr',
+            },
+            gap: 2,
+          }}
+        >
           {sortedDomains.map((domain, index) => {
             const isExpanded = expandedDomain === domain.name;
             const isHovered = hoveredDomain === domain.name;
@@ -231,16 +97,15 @@ const EnhancedDomainExpertiseCard = () => {
                 <Box
                   onClick={() => setExpandedDomain(isExpanded ? null : domain.name)}
                   sx={{
-                    mb: 2,
                     p: 2,
                     borderRadius: 2,
-                    backgroundColor: isHovered || isExpanded
-                      ? 'rgba(137, 102, 93, 0.1)'
-                      : 'rgba(255, 255, 255, 0.02)',
+                    backgroundColor:
+                      isHovered || isExpanded
+                        ? 'rgba(137, 102, 93, 0.1)'
+                        : 'rgba(255, 255, 255, 0.02)',
                     border: '1px solid',
-                    borderColor: isHovered || isExpanded
-                      ? domain.color
-                      : 'rgba(255, 255, 255, 0.1)',
+                    borderColor:
+                      isHovered || isExpanded ? domain.color : 'rgba(255, 255, 255, 0.1)',
                     cursor: 'pointer',
                     transition: 'all 0.3s ease',
                     position: 'relative',
@@ -258,7 +123,9 @@ const EnhancedDomainExpertiseCard = () => {
                   }}
                 >
                   {/* Domain Header */}
-                  <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box
+                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                  >
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
                       {/* Icon */}
                       <Box
@@ -290,9 +157,7 @@ const EnhancedDomainExpertiseCard = () => {
                           >
                             {domain.name}
                           </Typography>
-                          {domain.isFavorite && (
-                            <Star sx={{ fontSize: 18, color: '#ffd700' }} />
-                          )}
+                          {domain.isFavorite && <Star sx={{ fontSize: 18, color: '#ffd700' }} />}
                         </Box>
                         <Typography
                           variant="caption"
@@ -306,35 +171,14 @@ const EnhancedDomainExpertiseCard = () => {
                       </Box>
                     </Box>
 
-                    {/* Proficiency & Expand */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                      {/* Mini Proficiency Bar */}
-                      {!isExpanded && (
-                        <Box sx={{ width: 60, display: { xs: 'none', sm: 'block' } }}>
-                          <LinearProgress
-                            variant="determinate"
-                            value={domain.proficiency || 0}
-                            sx={{
-                              height: 4,
-                              borderRadius: 2,
-                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                              '& .MuiLinearProgress-bar': {
-                                backgroundColor: domain.color,
-                                borderRadius: 2,
-                              },
-                            }}
-                          />
-                        </Box>
-                      )}
-
-                      <Box
-                        sx={{
-                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                          transition: 'transform 0.3s ease',
-                        }}
-                      >
-                        <ExpandMore sx={{ color: 'text.secondary' }} />
-                      </Box>
+                    {/* Expand Arrow */}
+                    <Box
+                      sx={{
+                        transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.3s ease',
+                      }}
+                    >
+                      <ExpandMore sx={{ color: 'text.secondary' }} />
                     </Box>
                   </Box>
 
@@ -353,33 +197,6 @@ const EnhancedDomainExpertiseCard = () => {
                       >
                         {domain.description}
                       </Typography>
-
-                      {/* Proficiency Bar (Expanded) */}
-                      {domain.proficiency && (
-                        <Box sx={{ mb: 3 }}>
-                          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                            <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                              Expertise Level
-                            </Typography>
-                            <Typography variant="caption" sx={{ color: domain.color, fontWeight: 600 }}>
-                              {domain.proficiency}%
-                            </Typography>
-                          </Box>
-                          <LinearProgress
-                            variant="determinate"
-                            value={domain.proficiency}
-                            sx={{
-                              height: 8,
-                              borderRadius: 4,
-                              backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                              '& .MuiLinearProgress-bar': {
-                                backgroundColor: domain.color,
-                                borderRadius: 4,
-                              },
-                            }}
-                          />
-                        </Box>
-                      )}
 
                       {/* Key Projects */}
                       <Box>
@@ -461,7 +278,7 @@ const EnhancedDomainExpertiseCard = () => {
           </Box>
           <Box sx={{ textAlign: 'center' }}>
             <Typography variant="h5" sx={{ color: 'primary.main', fontWeight: 700 }}>
-              {domainExpertise.filter(d => d.isFavorite).length}
+              {domainExpertise.filter((d) => d.isFavorite).length}
             </Typography>
             <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
               Core Areas

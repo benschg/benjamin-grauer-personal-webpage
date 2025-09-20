@@ -1,6 +1,18 @@
-import type { DetailedSkill } from '../BaseSkillCard';
+interface ToolPlatform {
+  name: string;
+  description: string;
+  category: string;
+  experience: string;
+  projects: string[];
+  color: string;
+  icon?: string;
+  proficiency?: number;
+  lastUsed?: string;
+  keyFeatures?: string[];
+  isFavorite?: boolean;
+}
 
-export const toolsAndPlatforms: DetailedSkill[] = [
+export const toolsAndPlatforms: ToolPlatform[] = [
   {
     name: 'Cloud Platforms',
     description:
@@ -14,6 +26,16 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Cloud Architecture & IoT',
     ],
     color: '#FF9900',
+    icon: 'cloud',
+    proficiency: 85,
+    lastUsed: 'Currently using',
+    keyFeatures: [
+      'AWS EC2/Lambda',
+      'Azure DevOps',
+      'Google Cloud Functions',
+      'Infrastructure as Code',
+    ],
+    isFavorite: true,
   },
   {
     name: 'DevOps & CI/CD Tools',
@@ -28,9 +50,14 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Vercel Deployment',
     ],
     color: '#326CE5',
+    icon: 'devops',
+    proficiency: 88,
+    lastUsed: 'Currently using',
+    keyFeatures: ['Jenkins Pipelines', 'GitHub Actions', 'Azure DevOps', 'Automated Deployment'],
+    isFavorite: true,
   },
   {
-    name: 'Development Administration',
+    name: 'Development Admin',
     description: 'Expert-level administration of development tools and source control systems.',
     category: 'Administration',
     experience: '15+ years',
@@ -41,6 +68,11 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Team Workflow Setup',
     ],
     color: '#0078D4',
+    icon: 'admin',
+    proficiency: 92,
+    lastUsed: 'Currently using',
+    keyFeatures: ['Jira Administration', 'Git Management', 'Team Workflows', 'Access Control'],
+    isFavorite: true,
   },
   {
     name: '3D & Creative Tools',
@@ -50,6 +82,10 @@ export const toolsAndPlatforms: DetailedSkill[] = [
     experience: '10+ years',
     projects: ['Blender/Maya', 'Unity/Unreal Engine', 'DaVinci Resolve', 'Custom 3D Pipelines'],
     color: '#E65100',
+    icon: '3d',
+    proficiency: 80,
+    lastUsed: 'Currently using',
+    keyFeatures: ['3D Modeling', 'Game Engines', 'Video Editing', 'Rendering Pipelines'],
   },
   {
     name: 'Systems Management',
@@ -63,6 +99,15 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Network Configuration',
     ],
     color: '#D32F2F',
+    icon: 'systems',
+    proficiency: 85,
+    lastUsed: 'Currently using',
+    keyFeatures: [
+      'Windows Server',
+      'Linux Administration',
+      'Network Management',
+      'Security Configuration',
+    ],
   },
   {
     name: 'Development Tools',
@@ -76,6 +121,11 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Development Workflow',
     ],
     color: '#4285F4',
+    icon: 'ide',
+    proficiency: 95,
+    lastUsed: 'Currently using',
+    keyFeatures: ['Visual Studio', 'VS Code', 'Docker Containers', 'Development Environments'],
+    isFavorite: true,
   },
   {
     name: 'Data Analytics & BI',
@@ -89,6 +139,10 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Performance Metrics',
     ],
     color: '#F2C811',
+    icon: 'analytics',
+    proficiency: 75,
+    lastUsed: 'Currently using',
+    keyFeatures: ['Power BI', 'Data Visualization', 'SQL Databases', 'Business Intelligence'],
   },
   {
     name: 'Productivity Tools',
@@ -102,5 +156,9 @@ export const toolsAndPlatforms: DetailedSkill[] = [
       'Documentation Systems',
     ],
     color: '#34A853',
+    icon: 'productivity',
+    proficiency: 90,
+    lastUsed: 'Currently using',
+    keyFeatures: ['Office Suite', 'Google Workspace', 'Documentation', 'Collaboration'],
   },
 ];
