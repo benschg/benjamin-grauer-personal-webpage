@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Typography, Link, Divider } from '@mui/material';
+import { Box, Container, Grid, Typography, Divider } from '@mui/material';
 import { SocialLinksGroup } from '../social';
 import { socialLinks, fitnessLinks } from '../social/SocialLinksData';
 
@@ -73,7 +73,7 @@ const Footer = () => {
             gap: 1,
           }}
         >
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          {/* <Box sx={{ display: 'flex', gap: 2 }}>
             <Link
               href="#"
               sx={{
@@ -87,20 +87,7 @@ const Footer = () => {
             >
               Friends
             </Link>
-            <Link
-              href="#"
-              sx={{
-                color: 'white',
-                fontSize: '0.9rem',
-                textDecoration: 'none',
-                '&:hover': {
-                  opacity: 0.8,
-                },
-              }}
-            >
-              Attribution
-            </Link>
-          </Box>
+          </Box> */}
 
           <Typography
             variant="body2"
