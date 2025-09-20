@@ -62,12 +62,14 @@ cd benjamin-grauer-personal-webpage
 ### Manual Setup
 
 See **[SETUP.md](./SETUP.md)** for detailed setup instructions including:
+
 - Pre-commit hooks configuration
-- IDE setup recommendations  
+- IDE setup recommendations
 - Troubleshooting guide
 
 ### Prerequisites
-- Node.js 18+ 
+
+- Node.js 18+
 - Yarn package manager
 - Git
 
@@ -79,7 +81,7 @@ yarn dev          # Start Vite dev server
 yarn build        # Build for production
 yarn preview      # Preview production build locally
 
-# Code Quality  
+# Code Quality
 yarn lint         # Run ESLint
 yarn lint:fix     # Fix ESLint issues automatically
 yarn type-check   # Run TypeScript compiler check
@@ -94,12 +96,14 @@ yarn deploy       # Deploy to Firebase
 ## 🏗️ Development
 
 ### Component Architecture
+
 - **Modular Components**: Each section is broken into reusable components
-- **TypeScript First**: Full type safety throughout the application  
+- **TypeScript First**: Full type safety throughout the application
 - **MUI Integration**: Leverages MUI's component library and theming system
 - **Responsive Design**: Mobile-first approach with touch interactions
 
 ### Key Components
+
 - `Header`: Navigation with desktop/mobile variants
 - `ProfessionalHero`: Working life introduction with profile image
 - `Timeline`: Interactive career timeline (planned enhancement)
@@ -108,14 +112,16 @@ yarn deploy       # Deploy to Firebase
 ## 🎯 Current Status
 
 ✅ **Completed Features**:
+
 - Homepage with hero section and navigation
-- Working Life page with professional introduction  
+- Working Life page with professional introduction
 - Responsive navigation (desktop + mobile hamburger menu)
 - MUI dark theme with custom typography
 - Profile image integration
 - Custom favicon from benjamingrauer.ch
 
 🚧 **In Development**:
+
 - Personal Life page components
 - Portfolio project showcase
 - Interactive timeline enhancements
@@ -124,13 +130,17 @@ yarn deploy       # Deploy to Firebase
 ## 🔧 Configuration
 
 ### Environment Setup
+
 The project uses Vite with sensible defaults. Configuration files:
+
 - `vite.config.ts` - Vite bundler configuration
-- `tsconfig.json` - TypeScript configuration  
+- `tsconfig.json` - TypeScript configuration
 - `eslint.config.js` - ESLint rules
 
 ### Theme Customization
+
 Custom MUI theme located at `frontend/src/theme/theme.ts` with:
+
 - Dark mode color palette
 - Custom typography (Orbitron/Quicksand fonts)
 - Component style overrides
@@ -138,6 +148,7 @@ Custom MUI theme located at `frontend/src/theme/theme.ts` with:
 ## 🚀 Deployment
 
 The project is configured for Firebase hosting:
+
 ```bash
 firebase init    # Initialize Firebase (if not done)
 yarn build      # Build production bundle
@@ -151,9 +162,10 @@ This project is personal portfolio code. Please respect copyright and don't use 
 ## 👨‍💻 Author
 
 **Benjamin Grauer**
-- Website: [benjamingrauer.ch](https://benjamingrauer.ch)
-- LinkedIn: [Your LinkedIn](https://linkedin.com/in/your-profile)
-- GitHub: [Your GitHub](https://github.com/your-username)
+
+- Website: [benjamingrauer.ch](https://www.benjamingrauer.ch)
+- LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/benjamin-grauer)
+- GitHub: [Your GitHub](https://github.com/benschg)
 
 ---
 

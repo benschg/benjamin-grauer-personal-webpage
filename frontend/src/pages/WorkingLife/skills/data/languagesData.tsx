@@ -34,10 +34,10 @@ export const languages: Language[] = [
   {
     name: 'English',
     description:
-      'Professional proficiency in English for international business communication, software development, and technical documentation. Daily working language in global teams.',
+      'Professional proficiency in English for international business communication, software development, and technical documentation. Daily working language.',
     category: 'Proficient',
     proficiencyLevel: 'Proficient',
-    experience: '15+ years',
+    experience: '30+ years',
     icon: <BritishFlag />,
     color: '#012169',
     contexts: [

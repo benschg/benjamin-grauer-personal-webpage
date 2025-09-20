@@ -15,6 +15,8 @@ const SocialLinksGroup = ({ links, showText = true }: SocialLinksGroupProps) => 
           <Link
             key={index}
             href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
             sx={{
               color: 'white',
               textDecoration: 'none',
@@ -29,9 +31,7 @@ const SocialLinksGroup = ({ links, showText = true }: SocialLinksGroupProps) => 
             }}
           >
             <IconComponent sx={{ fontSize: '1.2rem' }} />
-            {showText && (
-              <span style={{ fontSize: '0.9rem' }}>{link.name}</span>
-            )}
+            {showText && <span style={{ fontSize: '0.9rem' }}>{link.name}</span>}
           </Link>
         );
       })}
