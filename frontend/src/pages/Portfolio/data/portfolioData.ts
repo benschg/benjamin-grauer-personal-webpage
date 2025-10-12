@@ -224,7 +224,7 @@ export const portfolioProjects: Project[] = [
     year: '2024-2025',
     status: 'In Progress',
     images: {
-      thumbnail: '/portfolio/projects/portfolio-thumb.jpg',
+      thumbnail: '/portfolio/projects/personal-website.png',
       gallery: [],
     },
     links: {
