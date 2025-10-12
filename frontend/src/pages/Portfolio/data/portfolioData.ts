@@ -88,7 +88,7 @@ export const portfolioProjects: Project[] = [
     duration: '2 years',
     status: 'Completed',
     images: {
-      thumbnail: '/images/projects/verity-thumb.jpg',
+      thumbnail: '/portfolio/projects/verity-cloud.png',
       gallery: [],
     },
     highlights: [
