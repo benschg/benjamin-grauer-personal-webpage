@@ -170,6 +170,42 @@ export const portfolioProjects: Project[] = [
     featured: true,
   },
   {
+    id: '3d-animations-youtube',
+    title: '3D Animations YouTube Channel',
+    description:
+      'YouTube channel showcasing experimental 3D animations and simulations created with Blender.',
+    longDescription:
+      'A creative YouTube channel featuring a collection of 3D animations, fluid simulations, and experimental visual effects created using Blender. The channel demonstrates various animation techniques including particle systems, fluid dynamics, abstract designs, and looping animations. Projects range from technical demonstrations to artistic explorations, showcasing proficiency in 3D modeling, rendering, and animation.',
+    category: '3D Graphics',
+    technologies: ['Blender', 'MantaFlow', '3D Animation', 'Fluid Simulation', 'Particle Systems'],
+    features: [
+      'Abstract particle animations',
+      'Fluid simulations with MantaFlow',
+      'Experimental visual effects',
+      'Looping animations',
+      'Technical demonstrations',
+      'Artistic 3D explorations',
+    ],
+    role: 'Creator & Animator',
+    year: '2018-2024',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/3d-animations.jpg',
+      gallery: [],
+    },
+    links: {
+      live: 'https://www.youtube.com/@benjamingrauer',
+    },
+    highlights: [
+      'Multiple fluid simulation projects',
+      'Abstract and experimental animations',
+      'Technical skill demonstrations',
+      'Learning-based projects',
+    ],
+    impact: 'Showcases creative and technical 3D animation skills through experimental visual projects',
+    featured: false,
+  },
+  {
     id: 'mosaic-studio',
     title: 'AI Mosaic Studio',
     description:
