@@ -9,7 +9,8 @@ export interface Project {
     | '3D Graphics'
     | 'Medical Software'
     | 'IoT & Hardware'
-    | 'Open Source';
+    | 'Open Source'
+    | 'Creative';
   technologies: string[];
   features?: string[];
   role: string;
@@ -53,6 +54,10 @@ export const portfolioProjects: Project[] = [
     year: '2012-2024',
     duration: '12+ years',
     status: 'Completed',
+    images: {
+      thumbnail: '/images/projects/virtamed-thumb.jpg',
+      gallery: [],
+    },
     highlights: [
       'Used in 100+ medical institutions globally',
       'Trained 10,000+ medical professionals',
@@ -60,6 +65,39 @@ export const portfolioProjects: Project[] = [
     ],
     teamSize: 15,
     impact: 'Revolutionized medical training by providing risk-free, repeatable surgical practice',
+    featured: true,
+  },
+  {
+    id: 'verity-cloud-platform',
+    title: 'Verity Cloud Platform',
+    description:
+      'Enterprise cloud platform for drone data management and analytics with real-time processing capabilities.',
+    longDescription:
+      'Developed cloud infrastructure for processing and analyzing drone-captured inventory data. Built scalable microservices handling millions of data points daily.',
+    category: 'Web Development',
+    technologies: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes', 'PostgreSQL'],
+    features: [
+      'Real-time data processing',
+      'Interactive 3D visualizations',
+      'Automated reporting',
+      'RESTful APIs',
+      'Role-based access control',
+    ],
+    role: 'Senior Software Engineer',
+    year: '2020-2022',
+    duration: '2 years',
+    status: 'Completed',
+    images: {
+      thumbnail: '/images/projects/verity-thumb.jpg',
+      gallery: [],
+    },
+    highlights: [
+      'Processed 10M+ data points daily',
+      'Reduced inventory counting time by 90%',
+      'Deployed across 50+ warehouses',
+    ],
+    teamSize: 8,
+    impact: 'Transformed warehouse inventory management through autonomous drone technology',
     featured: true,
   },
   {
@@ -82,6 +120,10 @@ export const portfolioProjects: Project[] = [
     year: '2007-2012',
     duration: '5 years',
     status: 'Completed',
+    images: {
+      thumbnail: '/images/projects/orxonox-thumb.jpg',
+      gallery: [],
+    },
     links: {
       github: 'https://github.com/orxonox',
       documentation: 'https://www.orxonox.net',
@@ -93,6 +135,38 @@ export const portfolioProjects: Project[] = [
     ],
     teamSize: 30,
     impact: 'Educational platform for game development and computer graphics',
+    featured: true,
+  },
+  {
+    id: 'arts-and-crafts-gallery',
+    title: 'Arts & Crafts Portfolio',
+    description:
+      'Personal collection of digital art, paintings, and handmade crafts showcasing creative exploration.',
+    longDescription:
+      'A diverse collection of artistic works including digital paintings, mixed media compositions, abstract art, and ceramic crafts. This portfolio represents creative exploration alongside technical work, featuring cosmic themes, abstract compositions, and traditional craftsmanship.',
+    category: 'Creative',
+    technologies: ['Digital Art', 'Mixed Media', 'Ceramics', 'Photography'],
+    features: [
+      'Digital paintings and illustrations',
+      'Abstract and cosmic artwork',
+      'Ceramic and pottery work',
+      'Mixed media compositions',
+      'Creative photography',
+    ],
+    role: 'Artist & Creator',
+    year: '2020-2024',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/arts-and-crafts/jupiter.jpg',
+      gallery: [],
+    },
+    highlights: [
+      '27+ artistic works',
+      'Multiple mediums explored',
+      'Featured cosmic and abstract themes',
+      'Handmade ceramic pieces',
+    ],
+    impact: 'Demonstrates creative versatility and artistic expression beyond technical work',
     featured: true,
   },
   {
@@ -110,161 +184,17 @@ export const portfolioProjects: Project[] = [
       'SEO friendly',
     ],
     role: 'Full Stack Developer',
-    year: '2024',
+    year: '2024-2025',
     status: 'In Progress',
+    images: {
+      thumbnail: '/images/projects/portfolio-thumb.jpg',
+      gallery: [],
+    },
     links: {
       live: 'https://benjamin-grauer.com',
-      github: 'https://github.com/bgrauer',
+      github: 'https://github.com/benschg/benjamin-grauer-personal-webpage',
     },
     featured: false,
-  },
-  {
-    id: 'verity-cloud-platform',
-    title: 'Verity Cloud Platform',
-    description:
-      'Enterprise cloud platform for drone data management and analytics with real-time processing capabilities.',
-    longDescription:
-      'Developed cloud infrastructure for processing and analyzing drone-captured inventory data. Built scalable microservices handling millions of data points daily.',
-    category: 'Web Development',
-    technologies: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes', 'PostgreSQL'],
-    features: [
-      'Real-time data processing',
-      'Interactive 3D visualizations',
-      'Automated reporting',
-      'RESTful APIs',
-      'Role-based access control',
-    ],
-    role: 'Senior Software Engineer',
-    year: '2020-2022',
-    duration: '2 years',
-    status: 'Completed',
-    highlights: [
-      'Processed 10M+ data points daily',
-      'Reduced inventory counting time by 90%',
-      'Deployed across 50+ warehouses',
-    ],
-    teamSize: 8,
-    impact: 'Transformed warehouse inventory management through autonomous drone technology',
-    featured: true,
-  },
-  {
-    id: '3d-visualization-tools',
-    title: '3D Web Visualization Tools',
-    description:
-      'Interactive 3D visualization components for web applications using WebGL and Three.js.',
-    category: '3D Graphics',
-    technologies: ['Three.js', 'WebGL', 'TypeScript', 'React', 'GLSL'],
-    features: [
-      'Custom shaders',
-      'Performance optimization',
-      'Mobile support',
-      'VR/AR capabilities',
-    ],
-    role: 'Graphics Developer',
-    year: '2018-2024',
-    status: 'Completed',
-    highlights: [
-      'Sub-16ms frame times',
-      'Cross-platform compatibility',
-      'Used in production applications',
-    ],
-    featured: false,
-  },
-  {
-    id: 'iot-sensor-platform',
-    title: 'IoT Sensor Integration Platform',
-    description:
-      'Platform for collecting and analyzing data from distributed IoT sensors in industrial settings.',
-    category: 'IoT & Hardware',
-    technologies: ['Python', 'C++', 'MQTT', 'InfluxDB', 'Grafana', 'Docker'],
-    features: [
-      'Real-time data streaming',
-      'Predictive analytics',
-      'Alert system',
-      'Dashboard visualization',
-    ],
-    role: 'Technical Lead',
-    year: '2019',
-    duration: '8 months',
-    status: 'Completed',
-    highlights: [
-      'Monitored 500+ sensors',
-      'Prevented equipment failures',
-      'Reduced downtime by 40%',
-    ],
-    teamSize: 4,
-    featured: false,
-  },
-  {
-    id: 'game-engine-contributions',
-    title: 'Game Engine Contributions',
-    description: 'Contributions to various open-source game engines and graphics libraries.',
-    category: 'Open Source',
-    technologies: ['C++', 'OpenGL', 'Vulkan', 'DirectX'],
-    features: [
-      'Performance optimizations',
-      'Bug fixes',
-      'Feature implementations',
-      'Documentation improvements',
-    ],
-    role: 'Contributor',
-    year: '2008-2023',
-    status: 'Completed',
-    links: {
-      github: 'https://github.com/bgrauer',
-    },
-    highlights: ['Multiple merged PRs', 'Performance improvements', 'Community recognition'],
-    featured: false,
-  },
-  {
-    id: '3d-printing-automation',
-    title: '3D Printing Automation Tools',
-    description: 'Automated workflow tools for 3D printing preparation and optimization.',
-    category: 'IoT & Hardware',
-    technologies: ['Python', 'OpenSCAD', 'Blender API', 'G-code'],
-    features: [
-      'Automated slicing',
-      'Print time optimization',
-      'Material calculation',
-      'Quality analysis',
-    ],
-    role: 'Developer',
-    year: '2020-2021',
-    status: 'Completed',
-    highlights: [
-      'Reduced preparation time by 70%',
-      'Improved print success rate',
-      'Cost optimization',
-    ],
-    featured: false,
-  },
-  {
-    id: 'arts-and-crafts-gallery',
-    title: 'Arts & Crafts Portfolio',
-    description:
-      'Personal collection of digital art, paintings, and handmade crafts showcasing creative exploration.',
-    longDescription:
-      'A diverse collection of artistic works including digital paintings, mixed media compositions, abstract art, and ceramic crafts. This portfolio represents creative exploration alongside technical work, featuring cosmic themes, abstract compositions, and traditional craftsmanship.',
-    category: 'Open Source',
-    technologies: ['Digital Art', 'Mixed Media', 'Ceramics', 'Photography'],
-    features: [
-      'Digital paintings and illustrations',
-      'Abstract and cosmic artwork',
-      'Ceramic and pottery work',
-      'Mixed media compositions',
-      'Creative photography',
-    ],
-    role: 'Artist & Creator',
-    year: '2020-2024',
-    status: 'Completed',
-    highlights: [
-      '27+ artistic works',
-      'Multiple mediums explored',
-      'Featured cosmic and abstract themes',
-      'Handmade ceramic pieces',
-    ],
-    impact: 'Demonstrates creative versatility and artistic expression beyond technical work',
-    featured: true,
   },
 ];
 

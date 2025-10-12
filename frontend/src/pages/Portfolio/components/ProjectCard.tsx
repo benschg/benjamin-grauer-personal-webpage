@@ -1,19 +1,15 @@
-import { Card, CardContent, Typography, Box, Chip, IconButton, Collapse } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Box, Chip } from '@mui/material';
 import {
-  ExpandMore,
-  GitHub,
-  Launch,
-  Description,
-  Group,
   CalendarToday,
   Star,
   CheckCircle,
   Schedule,
   Archive,
+  ArrowForward,
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import type { Project } from '../data/portfolioData';
+import { Link } from 'react-router-dom';
 
 interface ProjectCardProps {
   project: Project;
@@ -41,13 +37,17 @@ const getCategoryColor = (category: string) => {
     'Medical Software': '#F44336',
     'IoT & Hardware': '#4CAF50',
     'Open Source': '#FF9800',
+    Creative: '#FF6B9D',
   };
   return colors[category] || '#89665d';
 };
 
 const ProjectCard = ({ project, index }: ProjectCardProps) => {
-  const [expanded, setExpanded] = useState(false);
   const categoryColor = getCategoryColor(project.category);
+  const projectLink =
+    project.id === 'arts-and-crafts-gallery'
+      ? '/portfolio/arts-and-crafts'
+      : `/portfolio/${project.id}`;
 
   return (
     <motion.div
@@ -56,6 +56,8 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
       transition={{ delay: index * 0.1 }}
     >
       <Card
+        component={Link}
+        to={projectLink}
         sx={{
           height: '100%',
           display: 'flex',
@@ -64,12 +66,20 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
           border: '1px solid rgba(137, 102, 93, 0.3)',
           position: 'relative',
-          overflow: 'visible',
+          overflow: 'hidden',
           transition: 'all 0.3s ease',
+          textDecoration: 'none',
           '&:hover': {
-            transform: 'translateY(-4px)',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
+            transform: 'translateY(-8px)',
+            boxShadow: '0 12px 32px rgba(0,0,0,0.4)',
             borderColor: categoryColor,
+            '& .project-image': {
+              transform: 'scale(1.05)',
+            },
+            '& .view-project-btn': {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
           },
           '&::before': {
             content: '""',
@@ -77,9 +87,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             top: 0,
             left: 0,
             right: 0,
-            height: '3px',
+            height: '4px',
             background: categoryColor,
             borderRadius: '4px 4px 0 0',
+            zIndex: 2,
           },
         }}
       >
@@ -87,87 +98,129 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
           <Box
             sx={{
               position: 'absolute',
-              top: 10,
-              right: 10,
+              top: 16,
+              right: 16,
               backgroundColor: '#ffd700',
               borderRadius: '50%',
-              p: 0.5,
+              p: 0.75,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              zIndex: 1,
+              zIndex: 3,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             }}
           >
             <Star sx={{ fontSize: 20, color: '#343A40' }} />
           </Box>
         )}
 
-        <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
-          {/* Header */}
-          <Box sx={{ mb: 2 }}>
-            <Box
+        {/* Project Image */}
+        <CardMedia
+          component="div"
+          className="project-image"
+          sx={{
+            height: 200,
+            backgroundColor: 'rgba(0,0,0,0.3)',
+            backgroundImage: project.images?.thumbnail
+              ? `url(${project.images.thumbnail})`
+              : 'linear-gradient(135deg, rgba(137, 102, 93, 0.2) 0%, rgba(137, 102, 93, 0.4) 100%)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            position: 'relative',
+            transition: 'transform 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {/* Placeholder if no image */}
+          {!project.images?.thumbnail && (
+            <Typography
+              variant="h4"
               sx={{
-                display: 'flex',
-                alignItems: 'flex-start',
-                justifyContent: 'space-between',
-                mb: 1,
+                color: 'rgba(255,255,255,0.3)',
+                fontWeight: 700,
+                textAlign: 'center',
+                px: 2,
               }}
             >
-              <Typography
-                variant="h6"
-                sx={{
-                  fontSize: '1.1rem',
-                  fontWeight: 700,
-                  color: 'text.primary',
-                  flex: 1,
-                  mr: 2,
-                }}
-              >
-                {project.title}
-              </Typography>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                {getStatusIcon(project.status)}
-              </Box>
-            </Box>
+              {project.title}
+            </Typography>
+          )}
 
-            {/* Category and Year */}
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-              <Chip
-                label={project.category}
-                size="small"
-                sx={{
-                  backgroundColor: `${categoryColor}20`,
-                  color: categoryColor,
-                  border: `1px solid ${categoryColor}`,
-                  fontSize: '0.7rem',
-                  height: 24,
-                }}
-              />
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                <CalendarToday sx={{ fontSize: 14, color: 'text.secondary' }} />
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  {project.year}
-                </Typography>
-              </Box>
-              {project.teamSize && (
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Group sx={{ fontSize: 14, color: 'text.secondary' }} />
-                  <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                    {project.teamSize}
-                  </Typography>
-                </Box>
-              )}
+          {/* View Project Button Overlay */}
+          <Box
+            className="view-project-btn"
+            sx={{
+              position: 'absolute',
+              bottom: 16,
+              right: 16,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 0.5,
+              px: 2,
+              py: 1,
+              borderRadius: 2,
+              backgroundColor: categoryColor,
+              color: 'white',
+              fontWeight: 600,
+              fontSize: '0.875rem',
+              opacity: 0,
+              transform: 'translateY(10px)',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            }}
+          >
+            View Project <ArrowForward sx={{ fontSize: 16 }} />
+          </Box>
+        </CardMedia>
+
+        <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 2.5 }}>
+          {/* Title */}
+          <Typography
+            variant="h6"
+            sx={{
+              fontSize: '1.25rem',
+              fontWeight: 700,
+              color: 'text.primary',
+              mb: 1,
+              lineHeight: 1.3,
+            }}
+          >
+            {project.title}
+          </Typography>
+
+          {/* Category, Year, Status */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+            <Chip
+              label={project.category}
+              size="small"
+              sx={{
+                backgroundColor: `${categoryColor}20`,
+                color: categoryColor,
+                border: `1px solid ${categoryColor}`,
+                fontSize: '0.7rem',
+                height: 22,
+                fontWeight: 600,
+              }}
+            />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+              <CalendarToday sx={{ fontSize: 14, color: 'text.secondary' }} />
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
+                {project.year}
+              </Typography>
             </Box>
+            {getStatusIcon(project.status)}
           </Box>
 
           {/* Role */}
           <Typography
             variant="subtitle2"
             sx={{
-              fontSize: '0.85rem',
+              fontSize: '0.875rem',
               color: 'primary.main',
               fontWeight: 600,
-              mb: 2,
+              mb: 1.5,
             }}
           >
             {project.role}
@@ -177,285 +230,46 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
           <Typography
             variant="body2"
             sx={{
-              fontSize: '0.85rem',
+              fontSize: '0.875rem',
               color: 'text.secondary',
               mb: 2,
               lineHeight: 1.6,
+              flexGrow: 1,
             }}
           >
             {project.description}
           </Typography>
 
           {/* Technologies */}
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-              {project.technologies.slice(0, expanded ? undefined : 5).map((tech) => (
-                <Chip
-                  key={tech}
-                  label={tech}
-                  size="small"
-                  sx={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    color: 'text.primary',
-                    fontSize: '0.7rem',
-                    height: 22,
-                    '& .MuiChip-label': { px: 1 },
-                  }}
-                />
-              ))}
-              {!expanded && project.technologies.length > 5 && (
-                <Chip
-                  label={`+${project.technologies.length - 5}`}
-                  size="small"
-                  sx={{
-                    backgroundColor: 'rgba(137, 102, 93, 0.2)',
-                    color: 'primary.main',
-                    fontSize: '0.7rem',
-                    height: 22,
-                    '& .MuiChip-label': { px: 1 },
-                  }}
-                />
-              )}
-            </Box>
-          </Box>
-
-          {/* Highlights (always visible if featured) */}
-          {project.featured && project.highlights && !expanded && (
-            <Box sx={{ mb: 2 }}>
-              {project.highlights.slice(0, 2).map((highlight, idx) => (
-                <Typography
-                  key={idx}
-                  variant="caption"
-                  sx={{
-                    display: 'block',
-                    color: 'text.secondary',
-                    fontSize: '0.75rem',
-                    '&::before': {
-                      content: '"• "',
-                      color: categoryColor,
-                    },
-                  }}
-                >
-                  {highlight}
-                </Typography>
-              ))}
-            </Box>
-          )}
-
-          {/* Expandable Content */}
-          <Collapse in={expanded} timeout="auto" unmountOnExit>
-            <Box sx={{ pt: 2, borderTop: '1px solid rgba(255, 255, 255, 0.1)' }}>
-              {/* Long Description */}
-              {project.longDescription && (
-                <Typography
-                  variant="body2"
-                  sx={{
-                    fontSize: '0.85rem',
-                    color: 'text.secondary',
-                    mb: 3,
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {project.longDescription}
-                </Typography>
-              )}
-
-              {/* Features */}
-              {project.features && (
-                <Box sx={{ mb: 3 }}>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      mb: 1,
-                      color: 'text.primary',
-                    }}
-                  >
-                    Key Features:
-                  </Typography>
-                  <Box sx={{ pl: 2 }}>
-                    {project.features.map((feature, idx) => (
-                      <Typography
-                        key={idx}
-                        variant="caption"
-                        sx={{
-                          display: 'block',
-                          color: 'text.secondary',
-                          fontSize: '0.8rem',
-                          mb: 0.5,
-                          '&::before': {
-                            content: '"▸ "',
-                            color: categoryColor,
-                          },
-                        }}
-                      >
-                        {feature}
-                      </Typography>
-                    ))}
-                  </Box>
-                </Box>
-              )}
-
-              {/* All Highlights */}
-              {project.highlights && (
-                <Box sx={{ mb: 3 }}>
-                  <Typography
-                    variant="subtitle2"
-                    sx={{
-                      fontSize: '0.85rem',
-                      fontWeight: 600,
-                      mb: 1,
-                      color: 'text.primary',
-                    }}
-                  >
-                    Achievements:
-                  </Typography>
-                  <Box sx={{ pl: 2 }}>
-                    {project.highlights.map((highlight, idx) => (
-                      <Typography
-                        key={idx}
-                        variant="caption"
-                        sx={{
-                          display: 'block',
-                          color: 'text.secondary',
-                          fontSize: '0.8rem',
-                          mb: 0.5,
-                          '&::before': {
-                            content: '"★ "',
-                            color: '#ffd700',
-                          },
-                        }}
-                      >
-                        {highlight}
-                      </Typography>
-                    ))}
-                  </Box>
-                </Box>
-              )}
-
-              {/* Impact */}
-              {project.impact && (
-                <Box
-                  sx={{
-                    p: 2,
-                    borderRadius: 1,
-                    backgroundColor: `${categoryColor}10`,
-                    border: `1px solid ${categoryColor}30`,
-                    mb: 2,
-                  }}
-                >
-                  <Typography
-                    variant="caption"
-                    sx={{
-                      fontSize: '0.8rem',
-                      color: 'text.primary',
-                      fontStyle: 'italic',
-                    }}
-                  >
-                    Impact: {project.impact}
-                  </Typography>
-                </Box>
-              )}
-
-              {/* Arts & Crafts Gallery Link */}
-              {project.id === 'arts-and-crafts-gallery' && (
-                <Box sx={{ mt: 3, textAlign: 'center' }}>
-                  <Box
-                    component="a"
-                    href="/portfolio/arts-and-crafts"
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 1,
-                      px: 3,
-                      py: 1.5,
-                      borderRadius: 2,
-                      backgroundColor: `${categoryColor}`,
-                      color: 'white',
-                      textDecoration: 'none',
-                      fontSize: '1rem',
-                      fontWeight: 600,
-                      transition: 'all 0.3s ease',
-                      '&:hover': {
-                        backgroundColor: categoryColor,
-                        transform: 'scale(1.05)',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                      },
-                    }}
-                  >
-                    View Full Gallery →
-                  </Box>
-                </Box>
-              )}
-            </Box>
-          </Collapse>
-
-          {/* Actions */}
-          <Box
-            sx={{
-              mt: 'auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Box sx={{ display: 'flex', gap: 1 }}>
-              {project.links?.github && (
-                <IconButton
-                  size="small"
-                  href={project.links.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': { color: '#fff' },
-                  }}
-                >
-                  <GitHub sx={{ fontSize: 20 }} />
-                </IconButton>
-              )}
-              {project.links?.live && (
-                <IconButton
-                  size="small"
-                  href={project.links.live}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': { color: '#fff' },
-                  }}
-                >
-                  <Launch sx={{ fontSize: 20 }} />
-                </IconButton>
-              )}
-              {project.links?.documentation && (
-                <IconButton
-                  size="small"
-                  href={project.links.documentation}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  sx={{
-                    color: 'text.secondary',
-                    '&:hover': { color: '#fff' },
-                  }}
-                >
-                  <Description sx={{ fontSize: 20 }} />
-                </IconButton>
-              )}
-            </Box>
-
-            <IconButton
-              onClick={() => setExpanded(!expanded)}
-              sx={{
-                transform: expanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.3s ease',
-                color: 'text.secondary',
-                '&:hover': { color: categoryColor },
-              }}
-            >
-              <ExpandMore />
-            </IconButton>
+          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+            {project.technologies.slice(0, 4).map((tech) => (
+              <Chip
+                key={tech}
+                label={tech}
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                  color: 'text.secondary',
+                  fontSize: '0.7rem',
+                  height: 20,
+                  '& .MuiChip-label': { px: 1 },
+                }}
+              />
+            ))}
+            {project.technologies.length > 4 && (
+              <Chip
+                label={`+${project.technologies.length - 4}`}
+                size="small"
+                sx={{
+                  backgroundColor: 'rgba(137, 102, 93, 0.2)',
+                  color: 'primary.main',
+                  fontSize: '0.7rem',
+                  height: 20,
+                  fontWeight: 600,
+                  '& .MuiChip-label': { px: 1 },
+                }}
+              />
+            )}
           </Box>
         </CardContent>
       </Card>

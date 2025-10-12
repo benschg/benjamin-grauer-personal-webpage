@@ -35,6 +35,7 @@ const categoryIcons: Record<string, JSX.Element> = {
   'Medical Software': <LocalHospital sx={{ fontSize: 18 }} />,
   'IoT & Hardware': <Memory sx={{ fontSize: 18 }} />,
   'Open Source': <GitHub sx={{ fontSize: 18 }} />,
+  Creative: <Brush sx={{ fontSize: 18 }} />,
 };
 
 const getCategoryColor = (category: string) => {
@@ -45,6 +46,7 @@ const getCategoryColor = (category: string) => {
     'Medical Software': '#F44336',
     'IoT & Hardware': '#4CAF50',
     'Open Source': '#FF9800',
+    Creative: '#FF6B9D',
   };
   return colors[category] || '#89665d';
 };
