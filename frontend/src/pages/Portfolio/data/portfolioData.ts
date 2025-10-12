@@ -175,7 +175,7 @@ export const portfolioProjects: Project[] = [
     description:
       'Web-based, touch-first font creation tool for designing custom fonts on any device with complete privacy and offline support.',
     longDescription:
-      'Glyphic is a modern web application that makes font creation accessible to everyone. Built with a touch-first approach, it allows users to create custom fonts using drawing tools optimized for touch screens, tablets, and traditional computers. All data is stored locally in the browser, ensuring complete privacy with no server uploads, tracking, or cookies. The tool features an intuitive interface with reference image tracing, visual guidelines, and automatic saving.',
+      'Glyphic is a modern web application that makes font creation accessible to everyone. Built with a touch-first approach, it allows users to create custom fonts using drawing tools optimized for touch screens, tablets, and traditional computers. Developed collaboratively with Claude AI in just 2 days, this project showcases rapid modern web development. All data is stored locally in the browser, ensuring complete privacy with no server uploads, tracking, or cookies. The tool features an intuitive interface with reference image tracing, visual guidelines, and automatic saving.',
     category: 'Web Development',
     technologies: ['Next.js 14', 'TypeScript', 'Bun', 'opentype.js', 'HTML5 Canvas', 'CSS Modules'],
     features: [
@@ -192,7 +192,7 @@ export const portfolioProjects: Project[] = [
     ],
     role: 'Creator & Developer',
     year: '2024',
-    duration: '2 months',
+    duration: '2 days',
     status: 'Completed',
     images: {
       thumbnail: '/portfolio/projects/glyphic.png',
@@ -203,10 +203,10 @@ export const portfolioProjects: Project[] = [
       github: 'https://github.com/benschg/glyphic',
     },
     highlights: [
+      'Built in 2 days with Claude AI assistance',
       'Privacy-first: 100% local data storage',
       'GDPR compliant with no tracking',
       'Touch-optimized for modern devices',
-      'Full offline support',
       'MIT licensed open source',
     ],
     impact: 'Makes font creation accessible to everyone with a focus on privacy and ease of use',
