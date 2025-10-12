@@ -121,7 +121,7 @@ export const portfolioProjects: Project[] = [
     duration: '5 years',
     status: 'Completed',
     images: {
-      thumbnail: '/images/projects/orxonox-thumb.jpg',
+      thumbnail: '/portfolio/projects/orxonox-game.jpg',
       gallery: [],
     },
     links: {
