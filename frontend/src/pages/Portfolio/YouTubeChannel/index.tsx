@@ -192,7 +192,7 @@ const YouTubeChannelDetail = () => {
                 <Button
                   variant="contained"
                   startIcon={<YouTube />}
-                  href="https://www.youtube.com/@benjamingrauer"
+                  href="https://www.youtube.com/@benschg"
                   target="_blank"
                   rel="noopener noreferrer"
                   sx={{
