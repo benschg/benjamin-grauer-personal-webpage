@@ -195,7 +195,7 @@ export const portfolioProjects: Project[] = [
     duration: '2 months',
     status: 'Completed',
     images: {
-      thumbnail: '/portfolio/projects/glyphic.jpg',
+      thumbnail: '/portfolio/projects/glyphic.png',
       gallery: [],
     },
     links: {
