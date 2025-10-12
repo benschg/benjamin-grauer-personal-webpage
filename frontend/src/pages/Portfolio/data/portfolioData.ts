@@ -305,7 +305,7 @@ export const portfolioProjects: Project[] = [
       gallery: [],
     },
     links: {
-      live: 'https://benjamin-grauer.com',
+      live: 'https://benjamingrauer.ch',
       github: 'https://github.com/benschg/benjamin-grauer-personal-webpage',
     },
     featured: false,
