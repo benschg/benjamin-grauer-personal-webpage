@@ -55,7 +55,7 @@ export const portfolioProjects: Project[] = [
     duration: '12+ years',
     status: 'Completed',
     images: {
-      thumbnail: '/images/projects/virtamed-thumb.jpg',
+      thumbnail: '/portfolio/projects/virtamed-simulator.webp',
       gallery: [],
     },
     highlights: [
