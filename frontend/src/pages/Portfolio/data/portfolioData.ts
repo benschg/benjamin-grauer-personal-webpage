@@ -194,8 +194,7 @@ export const portfolioProjects: Project[] = [
       gallery: [],
     },
     links: {
-      live: 'https://www.youtube.com/@benjamingrauer',
-      documentation: 'https://studio.youtube.com/channel/UCuICc_bFZX9Orgb8Gvj2EJw',
+      live: 'https://www.youtube.com/@benschg',
     },
     highlights: [
       'Multiple fluid simulation projects',
