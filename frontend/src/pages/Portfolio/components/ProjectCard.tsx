@@ -131,7 +131,10 @@ const ProjectCard = ({ project, index }: ProjectCardProps) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            // Use CSS to hint at image loading optimization
+            imageRendering: 'crisp-edges',
           }}
+          loading="lazy"
         >
           {/* Placeholder if no image */}
           {!project.images?.thumbnail && (
