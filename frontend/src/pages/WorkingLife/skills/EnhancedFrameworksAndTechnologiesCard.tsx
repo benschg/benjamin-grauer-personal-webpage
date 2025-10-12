@@ -271,10 +271,10 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                         {framework.description}
                       </Typography>
 
-                      <Grid container spacing={2}>
-                        {/* Key Features */}
-                        {framework.keyFeatures && (
-                          <Grid size={{ xs: 12, md: 6 }}>
+                      {/* Experience & Applications */}
+                      {(framework.keyFeatures || framework.primaryProjects) && (
+                        <Grid container spacing={2}>
+                          <Grid size={{ xs: 12 }}>
                             <Typography
                               variant="subtitle2"
                               sx={{
@@ -284,10 +284,10 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                                 color: 'text.primary',
                               }}
                             >
-                              Key Features:
+                              Experience & Applications:
                             </Typography>
                             <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                              {framework.keyFeatures.map((feature) => (
+                              {framework.keyFeatures?.map((feature) => (
                                 <Chip
                                   key={feature}
                                   label={feature}
@@ -301,41 +301,24 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                                   }}
                                 />
                               ))}
+                              {framework.primaryProjects.map((project) => (
+                                <Chip
+                                  key={project}
+                                  label={project}
+                                  size="small"
+                                  variant="outlined"
+                                  sx={{
+                                    fontSize: '0.7rem',
+                                    height: '20px',
+                                    borderColor: framework.color,
+                                    color: 'text.primary',
+                                  }}
+                                />
+                              ))}
                             </Box>
                           </Grid>
-                        )}
-
-                        {/* Primary Projects */}
-                        <Grid size={{ xs: 12, md: 6 }}>
-                          <Typography
-                            variant="subtitle2"
-                            sx={{
-                              fontSize: '0.8rem',
-                              fontWeight: 600,
-                              mb: 1,
-                              color: 'text.primary',
-                            }}
-                          >
-                            Primary Projects:
-                          </Typography>
-                          <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
-                            {framework.primaryProjects.map((project) => (
-                              <Chip
-                                key={project}
-                                label={project}
-                                size="small"
-                                variant="outlined"
-                                sx={{
-                                  fontSize: '0.7rem',
-                                  height: '20px',
-                                  borderColor: 'rgba(255, 255, 255, 0.3)',
-                                  color: 'text.secondary',
-                                }}
-                              />
-                            ))}
-                          </Box>
                         </Grid>
-                      </Grid>
+                      )}
 
                       {/* Additional Info */}
                       <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
