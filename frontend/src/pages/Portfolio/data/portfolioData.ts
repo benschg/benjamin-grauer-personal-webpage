@@ -190,7 +190,7 @@ export const portfolioProjects: Project[] = [
     duration: '3 months',
     status: 'Completed',
     images: {
-      thumbnail: '/portfolio/projects/binary-watchface.jpg',
+      thumbnail: '/portfolio/projects/binary-watchface.png',
       gallery: [],
     },
     links: {
