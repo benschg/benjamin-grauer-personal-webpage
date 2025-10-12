@@ -170,6 +170,43 @@ export const portfolioProjects: Project[] = [
     featured: true,
   },
   {
+    id: 'binary-watchface',
+    title: 'Binary Watchface for Garmin',
+    description:
+      'Custom binary time display watch face for Garmin smartwatches, designed collaboratively with my brother Daniel.',
+    longDescription:
+      'A unique watch face that displays time in binary format for Garmin smartwatches. This project combines functional design with a geeky aesthetic, allowing users to read time in binary notation. Built as a collaborative project showcasing both technical skills and creative design.',
+    category: 'IoT & Hardware',
+    technologies: ['Monkey C', 'Garmin SDK', 'ConnectIQ'],
+    features: [
+      'Binary time display',
+      'Optimized for Garmin Fenix series',
+      'Low battery consumption',
+      'Clean minimalist design',
+      'Available on Garmin App Store',
+    ],
+    role: 'Co-Developer',
+    year: '2016',
+    duration: '3 months',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/binary-watchface.jpg',
+      gallery: [],
+    },
+    links: {
+      github: 'https://github.com/kromar/garmin_fenix3',
+      live: 'https://apps.garmin.com/de-DE/apps/80e17ad5-5892-4ed9-94f0-3a2c732aec87',
+    },
+    highlights: [
+      'Published on Garmin Connect IQ Store',
+      'Collaborative family project',
+      'Custom binary time algorithm',
+    ],
+    teamSize: 2,
+    impact: 'Created a unique way to display time for Garmin smartwatch enthusiasts',
+    featured: false,
+  },
+  {
     id: 'personal-website',
     title: 'Personal Portfolio Website',
     description:
@@ -187,7 +224,7 @@ export const portfolioProjects: Project[] = [
     year: '2024-2025',
     status: 'In Progress',
     images: {
-      thumbnail: '/images/projects/portfolio-thumb.jpg',
+      thumbnail: '/portfolio/projects/portfolio-thumb.jpg',
       gallery: [],
     },
     links: {
