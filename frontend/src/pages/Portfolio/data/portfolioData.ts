@@ -125,7 +125,7 @@ export const portfolioProjects: Project[] = [
       gallery: [],
     },
     links: {
-      github: 'https://github.com/orxonox',
+      github: 'https://www.orxonox.net/browser',
       documentation: 'https://www.orxonox.net',
     },
     highlights: [
