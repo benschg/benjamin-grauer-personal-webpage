@@ -186,7 +186,7 @@ export const portfolioProjects: Project[] = [
       'Real-time preview',
     ],
     role: 'Developer',
-    year: '2024',
+    year: '2025',
     status: 'Completed',
     images: {
       thumbnail: '/portfolio/projects/mosaic-studio.jpg',
@@ -225,7 +225,7 @@ export const portfolioProjects: Project[] = [
       'Local-only data storage (no server)',
     ],
     role: 'Creator & Developer',
-    year: '2024',
+    year: '2025',
     duration: '2 days',
     status: 'Completed',
     images: {
