@@ -170,6 +170,49 @@ export const portfolioProjects: Project[] = [
     featured: true,
   },
   {
+    id: 'glyphic',
+    title: 'Glyphic - Font Creation Tool',
+    description:
+      'Web-based, touch-first font creation tool for designing custom fonts on any device with complete privacy and offline support.',
+    longDescription:
+      'Glyphic is a modern web application that makes font creation accessible to everyone. Built with a touch-first approach, it allows users to create custom fonts using drawing tools optimized for touch screens, tablets, and traditional computers. All data is stored locally in the browser, ensuring complete privacy with no server uploads, tracking, or cookies. The tool features an intuitive interface with reference image tracing, visual guidelines, and automatic saving.',
+    category: 'Web Development',
+    technologies: ['Next.js 14', 'TypeScript', 'Bun', 'opentype.js', 'HTML5 Canvas', 'CSS Modules'],
+    features: [
+      'Touch and pen-optimized drawing interface',
+      'Multiple drawing tools (freehand, straight lines, points)',
+      'Reference image tracing support',
+      'Visual drawing guidelines',
+      'Character grid management',
+      'Dark mode support',
+      'Auto-save functionality',
+      'Export fonts as TTF format',
+      'Complete offline functionality',
+      'Local-only data storage (no server)',
+    ],
+    role: 'Creator & Developer',
+    year: '2024',
+    duration: '2 months',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/glyphic.jpg',
+      gallery: [],
+    },
+    links: {
+      live: 'https://glyphic.benjamingrauer.ch',
+      github: 'https://github.com/benschg/glyphic',
+    },
+    highlights: [
+      'Privacy-first: 100% local data storage',
+      'GDPR compliant with no tracking',
+      'Touch-optimized for modern devices',
+      'Full offline support',
+      'MIT licensed open source',
+    ],
+    impact: 'Makes font creation accessible to everyone with a focus on privacy and ease of use',
+    featured: true,
+  },
+  {
     id: 'binary-watchface',
     title: 'Binary Watchface for Garmin',
     description:
