@@ -16,61 +16,54 @@ import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 
 // Video data from the YouTube channel
+// Replace videoId with actual YouTube video IDs from your channel
 const videos = [
   {
     id: 'abstract-particles',
     title: 'Abstract Particles',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_1',
-    thumbnail: '/portfolio/youtube/abstract-particles.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Abstract particle animation exploring dynamic motion',
   },
   {
     id: 'scales-blender',
     title: 'Scales with Blender',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_2',
-    thumbnail: '/portfolio/youtube/scales-blender.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Procedural scale patterns created in Blender',
   },
   {
     id: 'diving-reel',
     title: 'Diving Reel by Benjamin',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_3',
-    thumbnail: '/portfolio/youtube/diving-reel.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: '3D model and animation of a diving reel',
   },
   {
     id: 'explosive-fluid',
     title: 'Explosive Fluid Simulation',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_4',
-    thumbnail: '/portfolio/youtube/explosive-fluid.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Explosive fluid simulation using Blender MantaFlow',
   },
   {
     id: 'strange-sphere',
     title: 'The Strange Sphere in Red Space',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_5',
-    thumbnail: '/portfolio/youtube/strange-sphere.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Abstract spherical animation in a red environment',
   },
   {
     id: 'disco-ball',
     title: 'Disco-ball',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_6',
-    thumbnail: '/portfolio/youtube/disco-ball.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'An endlessly looping animation using Blender',
   },
   {
     id: 'cylinder-madness',
     title: 'Cylinder Madness',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_7',
-    thumbnail: '/portfolio/youtube/cylinder-madness.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Experimental animation with cylindrical forms',
   },
   {
     id: 'crazy-wave',
     title: 'The Crazy Wave Animation',
-    embedUrl: 'https://www.youtube.com/embed/VIDEO_ID_8',
-    thumbnail: '/portfolio/youtube/crazy-wave.jpg',
+    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
     description: 'Based on Ducky 3D\'s learning video',
   },
 ];
@@ -236,33 +229,56 @@ const YouTubeChannelDetail = () => {
                     transition={{ delay: 0.3 + index * 0.1 }}
                   >
                     <Card
+                      component="a"
+                      href={`https://www.youtube.com/watch?v=${video.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       sx={{
                         height: '100%',
                         background:
                           'linear-gradient(135deg, rgba(52, 58, 64, 0.9) 0%, rgba(52, 58, 64, 0.95) 100%)',
                         border: '1px solid rgba(137, 102, 93, 0.3)',
                         transition: 'all 0.3s ease',
+                        textDecoration: 'none',
+                        display: 'block',
+                        cursor: 'pointer',
+                        position: 'relative',
                         '&:hover': {
                           transform: 'translateY(-4px)',
                           boxShadow: '0 8px 24px rgba(0,0,0,0.3)',
                           borderColor: categoryColor,
+                          '& .play-button': {
+                            transform: 'translate(-50%, -50%) scale(1.1)',
+                            backgroundColor: '#FF0000',
+                          },
                         },
                       }}
                     >
-                      {/* Video Thumbnail/Embed Placeholder */}
-                      <CardMedia
-                        sx={{
-                          height: 240,
-                          backgroundColor: 'rgba(0,0,0,0.5)',
-                          position: 'relative',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                        }}
-                      >
-                        <Box
+                      {/* YouTube Thumbnail */}
+                      <Box sx={{ position: 'relative', height: 240 }}>
+                        <CardMedia
+                          component="img"
+                          image={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
+                          alt={video.title}
+                          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+                            // Fallback to medium quality thumbnail if maxres not available
+                            e.currentTarget.src = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
+                          }}
                           sx={{
+                            height: 240,
+                            objectFit: 'cover',
+                            backgroundColor: 'rgba(0,0,0,0.5)',
+                          }}
+                        />
+
+                        {/* Play Button Overlay */}
+                        <Box
+                          className="play-button"
+                          sx={{
+                            position: 'absolute',
+                            top: '50%',
+                            left: '50%',
+                            transform: 'translate(-50%, -50%)',
                             width: 80,
                             height: 80,
                             borderRadius: '50%',
@@ -270,15 +286,13 @@ const YouTubeChannelDetail = () => {
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            transition: 'transform 0.3s ease',
-                            '&:hover': {
-                              transform: 'scale(1.1)',
-                            },
+                            transition: 'all 0.3s ease',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
                           }}
                         >
-                          <PlayArrow sx={{ fontSize: 48, color: 'white' }} />
+                          <PlayArrow sx={{ fontSize: 48, color: 'white', ml: 0.5 }} />
                         </Box>
-                      </CardMedia>
+                      </Box>
 
                       <CardContent>
                         <Typography
