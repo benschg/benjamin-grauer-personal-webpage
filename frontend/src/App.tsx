@@ -9,7 +9,9 @@ const Home = lazy(() => import('./pages/Home'));
 const WorkingLife = lazy(() => import('./pages/WorkingLife'));
 const PersonalLife = lazy(() => import('./pages/PersonalLife'));
 const Portfolio = lazy(() => import('./pages/Portfolio'));
+const ProjectDetail = lazy(() => import('./pages/Portfolio/ProjectDetail'));
 const ArtGallery = lazy(() => import('./pages/Portfolio/ArtGallery'));
+const YouTubeChannel = lazy(() => import('./pages/Portfolio/YouTubeChannel'));
 
 // Very subtle loading indicator
 const PageLoader = () => (
@@ -44,7 +46,9 @@ function App() {
               <Route path="/working-life" element={<WorkingLife />} />
               <Route path="/personal-life" element={<PersonalLife />} />
               <Route path="/portfolio" element={<Portfolio />} />
+              <Route path="/portfolio/3d-animations-youtube" element={<YouTubeChannel />} />
               <Route path="/portfolio/arts-and-crafts" element={<ArtGallery />} />
+              <Route path="/portfolio/:projectId" element={<ProjectDetail />} />
             </Routes>
           </Suspense>
         </div>

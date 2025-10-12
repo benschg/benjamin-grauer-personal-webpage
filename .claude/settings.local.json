@@ -4,7 +4,10 @@
       "WebSearch",
       "Bash(yarn test:*)",
       "Bash(yarn type-check)",
-      "Bash(yarn lint)"
+      "Bash(yarn lint)",
+      "Bash(node:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

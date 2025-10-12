@@ -9,7 +9,8 @@ export interface Project {
     | '3D Graphics'
     | 'Medical Software'
     | 'IoT & Hardware'
-    | 'Open Source';
+    | 'Open Source'
+    | 'Creative';
   technologies: string[];
   features?: string[];
   role: string;
@@ -50,9 +51,13 @@ export const portfolioProjects: Project[] = [
       'Multi-platform support',
     ],
     role: 'Lead Software Engineer',
-    year: '2012-2024',
-    duration: '12+ years',
+    year: '2009-2020',
+    duration: '11 years',
     status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/virtamed-simulator.webp',
+      gallery: [],
+    },
     highlights: [
       'Used in 100+ medical institutions globally',
       'Trained 10,000+ medical professionals',
@@ -60,6 +65,39 @@ export const portfolioProjects: Project[] = [
     ],
     teamSize: 15,
     impact: 'Revolutionized medical training by providing risk-free, repeatable surgical practice',
+    featured: true,
+  },
+  {
+    id: 'verity-cloud-platform',
+    title: 'Verity Cloud Platform',
+    description:
+      'Enterprise cloud platform for drone data management and analytics with real-time processing capabilities.',
+    longDescription:
+      'Developed cloud infrastructure for processing and analyzing drone-captured inventory data. Built scalable microservices handling millions of data points daily.',
+    category: 'Web Development',
+    technologies: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes', 'PostgreSQL'],
+    features: [
+      'Real-time data processing',
+      'Interactive 3D visualizations',
+      'Automated reporting',
+      'RESTful APIs',
+      'Role-based access control',
+    ],
+    role: 'Senior Software Engineer',
+    year: '2020-2022',
+    duration: '2 years',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/verity-cloud.png',
+      gallery: [],
+    },
+    highlights: [
+      'Processed 10M+ data points daily',
+      'Reduced inventory counting time by 90%',
+      'Deployed across 50+ warehouses',
+    ],
+    teamSize: 8,
+    impact: 'Transformed warehouse inventory management through autonomous drone technology',
     featured: true,
   },
   {
@@ -82,8 +120,12 @@ export const portfolioProjects: Project[] = [
     year: '2007-2012',
     duration: '5 years',
     status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/orxonox-game.jpg',
+      gallery: [],
+    },
     links: {
-      github: 'https://github.com/orxonox',
+      github: 'https://www.orxonox.net/browser',
       documentation: 'https://www.orxonox.net',
     },
     highlights: [
@@ -94,6 +136,188 @@ export const portfolioProjects: Project[] = [
     teamSize: 30,
     impact: 'Educational platform for game development and computer graphics',
     featured: true,
+  },
+  {
+    id: 'arts-and-crafts-gallery',
+    title: 'Arts & Crafts Portfolio',
+    description:
+      'Personal collection of digital art, paintings, and handmade crafts showcasing creative exploration.',
+    longDescription:
+      'A diverse collection of artistic works including digital paintings, mixed media compositions, abstract art, and ceramic crafts. This portfolio represents creative exploration alongside technical work, featuring cosmic themes, abstract compositions, and traditional craftsmanship.',
+    category: 'Creative',
+    technologies: ['Digital Art', 'Mixed Media', 'Ceramics', 'Photography'],
+    features: [
+      'Digital paintings and illustrations',
+      'Abstract and cosmic artwork',
+      'Ceramic and pottery work',
+      'Mixed media compositions',
+      'Creative photography',
+    ],
+    role: 'Artist & Creator',
+    year: '2020-2024',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/arts-and-crafts/jupiter.jpg',
+      gallery: [],
+    },
+    highlights: [
+      '27+ artistic works',
+      'Multiple mediums explored',
+      'Featured cosmic and abstract themes',
+      'Handmade ceramic pieces',
+    ],
+    impact: 'Demonstrates creative versatility and artistic expression beyond technical work',
+    featured: true,
+  },
+  {
+    id: '3d-animations-youtube',
+    title: '3D Animations YouTube Channel',
+    description:
+      'YouTube channel showcasing experimental 3D animations and simulations created with Blender.',
+    longDescription:
+      'A creative YouTube channel featuring a collection of 3D animations, fluid simulations, and experimental visual effects created using Blender. The channel demonstrates various animation techniques including particle systems, fluid dynamics, abstract designs, and looping animations. Projects range from technical demonstrations to artistic explorations, showcasing proficiency in 3D modeling, rendering, and animation.',
+    category: '3D Graphics',
+    technologies: ['Blender', 'MantaFlow', '3D Animation', 'Fluid Simulation', 'Particle Systems'],
+    features: [
+      'Abstract particle animations',
+      'Fluid simulations with MantaFlow',
+      'Experimental visual effects',
+      'Looping animations',
+      'Technical demonstrations',
+      'Artistic 3D explorations',
+    ],
+    role: 'Creator & Animator',
+    year: '2018-2024',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/3d-animations.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://www.youtube.com/@benschg',
+    },
+    highlights: [
+      'Multiple fluid simulation projects',
+      'Abstract and experimental animations',
+      'Technical skill demonstrations',
+      'Learning-based projects',
+    ],
+    impact: 'Showcases creative and technical 3D animation skills through experimental visual projects',
+    featured: false,
+  },
+  {
+    id: 'mosaic-studio',
+    title: 'AI Mosaic Studio',
+    description:
+      'AI-powered mosaic creation tool for generating artistic mosaic images from photos.',
+    longDescription:
+      'AI Mosaic Studio is a web-based application that transforms regular photos into beautiful mosaic artworks using artificial intelligence. The tool provides an intuitive interface for creating customized mosaic effects, allowing users to adjust parameters and generate unique artistic interpretations of their images.',
+    category: 'Web Development',
+    technologies: ['AI/ML', 'Web Technologies', 'Image Processing'],
+    features: [
+      'AI-powered mosaic generation',
+      'Photo-to-mosaic transformation',
+      'Customizable mosaic parameters',
+      'Web-based interface',
+      'Real-time preview',
+    ],
+    role: 'Developer',
+    year: '2025',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/mosaic-studio.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://mosaic-studio.0verall.com/',
+    },
+    highlights: [
+      'AI-powered image processing',
+      'Intuitive web interface',
+      'Real-time mosaic generation',
+    ],
+    impact: 'Provides an accessible tool for creating artistic mosaic effects from photos',
+    featured: false,
+  },
+  {
+    id: 'glyphic',
+    title: 'Glyphic - Font Creation Tool',
+    description:
+      'Web-based, touch-first font creation tool for designing custom fonts on any device with complete privacy and offline support.',
+    longDescription:
+      'Glyphic is a modern web application that makes font creation accessible to everyone. Built with a touch-first approach, it allows users to create custom fonts using drawing tools optimized for touch screens, tablets, and traditional computers. Developed collaboratively with Claude AI in just 2 days, this project showcases rapid modern web development. All data is stored locally in the browser, ensuring complete privacy with no server uploads, tracking, or cookies. The tool features an intuitive interface with reference image tracing, visual guidelines, and automatic saving.',
+    category: 'Web Development',
+    technologies: ['Next.js 14', 'TypeScript', 'Bun', 'opentype.js', 'HTML5 Canvas', 'CSS Modules'],
+    features: [
+      'Touch and pen-optimized drawing interface',
+      'Multiple drawing tools (freehand, straight lines, points)',
+      'Reference image tracing support',
+      'Visual drawing guidelines',
+      'Character grid management',
+      'Dark mode support',
+      'Auto-save functionality',
+      'Export fonts as TTF format',
+      'Complete offline functionality',
+      'Local-only data storage (no server)',
+    ],
+    role: 'Creator & Developer',
+    year: '2025',
+    duration: '2 days',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/glyphic.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://glyphic.benjamingrauer.ch',
+      github: 'https://github.com/benschg/glyphic',
+    },
+    highlights: [
+      'Built in 2 days with Claude AI assistance',
+      'Privacy-first: 100% local data storage',
+      'GDPR compliant with no tracking',
+      'Touch-optimized for modern devices',
+      'MIT licensed open source',
+    ],
+    impact: 'Makes font creation accessible to everyone with a focus on privacy and ease of use',
+    featured: true,
+  },
+  {
+    id: 'binary-watchface',
+    title: 'Binary Watchface for Garmin',
+    description:
+      'Custom binary time display watch face for Garmin smartwatches, designed collaboratively with my brother Daniel.',
+    longDescription:
+      'A unique watch face that displays time in binary format for Garmin smartwatches. This project combines functional design with a geeky aesthetic, allowing users to read time in binary notation. Built as a collaborative project showcasing both technical skills and creative design.',
+    category: 'IoT & Hardware',
+    technologies: ['Monkey C', 'Garmin SDK', 'ConnectIQ'],
+    features: [
+      'Binary time display',
+      'Optimized for Garmin Fenix series',
+      'Low battery consumption',
+      'Clean minimalist design',
+      'Available on Garmin App Store',
+    ],
+    role: 'Co-Developer',
+    year: '2016',
+    duration: '3 months',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/binary-watchface.png',
+      gallery: [],
+    },
+    links: {
+      github: 'https://github.com/kromar/garmin_fenix3',
+      live: 'https://apps.garmin.com/de-DE/apps/80e17ad5-5892-4ed9-94f0-3a2c732aec87',
+    },
+    highlights: [
+      'Published on Garmin Connect IQ Store',
+      'Collaborative family project',
+      'Custom binary time algorithm',
+    ],
+    teamSize: 2,
+    impact: 'Created a unique way to display time for Garmin smartwatch enthusiasts',
+    featured: false,
   },
   {
     id: 'personal-website',
@@ -110,161 +334,17 @@ export const portfolioProjects: Project[] = [
       'SEO friendly',
     ],
     role: 'Full Stack Developer',
-    year: '2024',
+    year: '2024-2025',
     status: 'In Progress',
+    images: {
+      thumbnail: '/portfolio/projects/personal-website.png',
+      gallery: [],
+    },
     links: {
-      live: 'https://benjamin-grauer.com',
-      github: 'https://github.com/bgrauer',
+      live: 'https://benjamingrauer.ch',
+      github: 'https://github.com/benschg/benjamin-grauer-personal-webpage',
     },
     featured: false,
-  },
-  {
-    id: 'verity-cloud-platform',
-    title: 'Verity Cloud Platform',
-    description:
-      'Enterprise cloud platform for drone data management and analytics with real-time processing capabilities.',
-    longDescription:
-      'Developed cloud infrastructure for processing and analyzing drone-captured inventory data. Built scalable microservices handling millions of data points daily.',
-    category: 'Web Development',
-    technologies: ['TypeScript', 'React', 'Node.js', 'Docker', 'Kubernetes', 'PostgreSQL'],
-    features: [
-      'Real-time data processing',
-      'Interactive 3D visualizations',
-      'Automated reporting',
-      'RESTful APIs',
-      'Role-based access control',
-    ],
-    role: 'Senior Software Engineer',
-    year: '2020-2022',
-    duration: '2 years',
-    status: 'Completed',
-    highlights: [
-      'Processed 10M+ data points daily',
-      'Reduced inventory counting time by 90%',
-      'Deployed across 50+ warehouses',
-    ],
-    teamSize: 8,
-    impact: 'Transformed warehouse inventory management through autonomous drone technology',
-    featured: true,
-  },
-  {
-    id: '3d-visualization-tools',
-    title: '3D Web Visualization Tools',
-    description:
-      'Interactive 3D visualization components for web applications using WebGL and Three.js.',
-    category: '3D Graphics',
-    technologies: ['Three.js', 'WebGL', 'TypeScript', 'React', 'GLSL'],
-    features: [
-      'Custom shaders',
-      'Performance optimization',
-      'Mobile support',
-      'VR/AR capabilities',
-    ],
-    role: 'Graphics Developer',
-    year: '2018-2024',
-    status: 'Completed',
-    highlights: [
-      'Sub-16ms frame times',
-      'Cross-platform compatibility',
-      'Used in production applications',
-    ],
-    featured: false,
-  },
-  {
-    id: 'iot-sensor-platform',
-    title: 'IoT Sensor Integration Platform',
-    description:
-      'Platform for collecting and analyzing data from distributed IoT sensors in industrial settings.',
-    category: 'IoT & Hardware',
-    technologies: ['Python', 'C++', 'MQTT', 'InfluxDB', 'Grafana', 'Docker'],
-    features: [
-      'Real-time data streaming',
-      'Predictive analytics',
-      'Alert system',
-      'Dashboard visualization',
-    ],
-    role: 'Technical Lead',
-    year: '2019',
-    duration: '8 months',
-    status: 'Completed',
-    highlights: [
-      'Monitored 500+ sensors',
-      'Prevented equipment failures',
-      'Reduced downtime by 40%',
-    ],
-    teamSize: 4,
-    featured: false,
-  },
-  {
-    id: 'game-engine-contributions',
-    title: 'Game Engine Contributions',
-    description: 'Contributions to various open-source game engines and graphics libraries.',
-    category: 'Open Source',
-    technologies: ['C++', 'OpenGL', 'Vulkan', 'DirectX'],
-    features: [
-      'Performance optimizations',
-      'Bug fixes',
-      'Feature implementations',
-      'Documentation improvements',
-    ],
-    role: 'Contributor',
-    year: '2008-2023',
-    status: 'Completed',
-    links: {
-      github: 'https://github.com/bgrauer',
-    },
-    highlights: ['Multiple merged PRs', 'Performance improvements', 'Community recognition'],
-    featured: false,
-  },
-  {
-    id: '3d-printing-automation',
-    title: '3D Printing Automation Tools',
-    description: 'Automated workflow tools for 3D printing preparation and optimization.',
-    category: 'IoT & Hardware',
-    technologies: ['Python', 'OpenSCAD', 'Blender API', 'G-code'],
-    features: [
-      'Automated slicing',
-      'Print time optimization',
-      'Material calculation',
-      'Quality analysis',
-    ],
-    role: 'Developer',
-    year: '2020-2021',
-    status: 'Completed',
-    highlights: [
-      'Reduced preparation time by 70%',
-      'Improved print success rate',
-      'Cost optimization',
-    ],
-    featured: false,
-  },
-  {
-    id: 'arts-and-crafts-gallery',
-    title: 'Arts & Crafts Portfolio',
-    description:
-      'Personal collection of digital art, paintings, and handmade crafts showcasing creative exploration.',
-    longDescription:
-      'A diverse collection of artistic works including digital paintings, mixed media compositions, abstract art, and ceramic crafts. This portfolio represents creative exploration alongside technical work, featuring cosmic themes, abstract compositions, and traditional craftsmanship.',
-    category: 'Open Source',
-    technologies: ['Digital Art', 'Mixed Media', 'Ceramics', 'Photography'],
-    features: [
-      'Digital paintings and illustrations',
-      'Abstract and cosmic artwork',
-      'Ceramic and pottery work',
-      'Mixed media compositions',
-      'Creative photography',
-    ],
-    role: 'Artist & Creator',
-    year: '2020-2024',
-    status: 'Completed',
-    highlights: [
-      '27+ artistic works',
-      'Multiple mediums explored',
-      'Featured cosmic and abstract themes',
-      'Handmade ceramic pieces',
-    ],
-    impact: 'Demonstrates creative versatility and artistic expression beyond technical work',
-    featured: true,
   },
 ];
 
