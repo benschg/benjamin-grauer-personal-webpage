@@ -170,6 +170,40 @@ export const portfolioProjects: Project[] = [
     featured: true,
   },
   {
+    id: 'mosaic-studio',
+    title: 'AI Mosaic Studio',
+    description:
+      'AI-powered mosaic creation tool for generating artistic mosaic images from photos.',
+    longDescription:
+      'AI Mosaic Studio is a web-based application that transforms regular photos into beautiful mosaic artworks using artificial intelligence. The tool provides an intuitive interface for creating customized mosaic effects, allowing users to adjust parameters and generate unique artistic interpretations of their images.',
+    category: 'Web Development',
+    technologies: ['AI/ML', 'Web Technologies', 'Image Processing'],
+    features: [
+      'AI-powered mosaic generation',
+      'Photo-to-mosaic transformation',
+      'Customizable mosaic parameters',
+      'Web-based interface',
+      'Real-time preview',
+    ],
+    role: 'Developer',
+    year: '2024',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/mosaic-studio.jpg',
+      gallery: [],
+    },
+    links: {
+      live: 'https://mosaic-studio.0verall.com/',
+    },
+    highlights: [
+      'AI-powered image processing',
+      'Intuitive web interface',
+      'Real-time mosaic generation',
+    ],
+    impact: 'Provides an accessible tool for creating artistic mosaic effects from photos',
+    featured: false,
+  },
+  {
     id: 'glyphic',
     title: 'Glyphic - Font Creation Tool',
     description:
