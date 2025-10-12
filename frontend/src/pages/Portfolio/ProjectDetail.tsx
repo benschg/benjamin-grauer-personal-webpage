@@ -8,7 +8,6 @@ import {
   Grid,
   Card,
   CardContent,
-  IconButton,
 } from '@mui/material';
 import {
   ArrowBack,

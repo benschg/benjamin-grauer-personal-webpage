@@ -54,8 +54,12 @@ const YouTubeChannelDetail = () => {
         console.log('Fetching from:', rssUrl);
 
         // Use a CORS proxy to fetch the RSS feed from the client
+        // Add timestamp to prevent caching
         const proxyUrl = 'https://api.allorigins.win/get?url=';
-        const response = await fetch(proxyUrl + encodeURIComponent(rssUrl));
+        const cacheBuster = `&_=${Date.now()}`;
+        const response = await fetch(proxyUrl + encodeURIComponent(rssUrl) + cacheBuster, {
+          cache: 'no-store', // Prevent browser caching
+        });
 
         if (!response.ok) {
           throw new Error(`Failed to fetch videos: ${response.status}`);
