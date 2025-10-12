@@ -9,9 +9,9 @@ const RecommendationsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
 
-  // Shuffle recommendations once on component mount
+  // Shuffle all recommendations once on component mount
   const shuffledRecommendations = useMemo(() => {
-    const shuffled = [...recommendations.slice(0, 3)];
+    const shuffled = [...recommendations];
     for (let i = shuffled.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -191,6 +191,48 @@ const RecommendationsSection = () => {
           >
             <FaChevronRight />
           </IconButton>
+        </Box>
+
+        {/* Page Indicators */}
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            gap: 1,
+            mt: 3,
+          }}
+        >
+          {Array.from({ length: totalPages }).map((_, index) => (
+            <Box
+              key={index}
+              onClick={() => setCurrentIndex(index)}
+              sx={{
+                width: currentIndex === index ? 32 : 8,
+                height: 8,
+                borderRadius: 4,
+                backgroundColor: currentIndex === index ? 'primary.main' : 'rgba(137, 102, 93, 0.3)',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  backgroundColor: currentIndex === index ? 'primary.main' : 'rgba(137, 102, 93, 0.5)',
+                },
+              }}
+            />
+          ))}
+        </Box>
+
+        {/* Page Counter */}
+        <Box sx={{ textAlign: 'center', mt: 2 }}>
+          <Typography
+            variant="body2"
+            sx={{
+              color: 'text.secondary',
+              fontSize: '0.875rem',
+            }}
+          >
+            Page {currentIndex + 1} of {totalPages} • {shuffledRecommendations.length} recommendations
+          </Typography>
         </Box>
 
         {/* Call to Action */}
