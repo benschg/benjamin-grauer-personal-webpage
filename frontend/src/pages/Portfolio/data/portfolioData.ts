@@ -189,7 +189,7 @@ export const portfolioProjects: Project[] = [
     year: '2025',
     status: 'Completed',
     images: {
-      thumbnail: '/portfolio/projects/mosaic-studio.jpg',
+      thumbnail: '/portfolio/projects/mosaic-studio.png',
       gallery: [],
     },
     links: {
