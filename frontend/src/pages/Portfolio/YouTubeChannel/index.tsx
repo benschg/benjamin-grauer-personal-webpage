@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Container,
@@ -9,69 +10,109 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  CircularProgress,
+  Alert,
 } from '@mui/material';
 import { ArrowBack, PlayArrow, YouTube } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import Header from '../../../components/common/Header';
 import Footer from '../../../components/common/Footer';
 
-// Video data from the YouTube channel
-// Replace videoId with actual YouTube video IDs from your channel
-const videos = [
-  {
-    id: 'abstract-particles',
-    title: 'Abstract Particles',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Abstract particle animation exploring dynamic motion',
-  },
-  {
-    id: 'scales-blender',
-    title: 'Scales with Blender',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Procedural scale patterns created in Blender',
-  },
-  {
-    id: 'diving-reel',
-    title: 'Diving Reel by Benjamin',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: '3D model and animation of a diving reel',
-  },
-  {
-    id: 'explosive-fluid',
-    title: 'Explosive Fluid Simulation',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Explosive fluid simulation using Blender MantaFlow',
-  },
-  {
-    id: 'strange-sphere',
-    title: 'The Strange Sphere in Red Space',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Abstract spherical animation in a red environment',
-  },
-  {
-    id: 'disco-ball',
-    title: 'Disco-ball',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'An endlessly looping animation using Blender',
-  },
-  {
-    id: 'cylinder-madness',
-    title: 'Cylinder Madness',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Experimental animation with cylindrical forms',
-  },
-  {
-    id: 'crazy-wave',
-    title: 'The Crazy Wave Animation',
-    videoId: 'dQw4w9WgXcQ', // Replace with actual YouTube video ID
-    description: 'Based on Ducky 3D\'s learning video',
-  },
-];
-
 const categoryColor = '#E91E63'; // 3D Graphics color
+
+// Option 1: Use channel ID (fetches latest 15 videos from entire channel)
+const CHANNEL_ID = 'UCbQQZ-l8i8fVEI8gGQO6CqA'; // @benschg channel ID
+
+// Option 2: Use playlist ID (fetches from specific playlist)
+const PLAYLIST_ID = 'PLQfp_fHFd7QuM3X2Ve3cI3Qwaee3NmlmE'; // Your 3D animations playlist
+
+interface Video {
+  id: string;
+  videoId: string;
+  title: string;
+  description: string;
+  publishedAt: string;
+}
 
 const YouTubeChannelDetail = () => {
   const navigate = useNavigate();
+  const [videos, setVideos] = useState<Video[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Choose between channel or playlist RSS feed
+        const rssUrl = PLAYLIST_ID
+          ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`
+          : `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
+
+        console.log('Fetching from:', rssUrl);
+
+        // Use a CORS proxy to fetch the RSS feed from the client
+        const proxyUrl = 'https://api.allorigins.win/get?url=';
+        const response = await fetch(proxyUrl + encodeURIComponent(rssUrl));
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch videos: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const xmlText = data.contents;
+
+        console.log('Received XML length:', xmlText?.length);
+
+        // Parse the XML
+        const parser = new DOMParser();
+        const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+
+        // Check for parsing errors
+        const parserError = xmlDoc.querySelector('parsererror');
+        if (parserError) {
+          console.error('XML parsing error:', parserError.textContent);
+          throw new Error('Failed to parse RSS feed');
+        }
+
+        const entries = xmlDoc.querySelectorAll('entry');
+        console.log('Found entries:', entries.length);
+
+        const fetchedVideos: Video[] = Array.from(entries).map((entry) => {
+          const videoId = entry.querySelector('videoId, yt\\:videoId')?.textContent || '';
+          const title = entry.querySelector('title')?.textContent || 'Untitled';
+          const description =
+            entry.querySelector('media\\:description, description')?.textContent || '';
+          const publishedAt = entry.querySelector('published')?.textContent || '';
+
+          console.log('Parsed video:', { videoId, title: title.substring(0, 30) });
+
+          return {
+            id: videoId,
+            videoId,
+            title,
+            description,
+            publishedAt,
+          };
+        });
+
+        setVideos(fetchedVideos);
+
+        if (fetchedVideos.length === 0) {
+          setError('No videos found. Please check the channel or playlist ID.');
+        }
+      } catch (err) {
+        console.error('Error fetching videos:', err);
+        setError(`Failed to load videos: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVideos();
+  }, []);
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#343A40' }}>
@@ -217,11 +258,27 @@ const YouTubeChannelDetail = () => {
                 color: 'text.primary',
               }}
             >
-              Featured Videos
+              Recent Videos
             </Typography>
 
-            <Grid container spacing={3}>
-              {videos.map((video, index) => (
+            {/* Loading State */}
+            {loading && (
+              <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+                <CircularProgress sx={{ color: categoryColor }} />
+              </Box>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <Alert severity="error" sx={{ mb: 4 }}>
+                {error}
+              </Alert>
+            )}
+
+            {/* Videos Grid */}
+            {!loading && !error && (
+              <Grid container spacing={3}>
+                {videos.map((video, index) => (
                 <Grid key={video.id} size={{ xs: 12, md: 6 }}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
@@ -258,12 +315,8 @@ const YouTubeChannelDetail = () => {
                       <Box sx={{ position: 'relative', height: 240 }}>
                         <CardMedia
                           component="img"
-                          image={`https://img.youtube.com/vi/${video.videoId}/maxresdefault.jpg`}
+                          image={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
                           alt={video.title}
-                          onError={(e: React.SyntheticEvent<HTMLImageElement, Event>) => {
-                            // Fallback to medium quality thumbnail if maxres not available
-                            e.currentTarget.src = `https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`;
-                          }}
                           sx={{
                             height: 240,
                             objectFit: 'cover',
@@ -319,8 +372,9 @@ const YouTubeChannelDetail = () => {
                     </Card>
                   </motion.div>
                 </Grid>
-              ))}
-            </Grid>
+                ))}
+              </Grid>
+            )}
           </motion.div>
 
           {/* Technologies */}
