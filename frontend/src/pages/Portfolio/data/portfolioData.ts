@@ -51,8 +51,8 @@ export const portfolioProjects: Project[] = [
       'Multi-platform support',
     ],
     role: 'Lead Software Engineer',
-    year: '2012-2024',
-    duration: '12+ years',
+    year: '2009-2020',
+    duration: '11 years',
     status: 'Completed',
     images: {
       thumbnail: '/portfolio/projects/virtamed-simulator.webp',
