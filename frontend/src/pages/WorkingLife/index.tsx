@@ -10,12 +10,14 @@ import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import RecommendationsSection from './RecommendationsSection';
 import CareerAspirationsSection from './CareerAspirationsSection';
+import PortfolioReferenceSection from './PortfolioReferenceSection';
 
 const WorkingLife = () => {
   const tocItems = [
     { id: 'documents', title: 'Documents', level: 1 },
     { id: 'impact', title: 'My Impact', level: 1 },
     { id: 'skills', title: 'Skills & Expertise', level: 1 },
+    { id: 'portfolio-reference', title: 'See My Work', level: 1 },
     { id: 'timeline', title: 'Career Timeline', level: 1 },
     { id: 'recommendations', title: 'Recommendations', level: 1 },
     { id: 'aspirations', title: 'Career Aspirations', level: 1 },
@@ -115,6 +117,9 @@ const WorkingLife = () => {
             </motion.div>
             <motion.div variants={itemVariants} id="skills">
               <SkillsSection />
+            </motion.div>
+            <motion.div variants={itemVariants} id="portfolio-reference">
+              <PortfolioReferenceSection />
             </motion.div>
             <motion.div variants={itemVariants} id="timeline">
               <TimelineSection />
