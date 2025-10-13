@@ -10,15 +10,19 @@ import SkillsSection from './SkillsSection';
 import TimelineSection from './TimelineSection';
 import RecommendationsSection from './RecommendationsSection';
 import CareerAspirationsSection from './CareerAspirationsSection';
+import PortfolioReferenceSection from './PortfolioReferenceSection';
+import PersonalLifeReferenceSection from './PersonalLifeReferenceSection';
 
 const WorkingLife = () => {
   const tocItems = [
     { id: 'documents', title: 'Documents', level: 1 },
     { id: 'impact', title: 'My Impact', level: 1 },
     { id: 'skills', title: 'Skills & Expertise', level: 1 },
+    { id: 'portfolio-reference', title: 'See My Work', level: 1 },
     { id: 'timeline', title: 'Career Timeline', level: 1 },
     { id: 'recommendations', title: 'Recommendations', level: 1 },
     { id: 'aspirations', title: 'Career Aspirations', level: 1 },
+    { id: 'personal-life-reference', title: 'Beyond Work', level: 1 },
   ];
 
   // Animation variants
@@ -116,6 +120,9 @@ const WorkingLife = () => {
             <motion.div variants={itemVariants} id="skills">
               <SkillsSection />
             </motion.div>
+            <motion.div variants={itemVariants} id="portfolio-reference">
+              <PortfolioReferenceSection />
+            </motion.div>
             <motion.div variants={itemVariants} id="timeline">
               <TimelineSection />
             </motion.div>
@@ -124,6 +131,9 @@ const WorkingLife = () => {
             </motion.div>
             <motion.div variants={itemVariants} id="aspirations">
               <CareerAspirationsSection />
+            </motion.div>
+            <motion.div variants={itemVariants} id="personal-life-reference">
+              <PersonalLifeReferenceSection />
             </motion.div>
           </motion.div>
           <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
