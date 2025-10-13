@@ -1,4 +1,4 @@
-import { Box, Typography, Button, Card, CardContent, Grid, Chip } from '@mui/material';
+import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material';
 import { ArrowForward, FamilyRestroom, DirectionsRun, Flight, Hiking } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
