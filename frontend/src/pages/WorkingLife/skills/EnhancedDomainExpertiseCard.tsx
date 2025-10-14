@@ -132,6 +132,8 @@ const EnhancedDomainExpertiseCard = () => {
                         sx={{
                           width: 48,
                           height: 48,
+                          minWidth: 48,
+                          minHeight: 48,
                           borderRadius: '50%',
                           backgroundColor: `${domain.color}20`,
                           display: 'flex',
@@ -139,6 +141,7 @@ const EnhancedDomainExpertiseCard = () => {
                           justifyContent: 'center',
                           color: domain.color,
                           border: `2px solid ${domain.color}`,
+                          flexShrink: 0,
                         }}
                       >
                         {getDomainIcon(domain.icon)}
