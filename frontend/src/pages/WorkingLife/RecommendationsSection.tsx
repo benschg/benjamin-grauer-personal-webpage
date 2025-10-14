@@ -36,9 +36,9 @@ const RecommendationsSection = () => {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth < 600) {
+      if (window.innerWidth < 900) {
         setItemsPerPage(1);
-      } else if (window.innerWidth < 960) {
+      } else if (window.innerWidth < 1400) {
         setItemsPerPage(2);
       } else {
         setItemsPerPage(3);
@@ -142,12 +142,12 @@ const RecommendationsSection = () => {
               '&:hover': {
                 backgroundColor: 'primary.dark',
               },
-              width: 48,
-              height: 48,
+              width: { xs: 36, sm: 48 },
+              height: { xs: 36, sm: 48 },
               flexShrink: 0,
             }}
           >
-            <FaChevronLeft />
+            <FaChevronLeft size={16} />
           </IconButton>
 
           {/* Cards Container */}
@@ -184,12 +184,12 @@ const RecommendationsSection = () => {
               '&:hover': {
                 backgroundColor: 'primary.dark',
               },
-              width: 48,
-              height: 48,
+              width: { xs: 36, sm: 48 },
+              height: { xs: 36, sm: 48 },
               flexShrink: 0,
             }}
           >
-            <FaChevronRight />
+            <FaChevronRight size={16} />
           </IconButton>
         </Box>
 

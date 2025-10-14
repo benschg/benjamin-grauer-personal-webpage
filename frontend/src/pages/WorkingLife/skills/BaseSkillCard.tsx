@@ -199,10 +199,13 @@ const BaseSkillCard = ({
         </Box>
 
         {/* Skills chips */}
-        <Stack
-          direction="row"
-          spacing={1}
-          sx={{ flexWrap: 'wrap', gap: 1, mb: hasDetailedSkills ? 2 : 0 }}
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1,
+            mb: hasDetailedSkills ? 2 : 0,
+          }}
         >
           {skills.map((skill, skillIndex) => {
             const skillName = getSkillName(skill);
@@ -247,7 +250,7 @@ const BaseSkillCard = ({
               />
             );
           })}
-        </Stack>
+        </Box>
 
         {/* Expandable details for detailed skills */}
         {hasDetailedSkills && (
