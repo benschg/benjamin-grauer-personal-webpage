@@ -19,6 +19,7 @@ import {
   TimelineConnector,
   TimelineContent,
   TimelineDot,
+  TimelineOppositeContent,
 } from '@mui/lab';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
@@ -156,17 +157,21 @@ const GenericTimeline = ({
           position="alternate"
           sx={{
             '@media (max-width: 600px)': {
+              padding: 0,
               '& .MuiTimelineItem-root': {
+                minHeight: 'auto',
+                flexDirection: 'row !important',
                 '&::before': {
-                  display: 'none',
+                  flex: 0,
+                  padding: 0,
                 },
-                '& .MuiTimelineOppositeContent-root': {
-                  display: 'none',
-                },
-                '& .MuiTimelineContent-root': {
-                  paddingLeft: 2,
-                  paddingRight: 2,
-                },
+              },
+              '& .MuiTimelineOppositeContent-root': {
+                display: 'none',
+              },
+              '& .MuiTimelineContent-root': {
+                paddingLeft: 2,
+                paddingRight: 0,
               },
             },
           }}
@@ -175,6 +180,11 @@ const GenericTimeline = ({
             const isExpanded = expandedItems.has(event.id);
             return (
               <TimelineItem key={event.id}>
+                <TimelineOppositeContent
+                  sx={{
+                    display: { xs: 'none', sm: 'block' },
+                  }}
+                />
                 <TimelineSeparator>
                   <TimelineDot color={getColor(event.type)} sx={{ cursor: 'pointer' }}>
                     {getIcon(event.type)}
