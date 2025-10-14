@@ -184,9 +184,23 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                 >
                   {/* Compact Framework Header */}
                   <Box
-                    sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                    sx={{
+                      display: 'flex',
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      justifyContent: 'space-between',
+                      flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                      gap: 1,
+                    }}
                   >
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, flex: 1 }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1.5,
+                        flex: '1 1 auto',
+                        minWidth: 0,
+                      }}
+                    >
                       {/* Name & Icon */}
                       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0 }}>
                         <Tooltip title={`${framework.name} - ${framework.category}`}>
@@ -205,34 +219,40 @@ const EnhancedFrameworksAndTechnologiesCard = () => {
                         >
                           {framework.name}
                         </Typography>
-                        {framework.isFavorite && (
-                          <Star sx={{ fontSize: 16, color: '#ffd700', flexShrink: 0 }} />
-                        )}
-                      </Box>
-
-                      {/* Status Indicator */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        {framework.lastUsed === 'Currently using' && (
-                          <Box
-                            sx={{
-                              width: 8,
-                              height: 8,
-                              borderRadius: '50%',
-                              backgroundColor: '#4caf50',
-                              animation: 'pulse 2s infinite',
-                              '@keyframes pulse': {
-                                '0%': { opacity: 1 },
-                                '50%': { opacity: 0.5 },
-                                '100%': { opacity: 1 },
-                              },
-                            }}
-                          />
-                        )}
                       </Box>
                     </Box>
 
-                    {/* Experience & Expand Icon */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    {/* Additional Info - wraps to next line on small screens */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        flexShrink: 0,
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'flex-end', sm: 'flex-end' },
+                      }}
+                    >
+                      {framework.isFavorite && (
+                        <Star sx={{ fontSize: 16, color: '#ffd700', flexShrink: 0 }} />
+                      )}
+                      {/* Status Indicator */}
+                      {framework.lastUsed === 'Currently using' && (
+                        <Box
+                          sx={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: '50%',
+                            backgroundColor: '#4caf50',
+                            animation: 'pulse 2s infinite',
+                            '@keyframes pulse': {
+                              '0%': { opacity: 1 },
+                              '50%': { opacity: 0.5 },
+                              '100%': { opacity: 1 },
+                            },
+                          }}
+                        />
+                      )}
                       <Chip
                         label={framework.experience}
                         size="small"

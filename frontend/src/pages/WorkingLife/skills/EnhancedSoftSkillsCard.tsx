@@ -122,64 +122,52 @@ const EnhancedSoftSkillsCard = () => {
                   }}
                 >
                   {/* Compact Skill Header */}
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-                    {/* Top Row: Name, Icon, Experience (Years), and Expand Icon */}
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: { xs: 'flex-start', sm: 'center' },
+                      justifyContent: 'space-between',
+                      flexWrap: { xs: 'wrap', sm: 'nowrap' },
+                      gap: 1,
+                    }}
+                  >
+                    {/* Name & Icon */}
                     <Box
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'space-between',
                         gap: 1,
+                        minWidth: 0,
+                        flex: '1 1 auto',
                       }}
                     >
-                      {/* Name & Icon */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, minWidth: 0, flex: 1 }}>
-                        <Tooltip title={`${skill.name} - ${skill.category}`}>
-                          <Box sx={{ color: skill.color, flexShrink: 0 }}>
-                            {getCategoryIcon(skill.category)}
-                          </Box>
-                        </Tooltip>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: '1rem',
-                            fontWeight: 600,
-                            color: skill.color,
-                            whiteSpace: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                          }}
-                        >
-                          {skill.name}
-                        </Typography>
-                      </Box>
-
-                      {/* Experience & Expand Icon */}
-                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0 }}>
-                        <Chip
-                          label={skill.experience}
-                          size="small"
-                          sx={{
-                            backgroundColor: skill.color,
-                            color: getContrastColor(skill.color || '#89665d'),
-                            fontSize: '0.7rem',
-                            height: '22px',
-                            fontWeight: 600,
-                          }}
-                        />
-                        <Box
-                          sx={{
-                            transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                            transition: 'transform 0.3s ease',
-                          }}
-                        >
-                          <ExpandMore sx={{ color: 'text.secondary' }} />
+                      <Tooltip title={`${skill.name} - ${skill.category}`}>
+                        <Box sx={{ color: skill.color, flexShrink: 0 }}>
+                          {getCategoryIcon(skill.category)}
                         </Box>
-                      </Box>
+                      </Tooltip>
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontSize: '1rem',
+                          fontWeight: 600,
+                          color: skill.color,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {skill.name}
+                      </Typography>
                     </Box>
 
-                    {/* Bottom Row: Category Chip */}
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, pl: 4 }}>
+                    {/* First chip on first line (visible on all screens) */}
+                    <Box
+                      sx={{
+                        display: { xs: 'none', sm: 'flex' },
+                        alignItems: 'center',
+                        gap: 1,
+                        flexShrink: 0,
+                      }}
+                    >
                       <Chip
                         label={skill.category}
                         size="small"
@@ -190,6 +178,51 @@ const EnhancedSoftSkillsCard = () => {
                           height: '18px',
                         }}
                       />
+                    </Box>
+
+                    {/* Additional Info on right side (larger screens) or second line (mobile) */}
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 1,
+                        flexShrink: 0,
+                        width: { xs: '100%', sm: 'auto' },
+                        justifyContent: { xs: 'flex-end', sm: 'flex-end' },
+                      }}
+                    >
+                      {/* Category chip on second line (mobile only) */}
+                      <Box sx={{ display: { xs: 'block', sm: 'none' } }}>
+                        <Chip
+                          label={skill.category}
+                          size="small"
+                          sx={{
+                            backgroundColor: `${skill.color}20`,
+                            color: skill.color,
+                            fontSize: '0.6rem',
+                            height: '18px',
+                          }}
+                        />
+                      </Box>
+                      <Chip
+                        label={skill.experience}
+                        size="small"
+                        sx={{
+                          backgroundColor: skill.color,
+                          color: getContrastColor(skill.color || '#89665d'),
+                          fontSize: '0.7rem',
+                          height: '22px',
+                          fontWeight: 600,
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+                          transition: 'transform 0.3s ease',
+                        }}
+                      >
+                        <ExpandMore sx={{ color: 'text.secondary' }} />
+                      </Box>
                     </Box>
                   </Box>
 
