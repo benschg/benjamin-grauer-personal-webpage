@@ -22,7 +22,7 @@ export const documents = [
     description: 'Complete curriculum vitae with detailed work history (references on request)',
     icon: Description,
     fileType: 'PDF',
-    downloadUrl: '/working-life/documents/CV-Benjamin.Grauer.20250801_anon_full.pdf',
+    downloadUrl: '/working-life/documents/CV-Benjamin.Grauer.20251110_anon_full.pdf',
     downloadAs: 'Benjamin_Grauer_CV.pdf',
   },
 ];
