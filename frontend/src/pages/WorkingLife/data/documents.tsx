@@ -6,7 +6,7 @@ export const documents = [
     description: 'Professional references and recommendations',
     icon: ContactPage,
     fileType: 'PDF',
-    downloadUrl: '/working-life/documents/References_Benjamin.Grauer_20250626.pdf',
+    downloadUrl: '/working-life/documents/References_Benjamin_20251120.pdf',
     downloadAs: 'Benjamin_Grauer_References.pdf',
   },
   {
