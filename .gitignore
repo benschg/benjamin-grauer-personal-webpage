@@ -1,3 +1,22 @@
-﻿frontend/.vite
+frontend/.vite
 frontend/test-results
 frontend/playwright-report
+
+# Environment files
+.env
+.env.local
+.env.*.local
+frontend/.env
+frontend/.env.local
+frontend/.env.*.local
+nextjs/.env
+nextjs/.env.local
+nextjs/.env.*.local
+functions/.env
+functions/.env.local
+functions/.env.*.local
+
+# Supabase temp files
+**/supabase/.temp/
+
+node_modules
