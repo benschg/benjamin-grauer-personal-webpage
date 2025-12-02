@@ -45,6 +45,10 @@ export interface CVVersionContextType {
   updateEditedContent: (updates: Partial<CVVersionContent>) => void;
   saveEdits: () => Promise<void>;
   isSaving: boolean;
+
+  // AI regeneration support
+  regeneratingItems: Set<string>;
+  setRegeneratingItem: (itemId: string, isRegenerating: boolean) => void;
 }
 
 const CVVersionContext = createContext<CVVersionContextType | undefined>(undefined);
@@ -70,6 +74,7 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedContent, setEditedContent] = useState<CVVersionContent | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [regeneratingItems, setRegeneratingItems] = useState<Set<string>>(new Set());
 
   // Subscribe to Supabase versions
   useEffect(() => {
@@ -207,6 +212,18 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
     }
   }, [activeVersion, editedContent]);
 
+  const setRegeneratingItem = useCallback((itemId: string, isRegenerating: boolean) => {
+    setRegeneratingItems((prev) => {
+      const next = new Set(prev);
+      if (isRegenerating) {
+        next.add(itemId);
+      } else {
+        next.delete(itemId);
+      }
+      return next;
+    });
+  }, []);
+
   // Use edited content when editing, otherwise active content
   const displayContent = isEditing && editedContent ? editedContent : activeContent;
 
@@ -231,6 +248,8 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         updateEditedContent,
         saveEdits,
         isSaving,
+        regeneratingItems,
+        setRegeneratingItem,
       }}
     >
       {children}

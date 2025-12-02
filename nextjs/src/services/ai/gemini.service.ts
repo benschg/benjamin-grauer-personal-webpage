@@ -121,3 +121,52 @@ export const generateCustomizedCV = async (
 export const isGeminiConfigured = (): boolean => {
   return true;
 };
+
+// Regenerate a single CV item
+export interface RegenerateCVItemParams {
+  itemType: 'tagline' | 'profile' | 'slogan' | 'workExperienceBullet' | 'skill' | 'keyAchievement';
+  currentValue: string;
+  context: {
+    companyName?: string;
+    jobTitle?: string;
+    jobPosting?: string;
+    companyResearch?: CompanyResearch;
+    // For work experience bullets
+    workExperienceTitle?: string;
+    workExperienceCompany?: string;
+    // For skills
+    skillCategory?: string;
+  };
+  customInstructions?: string;
+  modelId?: GeminiModelId;
+}
+
+export interface RegenerateCVItemResult {
+  newValue: string;
+  model: string;
+}
+
+export const regenerateCVItem = async (
+  params: RegenerateCVItemParams
+): Promise<RegenerateCVItemResult> => {
+  const response = await fetch('/api/regenerate-cv-item', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      itemType: params.itemType,
+      currentValue: params.currentValue,
+      context: params.context,
+      customInstructions: params.customInstructions,
+      modelId: params.modelId || DEFAULT_GEMINI_MODEL,
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || 'Failed to regenerate item');
+  }
+
+  return response.json();
+};

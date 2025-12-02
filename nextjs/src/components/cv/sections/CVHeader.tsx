@@ -4,6 +4,7 @@ import type { CVHeaderData } from '../types/CVTypes';
 import LanguageIcon from '@mui/icons-material/Language';
 import { useCVVersion } from '../contexts';
 import EditableText from '../components/EditableText';
+import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
 
 interface CVHeaderProps {
   data: CVHeaderData;
@@ -32,7 +33,7 @@ const CVHeader = ({ data }: CVHeaderProps) => {
             isEditing={isEditing}
             variant="p"
             className="cv-header-title"
-            maxLength={100}
+            maxLength={CV_CHARACTER_LIMITS.tagline}
             placeholder="Your professional tagline..."
           />
           {data.website && (

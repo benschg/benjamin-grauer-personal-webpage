@@ -101,6 +101,7 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
         companyWebsite: lastInputData?.companyWebsite,
         uploadedFileName: lastInputData?.uploadedFile?.name,
         dataSourceSelection: lastInputData?.dataSourceSelection,
+        companyResearch: companyResearch || undefined,
       });
       setGeneratedContent(null);
       setCompanyResearch(null);

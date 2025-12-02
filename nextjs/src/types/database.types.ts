@@ -41,6 +41,28 @@ export interface CVDataSourceSelection {
   recommendations: boolean;
 }
 
+export interface CompanyResearch {
+  company: {
+    name: string;
+    industry: string;
+    culture: string[];
+    values: string[];
+    techStack: string[];
+  };
+  role: {
+    title: string;
+    level: string;
+    keyResponsibilities: string[];
+    requiredSkills: string[];
+    preferredSkills: string[];
+    keywords: string[];
+  };
+  insights: {
+    whatTheyValue: string;
+    toneGuidance: string;
+  };
+}
+
 export interface CVJobContext {
   company: string;
   position: string;
@@ -50,6 +72,7 @@ export interface CVJobContext {
   uploadedFileName?: string;
   customInstructions?: string;
   dataSourceSelection?: CVDataSourceSelection;
+  companyResearch?: CompanyResearch;
 }
 
 export interface CVLLMMetadata {
