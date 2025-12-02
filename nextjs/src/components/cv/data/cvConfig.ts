@@ -140,10 +140,10 @@ export const cvData: CVData = {
   // SIDEBAR (Left side - super short)
   sidebar: {
     successes: [
-      { value: '15+', label: 'Years Experience' },
-      { value: '20+', label: 'Engineers Led' },
-      { value: '4', label: 'Industries' },
-      { value: '40+', label: 'Projects Delivered' },
+      { value: '10+', label: 'Teams Built' },
+      { value: '100+', label: 'People Hired' },
+      { value: 'New', label: 'Perspectives Introduced' },
+      { value: '2x', label: 'ISO 9001 Implemented' },
     ],
 
     qualifications: [

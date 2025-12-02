@@ -30,6 +30,7 @@ export interface CVVersionContent {
 }
 
 export interface CVDataSourceSelection {
+  successes: boolean;
   whatLookingFor: boolean;
   workExperience: boolean;
   technicalSkills: boolean;

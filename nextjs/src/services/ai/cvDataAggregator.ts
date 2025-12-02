@@ -8,11 +8,18 @@ import { toolsAndPlatforms } from '@/data/toolsAndPlatformsData';
 import { cliftonStrengths } from '@/data/cliftonStrengthsData';
 import { recommendations } from '@/data/recommendations';
 import { careerAspirations, careerAspirationsIntro } from '@/data/careerAspirationsData';
+import { cvData } from '@/components/cv/data/cvConfig';
 import type { CVDataSourceSelection } from '@/types/database.types';
 
 export type { CVDataSourceSelection };
 
 export interface AggregatedCVData {
+  successes?: {
+    achievements: Array<{
+      value: string;
+      label: string;
+    }>;
+  };
   whatLookingFor?: {
     intro: string;
     aspirations: Array<{
@@ -95,6 +102,7 @@ export interface AggregatedCVData {
 }
 
 export const DEFAULT_DATA_SELECTION: CVDataSourceSelection = {
+  successes: true,
   whatLookingFor: true,
   workExperience: true,
   technicalSkills: true,
@@ -108,6 +116,15 @@ export const DEFAULT_DATA_SELECTION: CVDataSourceSelection = {
 
 export function aggregateCVData(selection: CVDataSourceSelection): AggregatedCVData {
   const data: AggregatedCVData = {};
+
+  if (selection.successes) {
+    data.successes = {
+      achievements: cvData.sidebar.successes.map((s) => ({
+        value: s.value,
+        label: s.label,
+      })),
+    };
+  }
 
   if (selection.whatLookingFor) {
     data.whatLookingFor = {
@@ -226,6 +243,14 @@ export function aggregateCVData(selection: CVDataSourceSelection): AggregatedCVD
 export function formatDataForPrompt(data: AggregatedCVData): string {
   const sections: string[] = [];
 
+  if (data.successes) {
+    sections.push('=== KEY ACHIEVEMENTS & SUCCESSES ===');
+    for (const achievement of data.successes.achievements) {
+      sections.push(`${achievement.value} ${achievement.label}`);
+    }
+    sections.push('');
+  }
+
   if (data.whatLookingFor) {
     sections.push('=== WHAT I\'M LOOKING FOR ===');
     sections.push(data.whatLookingFor.intro);
@@ -328,6 +353,10 @@ export function formatDataForPrompt(data: AggregatedCVData): string {
 
 export function getDataSourceLabels(): Record<keyof CVDataSourceSelection, { label: string; description: string }> {
   return {
+    successes: {
+      label: 'Key Achievements',
+      description: '10+ teams built, 100+ people hired, ISO 9001 implementations',
+    },
     whatLookingFor: {
       label: 'What I\'m Looking For',
       description: 'Career aspirations: Empowerment, Creativity, 3D Graphics...',
