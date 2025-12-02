@@ -144,6 +144,9 @@ export const cvData: CVData = {
       { value: '100+', label: 'People Hired' },
       { value: 'New', label: 'Perspectives Introduced' },
       { value: '2x', label: 'ISO 9001 Implemented' },
+      { title: 'Restructured teams to value-stream alignment' },
+      { title: 'Simplified 30 CLI tools into 1 unified app' },
+      { title: 'Brought legacy systems to the cloud', subtitle: 'VirtaMed IoT platform' },
     ],
 
     qualifications: [
