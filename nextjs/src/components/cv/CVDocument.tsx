@@ -139,32 +139,44 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           <span>Click on text to edit. Changes are saved when you click &quot;Save&quot;.</span>
         </div>
       )}
-      {activePages.map((pageLayout, pageIndex) => (
-        <CVPage
-          key={pageIndex}
-          pageNumber={pageIndex + 1}
-          totalPages={totalPages}
-          email={showPrivateInfo ? cvData.main.header.email : undefined}
-          phone={showPrivateInfo ? cvData.main.header.phone : undefined}
-          linkedin={cvData.main.header.linkedin}
-        >
-          <div className="cv-two-column">
-            <CVSidebar
-              data={cvData.sidebar}
-              header={cvData.main.header}
-              sections={pageLayout.sidebar}
-              showPhoto={pageIndex === 0 && showPhoto}
-              showContact={pageIndex === 0}
-              showPrivateInfo={showPrivateInfo}
-            />
-            <div className="cv-main-content">
-              {pageLayout.main.map((sectionType, idx) => (
-                <div key={idx}>{renderMainSection(sectionType)}</div>
-              ))}
-            </div>
-          </div>
-        </CVPage>
-      ))}
+      {activePages.map((pageLayout, pageIndex) => {
+        const hasSidebar = pageLayout.sidebar.length > 0;
+
+        return (
+          <CVPage
+            key={pageIndex}
+            pageNumber={pageIndex + 1}
+            totalPages={totalPages}
+            email={showPrivateInfo ? cvData.main.header.email : undefined}
+            phone={showPrivateInfo ? cvData.main.header.phone : undefined}
+            linkedin={cvData.main.header.linkedin}
+          >
+            {hasSidebar ? (
+              <div className="cv-two-column">
+                <CVSidebar
+                  data={cvData.sidebar}
+                  header={cvData.main.header}
+                  sections={pageLayout.sidebar}
+                  showPhoto={pageIndex === 0 && showPhoto}
+                  showContact={pageIndex === 0}
+                  showPrivateInfo={showPrivateInfo}
+                />
+                <div className="cv-main-content">
+                  {pageLayout.main.map((sectionType, idx) => (
+                    <div key={idx}>{renderMainSection(sectionType)}</div>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="cv-main-content cv-full-width">
+                {pageLayout.main.map((sectionType, idx) => (
+                  <div key={idx}>{renderMainSection(sectionType)}</div>
+                ))}
+              </div>
+            )}
+          </CVPage>
+        );
+      })}
     </div>
   );
 });

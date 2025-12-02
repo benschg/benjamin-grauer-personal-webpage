@@ -82,6 +82,11 @@
   padding: 12mm 15mm 8mm 12mm;
 }
 
+/* Full-width content (no sidebar) */
+.cv-main-content.cv-full-width {
+  padding: 12mm 15mm 8mm 15mm;
+}
+
 /* Sidebar */
 .cv-sidebar {
   width: 55mm;
