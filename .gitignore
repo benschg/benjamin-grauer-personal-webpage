@@ -1,3 +1,16 @@
-﻿frontend/.vite
+# Dependencies
+node_modules
+
+# Environment files
+.env*
+!.env*.example
+
+# Build artifacts
+frontend/.vite
+
+# Test artifacts
 frontend/test-results
 frontend/playwright-report
+
+# Supabase temp files
+**/supabase/.temp/

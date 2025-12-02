@@ -1,215 +1,129 @@
-# Benjamin Grauer Personal Website - React/TypeScript Architecture
+# Benjamin Grauer Personal Website - Next.js Architecture
 
 ## Tech Stack
-- **React 18** with TypeScript
-- **Vite** for fast development and building
-- **Yarn** for package management
+- **Next.js 16** with App Router and TypeScript
+- **Bun** for package management
 - **Material-UI (MUI)** for component library and theming
-- **Firebase** for hosting and backend services
+- **Tailwind CSS** for utility styling
+- **Supabase** for authentication and database
+- **Vercel** for hosting and deployment
 - **Framer Motion** for animations
 
 ## Project Structure
 
 ```
-frontend/
+nextjs/
 ├── public/
+│   ├── personal-life/       # Personal life images
+│   ├── portfolio/           # Portfolio project images
+│   ├── welcome/             # Homepage section images
+│   └── working-life/        # Working life images and documents
 ├── src/
-│   ├── components/
-│   │   ├── common/
-│   │   │   ├── Layout/
-│   │   │   ├── Navigation/
-│   │   │   ├── Footer/
-│   │   │   └── UI/ (buttons, cards, etc.)
+│   ├── app/                 # Next.js App Router pages
+│   │   ├── page.tsx         # Homepage
+│   │   ├── layout.tsx       # Root layout
 │   │   ├── personal-life/
-│   │   │   ├── PersonalHero/
-│   │   │   ├── LifeStory/
-│   │   │   ├── Hobbies/
-│   │   │   └── PersonalGallery/
 │   │   ├── working-life/
-│   │   │   ├── ProfessionalHero/
-│   │   │   ├── Timeline/ ⭐ INTERACTIVE TIMELINE
-│   │   │   ├── Skills/
-│   │   │   ├── Documents/
-│   │   │   └── Achievements/
-│   │   └── portfolio/
-│   │       ├── ProjectGrid/
-│   │       ├── ProjectFilter/
-│   │       ├── ProjectCard/
-│   │       └── ProjectDetail/
-│   ├── pages/
-│   │   ├── Home.tsx
-│   │   ├── PersonalLife.tsx
-│   │   ├── WorkingLife.tsx
-│   │   └── Portfolio.tsx
-│   ├── data/
-│   │   ├── timeline-data.ts
-│   │   ├── projects-data.ts
-│   │   ├── skills-data.ts
-│   │   └── personal-data.ts
-│   ├── types/
-│   │   ├── timeline.ts
-│   │   ├── project.ts
-│   │   └── common.ts
-│   ├── styles/
-│   │   ├── globals.css
-│   │   ├── variables.css
-│   │   └── components/
-│   └── utils/
-│       ├── firebase.ts
-│       └── helpers.ts
+│   │   │   └── cv/          # CV generation page
+│   │   ├── portfolio/
+│   │   │   ├── [projectId]/ # Dynamic project pages
+│   │   │   └── art-gallery/
+│   │   └── api/             # API routes
+│   │       ├── generate-cv/
+│   │       └── generate-pdf/
+│   ├── components/
+│   │   ├── common/          # Shared components (Header, Footer, Timeline)
+│   │   ├── cv/              # CV generation components
+│   │   ├── home/            # Homepage components
+│   │   ├── navigation/      # Navigation components
+│   │   ├── personal-life/   # Personal life page components
+│   │   ├── portfolio/       # Portfolio components
+│   │   ├── social/          # Social links components
+│   │   └── working-life/    # Working life components
+│   │       └── skills/      # Skills cards (Domain, Soft Skills, Languages, etc.)
+│   ├── contexts/            # React contexts (Auth)
+│   ├── data/                # Static data files
+│   │   ├── timelineData.ts
+│   │   ├── portfolioData.ts
+│   │   ├── recommendations.ts
+│   │   └── ...
+│   ├── lib/
+│   │   └── supabase/        # Supabase client setup
+│   ├── services/            # Business logic services
+│   │   ├── ai/              # Gemini AI integration
+│   │   └── cv/              # CV version management
+│   ├── theme/               # MUI theme configuration
+│   └── types/               # TypeScript types
+├── supabase/
+│   └── migrations/          # Database migrations
 ├── package.json
-├── vite.config.ts
-├── tsconfig.json
-└── firebase.json
+├── next.config.ts
+└── tsconfig.json
 ```
 
-## Interactive Timeline Features
+## Commands (using Bun)
+- **Install**: `cd nextjs && bun install`
+- **Dev Server**: `bun dev` (starts Next.js dev server on port 3000)
+- **Build**: `bun run build` (Next.js production build)
+- **Start**: `bun start` (start production server)
+- **Lint**: `bun run lint`
+- **Type Check**: `npx tsc --noEmit`
 
-### Timeline Component Enhancements:
-- **Animated Timeline**: Scroll-triggered animations as timeline items come into view
-- **Interactive Dots**: Clickable timeline nodes with hover effects
-- **Expandable Details**: Click to expand job details, achievements, and projects
-- **Skill Progression**: Visual skill evolution over time
-- **Video/Image Integration**: Embed media for specific career milestones
-- **Achievement Badges**: Interactive badges for certifications and accomplishments
+## Deployment
+- **Platform**: Vercel (automatic deployment on push)
+- **Production**: Merges to `main` deploy to production
+- **Preview**: PRs get preview deployments automatically
+- **Config**: `vercel.json` in project root
 
-### Timeline Data Structure:
-```typescript
-interface TimelineEvent {
-  id: string;
-  date: Date;
-  title: string;
-  company: string;
-  role: string;
-  description: string;
-  achievements: string[];
-  skills: string[];
-  media?: {
-    type: 'image' | 'video';
-    url: string;
-    caption?: string;
-  }[];
-  documents?: {
-    name: string;
-    url: string;
-    type: 'pdf' | 'link';
-  }[];
-}
-```
+## Key Features
 
-## Enhanced Features Plan:
-1. **Smooth Animations**: Framer Motion for timeline reveals and interactions
-2. **Responsive Design**: Mobile-first approach with touch interactions
-3. **Dark/Light Theme**: Toggle between themes (keeping your current dark aesthetic)
-4. **Performance**: Lazy loading for media and components
-5. **SEO**: Meta tags and structured data for better search visibility
+### CV Generation (`/working-life/cv`)
+- Interactive CV with WYSIWYG editing
+- PDF export via Puppeteer
+- AI-powered customization with Google Gemini
+- Version management with Supabase
+- Dark/light theme toggle
+- Privacy controls for contact info
 
-## Commands (using Yarn + Vite)
-- **Install**: `cd frontend && yarn install`
-- **Dev Server**: `yarn dev` (starts Vite dev server)
-- **Build**: `yarn build` (Vite build for production)
-- **Preview**: `yarn preview` (preview production build)
-- **Deploy**: `yarn deploy` (Firebase deploy)
-- **Lint**: `yarn lint`
-- **Type Check**: `yarn type-check`
+### Working Life Page
+- Professional timeline with expandable entries
+- Skills sections (Domain Expertise, Soft Skills, Languages, etc.)
+- Recommendations carousel
+- Documents section with downloadable PDFs
 
-## Testing Commands
-- **Unit Tests**: `yarn test` (Vitest unit tests)
-- **Unit Tests UI**: `yarn test:ui` (Vitest with UI)
-- **Unit Tests Run**: `yarn test:run` (Vitest single run)
-- **E2E Tests**: `yarn test:e2e` (Playwright E2E tests headless)
-- **E2E Tests UI**: `yarn test:e2e:ui` (Playwright with UI)
-- **E2E Tests Headed**: `yarn test:e2e:headed` (Playwright with visible browser)
+### Portfolio
+- Project grid with filtering
+- Dynamic project detail pages
+- Art gallery with lightbox
+- YouTube video integration
 
-## GitHub Actions CI/CD
-- **Automated Testing**: Tests run on every push/PR to main/master branches
-- **Test Pipeline**: Linting → Unit Tests → Build → E2E Tests
-- **Browser Caching**: Playwright browsers cached for faster CI runs
-- **Test Reports**: HTML reports and artifacts available for 30 days
-
-### Viewing Test Results on GitHub:
-1. **Actions Tab**: Go to repository → Actions → Click any workflow run
-2. **Live Results**: See individual test results in GitHub Actions logs  
-3. **Download Reports**: Click "playwright-report" artifact → extract → open `index.html`
-4. **PR Integration**: Test status shows automatically on pull requests
-5. **Branch Protection**: Failed tests can block merging (configure in Settings)
-
-## Setup Instructions
-1. Create React + TypeScript + Vite project: `yarn create vite frontend --template react-ts`
-2. Install MUI dependencies: `yarn add @mui/material @emotion/react @emotion/styled @mui/icons-material`
-3. Install additional dependencies: `yarn add react-router-dom framer-motion firebase`
-4. Install dev dependencies: `yarn add -D @types/node`
-5. Setup Firebase: `firebase init` in project root
-6. Configure Vite for Firebase hosting
-
-## Implementation Status
-✅ **Homepage Complete**: Fully implemented with MUI components
-- Header with navigation (AppBar, Toolbar, Typography, Button)
-- Hero section with video background and main title
-- Three main section cards (Working Life, Personal Life, Portfolio) 
-- Footer with contact info and social links
-- Custom MUI theme matching original design (dark theme, Orbitron/Quicksand fonts, brown accent)
-- Responsive hamburger menu for mobile devices
-- Modular navigation components
-
-✅ **Testing Setup Complete**: Full testing suite configured
-- **Vitest** for unit/component testing with React Testing Library
-- **Playwright** for E2E testing with multiple test modes
-- **Test Coverage**: All main pages (Home, Working Life, Personal Life, Portfolio)
-- **Video Testing**: Hero video loading, playback, and error handling
-- **Mobile Testing**: Responsive design and mobile navigation
-- **Error Detection**: Console error monitoring in tests
-- **Git LFS Support**: Large file handling in CI/CD pipelines
-- **CI Ready**: Headless mode for automated testing
-
-## Component Architecture
-### Navigation Components (`frontend/src/components/navigation/`)
-```
-navigation/
-├── NavItem.ts              # TypeScript interface for nav items
-├── NavigationLinks.tsx     # Navigation data array
-├── DesktopNavigation.tsx   # Desktop button navigation
-├── MobileNavigation.tsx    # Mobile hamburger menu with drawer
-└── index.ts               # Clean exports
-```
-
-### TypeScript Import Pattern
-Fixed import/export issues using TypeScript's `import type` syntax:
-```typescript
-// NavItem.ts
-export interface NavItem {
-  text: string;
-  href: string;
-}
-
-// NavigationLinks.tsx
-import type { NavItem } from './NavItem';
-export const navigationItems: NavItem[] = [...]
-
-// Component files
-import { navigationItems } from './NavigationLinks';
-import type { NavItem } from './NavItem';
-```
-
-## Features Implemented
-- **Video Header**: Auto-playing background video with overlay text
-- **Responsive Navigation**: Desktop buttons + mobile hamburger menu
-- **Grid Layout**: Modern MUI Grid with `size={{ xs: 12, sm: 6, lg: 4 }}` syntax
-- **Theme Integration**: Consistent MUI theme throughout all components
-
-## MUI Grid Usage
-Modern MUI Grid API syntax used throughout:
-```tsx
-<Grid container spacing={3}>
-  <Grid size={{ xs: 12, sm: 6, lg: 4 }}>
-    <Card>...</Card>
-  </Grid>
-</Grid>
-```
+### Personal Life Page
+- Interests grid
+- Sports timeline
+- Photo galleries
 
 ## Theme Configuration
-Custom MUI theme located at `frontend/src/theme/theme.ts`:
+Custom MUI theme at `nextjs/src/theme/theme.ts`:
 - Dark mode with #343A40 background
-- Primary color: #89665d (brown accent) 
+- Primary color: #89665d (brown accent)
 - Typography: Orbitron for headings, Quicksand for body text
-- Custom component overrides for Button, Card, AppBar
+
+## Environment Variables
+Required environment variables (set in Vercel dashboard):
+```
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+NEXT_PUBLIC_CONTACT_EMAIL=
+NEXT_PUBLIC_CONTACT_PHONE=
+NEXT_PUBLIC_CONTACT_ADDRESS=
+GEMINI_API_KEY=
+```
+
+## Database (Supabase)
+Tables:
+- `cv_versions` - Stored CV customizations
+- `cv_styles` - CV styling preferences
+
+## API Routes
+- `POST /api/generate-cv` - Generate AI-customized CV content
+- `POST /api/generate-pdf` - Generate PDF from CV page

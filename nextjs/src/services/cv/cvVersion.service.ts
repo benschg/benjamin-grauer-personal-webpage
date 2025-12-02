@@ -1,0 +1,180 @@
+import { createClient } from '@/lib/supabase/client';
+import type { CVVersion, CreateCVVersionInput, UpdateCVVersionInput } from '@/types/database.types';
+
+const TABLE_NAME = 'cv_versions';
+
+export async function getCVVersion(id: string): Promise<CVVersion | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error) {
+    console.error('Error fetching CV version:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function getAllCVVersions(): Promise<CVVersion[]> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching CV versions:', error);
+    return [];
+  }
+
+  return data ?? [];
+}
+
+export async function getDefaultCVVersion(): Promise<CVVersion | null> {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .select('*')
+    .eq('is_default', true)
+    .single();
+
+  if (error) {
+    console.error('Error fetching default CV version:', error);
+    return null;
+  }
+
+  return data;
+}
+
+export async function createCVVersion(input: CreateCVVersionInput): Promise<string | null> {
+  const supabase = createClient();
+
+  // Get current user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    console.error('Error creating CV version: User not authenticated');
+    return null;
+  }
+
+  // If setting as default, unset other defaults first
+  if (input.is_default) {
+    await unsetAllDefaults();
+  }
+
+  const { data, error } = await supabase
+    .from(TABLE_NAME)
+    .insert({
+      user_id: user.id,
+      name: input.name,
+      content: input.content,
+      is_default: input.is_default ?? false,
+      job_context: input.job_context,
+      llm_metadata: input.llm_metadata
+        ? { ...input.llm_metadata, generatedAt: new Date().toISOString() }
+        : undefined,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    console.error('Error creating CV version:', error);
+    return null;
+  }
+
+  return data.id;
+}
+
+export async function updateCVVersion(id: string, input: UpdateCVVersionInput): Promise<boolean> {
+  const supabase = createClient();
+
+  // If setting as default, unset other defaults first
+  if (input.is_default) {
+    await unsetAllDefaults();
+  }
+
+  const { error } = await supabase
+    .from(TABLE_NAME)
+    .update({
+      ...input,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error updating CV version:', error);
+    return false;
+  }
+
+  return true;
+}
+
+export async function deleteCVVersion(id: string): Promise<boolean> {
+  const supabase = createClient();
+  const { error } = await supabase.from(TABLE_NAME).delete().eq('id', id);
+
+  if (error) {
+    console.error('Error deleting CV version:', error);
+    return false;
+  }
+
+  return true;
+}
+
+export async function setAsDefault(id: string): Promise<boolean> {
+  await unsetAllDefaults();
+
+  const supabase = createClient();
+  const { error } = await supabase
+    .from(TABLE_NAME)
+    .update({ is_default: true, updated_at: new Date().toISOString() })
+    .eq('id', id);
+
+  if (error) {
+    console.error('Error setting default:', error);
+    return false;
+  }
+
+  return true;
+}
+
+async function unsetAllDefaults(): Promise<void> {
+  const supabase = createClient();
+  await supabase
+    .from(TABLE_NAME)
+    .update({ is_default: false, updated_at: new Date().toISOString() })
+    .eq('is_default', true);
+}
+
+// Real-time subscription
+export function subscribeToCVVersions(
+  callback: (versions: CVVersion[]) => void
+): () => void {
+  const supabase = createClient();
+
+  const channel = supabase
+    .channel('cv_versions_changes')
+    .on(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: TABLE_NAME },
+      async () => {
+        // Refetch all versions on any change
+        const versions = await getAllCVVersions();
+        callback(versions);
+      }
+    )
+    .subscribe();
+
+  // Initial fetch
+  getAllCVVersions().then(callback);
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}
