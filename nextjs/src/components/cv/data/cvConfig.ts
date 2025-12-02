@@ -2,6 +2,7 @@ import type {
   CVData,
   CVExperienceEntry,
   CVEducationEntry,
+  CVFunctionEntry,
   CVPageLayout,
   CVReferenceEntry,
 } from '../types/CVTypes';
@@ -15,13 +16,13 @@ import { cvAboutMe } from '@/data/interestsData';
 export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
-    sidebar: ['successes', 'qualifications', 'skills', 'languages'],
-    main: ['header', 'slogan', 'profile', 'usp', 'functions'],
+    sidebar: ['qualifications', 'successes', 'skills', 'languages'],
+    main: ['header', 'slogan', 'profile', 'usp'],
   },
   // Page 2
   {
     sidebar: ['education', 'courses', 'portfolio', 'volunteer', 'aboutMe'],
-    main: ['sideProjects', 'references'],
+    main: ['functions', 'sideProjects', 'references'],
   },
   // Page 3 - First 3 experience entries
   {
@@ -88,6 +89,28 @@ const getCoursesFromTimeline = (): { name: string; provider: string; year: strin
     });
 };
 
+// Extract function titles from work timeline
+const getFunctionsFromTimeline = (): CVFunctionEntry[] => {
+  const workEvents = timelineEvents
+    .filter((event) => event.type === 'work')
+    .sort((a, b) => {
+      const yearA = parseInt(a.year.split('-')[0]);
+      const yearB = parseInt(b.year.split('-')[0]);
+      return yearB - yearA;
+    });
+
+  return workEvents.map((event, index) => {
+    // Only show description for the first 4 roles (most recent)
+    const showDescription = index < 4;
+
+    return {
+      title: event.title,
+      subtitle: `${event.company}, ${event.year}`,
+      description: showDescription ? event.shortDescription : undefined,
+    };
+  });
+};
+
 // Get references from JSON environment variable
 // Format: [{"name":"John","title":"CTO","company":"Acme","email":"j@a.com","phone":"+41..."}]
 const getReferences = (): CVReferenceEntry[] => {
@@ -124,8 +147,10 @@ export const cvData: CVData = {
     ],
 
     qualifications: [
-      // TODO: Add qualifications
-      { title: 'TODO: Add qualifications', institution: 'Institution', year: '2024' },
+      { title: '15+ Years Experience' },
+      { title: '20+ Engineers Led' },
+      { title: '4 Industries' },
+      { title: '40+ Projects Delivered' },
     ],
 
     skills: [
@@ -189,7 +214,8 @@ export const cvData: CVData = {
       photo: sharedProfile.photo,
     },
 
-    slogan: 'TODO: Add a catchy slogan or personal motto that captures your professional essence.',
+    slogan:
+      'Transforming complex challenges into elegant solutions through collaborative leadership. Empowering engineers to ship products that matter.',
 
     profile: `Experienced engineering leader with 15+ years in software development,
 specializing in building and scaling high-performing teams. Proven track record in
@@ -198,19 +224,24 @@ simulators to drone logistics platforms. Passionate about user experience, value
 aligned development, and fostering collaborative engineering cultures.`,
 
     usp: [
-      // TODO: Add USPs, competences, key skills
       {
-        title: 'TODO: Add USP',
-        description: 'Description of unique selling point or key competence',
+        title: 'Servant Leadership',
+        description:
+          'Empowering engineers through mentorship, clear vision, and removing obstacles. Fostering environments where people and products thrive together.',
+      },
+      {
+        title: 'Value-Stream Optimization',
+        description:
+          'Aligning engineering efforts with business outcomes. Streamlining processes to maximize delivery velocity and product impact.',
+      },
+      {
+        title: '3D Graphics & Visualization',
+        description:
+          'Specialized expertise in real-time 3D applications and medical simulation. Bridging the gap between cutting-edge graphics and practical user experiences.',
       },
     ],
 
-    functions: [
-      // TODO: Add functions/roles you've held
-      { title: 'Head of Applications & Frameworks', description: 'Current role' },
-      { title: 'Engineering Manager', description: 'Previous role' },
-      { title: 'Senior Software Engineer', description: 'Earlier role' },
-    ],
+    functions: getFunctionsFromTimeline(),
 
     experience: getExperienceFromTimeline(),
 

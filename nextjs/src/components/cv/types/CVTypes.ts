@@ -62,6 +62,7 @@ export interface CVExperienceEntry {
 
 export interface CVFunctionEntry {
   title: string;
+  subtitle?: string;
   description?: string;
 }
 

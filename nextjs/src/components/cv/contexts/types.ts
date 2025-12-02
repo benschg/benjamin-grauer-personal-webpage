@@ -9,6 +9,8 @@ export interface CVThemeContextType {
   togglePhoto: () => void;
   showPrivateInfo: boolean;
   togglePrivateInfo: () => void;
+  showExperience: boolean;
+  toggleExperience: () => void;
 }
 
 export const CVThemeContext = createContext<CVThemeContextType | undefined>(undefined);

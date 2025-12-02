@@ -11,8 +11,11 @@ const CVFunctions = ({ data }: CVFunctionsProps) => {
       <div className="cv-functions-list">
         {data.map((func, index) => (
           <div key={index} className="cv-functions-item">
-            <span className="cv-functions-title">{func.title}</span>
-            {func.description && <span className="cv-functions-desc">{func.description}</span>}
+            <div className="cv-functions-header">
+              <span className="cv-functions-title">{func.title}</span>
+              {func.subtitle && <span className="cv-functions-subtitle">{func.subtitle}</span>}
+            </div>
+            {func.description && <p className="cv-functions-desc">{func.description}</p>}
           </div>
         ))}
       </div>
