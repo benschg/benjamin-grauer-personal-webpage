@@ -297,13 +297,32 @@
 
   @media (max-width: 600px) {
     .cv-page {
-      transform: scale(0.4);
-      margin-bottom: calc(-297mm * 0.6);
+      transform: scale(0.5);
+      margin-bottom: calc(-297mm * 0.5);
     }
 
     .cv-document-wrapper {
-      padding: 1rem;
-      gap: 1rem;
+      padding: 0.5rem;
+      gap: 0.5rem;
+    }
+  }
+
+  /* Improve mobile readability */
+  @media (max-width: 600px) {
+    .cv-floating-sidebar {
+      bottom: 10px;
+      top: auto;
+      right: 50%;
+      transform: translateX(50%);
+      flex-direction: row;
+      gap: 0.5rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .cv-floating-sidebar > div[style*="height"] {
+      width: 1px !important;
+      height: 24px !important;
+      margin: 0 0.25rem !important;
     }
   }
 }
