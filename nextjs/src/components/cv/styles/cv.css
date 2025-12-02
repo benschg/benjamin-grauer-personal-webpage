@@ -1014,10 +1014,16 @@
 .cv-functions-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .cv-functions-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.cv-functions-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
@@ -1030,10 +1036,18 @@
   color: var(--cv-text-primary);
 }
 
-.cv-functions-desc {
+.cv-functions-subtitle {
   font-size: 0.8rem;
   color: var(--cv-text-muted);
   font-style: italic;
+  white-space: nowrap;
+}
+
+.cv-functions-desc {
+  font-size: 0.8rem;
+  color: var(--cv-text-secondary);
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Side Projects Section */

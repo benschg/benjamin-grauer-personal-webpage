@@ -4,6 +4,7 @@ export interface TimelineEvent {
   title: string;
   company: string;
   description: string;
+  shortDescription?: string; // Short, punchy summary for CV functions section
   type: 'work' | 'education' | 'certification' | 'project' | 'personal';
   skills?: string[];
   achievements?: string[];
@@ -18,6 +19,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: 'Verity AG',
     description:
       'Member of a team of 5 dev heads. Focused on leveling up user experience and simplicity of applications throughout the entire product lifecycle and streamlining teams toward client-oriented impact. Successfully spearheaded value-stream aligned teams and transformed 30 CLI tools into one intuitive web application for rollout.',
+    shortDescription: 'Unified 30 CLI tools into one intuitive web app. Led value-stream aligned teams for drone logistics.',
     type: 'work',
     skills: [
       'AWS',
@@ -45,6 +47,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: '9T Labs AG',
     description:
       'Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations.',
+    shortDescription: 'Built cloud platform and 3D CAD design suite for carbon fiber manufacturing.',
     type: 'work',
     skills: [
       'Cloud Platform Development',
@@ -86,6 +89,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: 'VirtaMed AG',
     description:
       "Entrusted with development lead of VirtaMed's data services, aiming to interconnect simulators globally, manage updates remotely, and store training results in centralized databases in strict compliance with data protection regulations. Managed digitalization IoT project with nearshoring team.",
+    shortDescription: 'Connected global simulator fleet to cloud with GDPR-compliant IoT platform.',
     type: 'work',
     skills: [
       'Cloud & IoT Technologies',
@@ -197,6 +201,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: 'VirtaMed AG',
     description:
       'As member of management, built up several teams across R&D department. Re-organized entire development team along value stream. Led more than 20 people and helped hire many more throughout the company. Built teams for framework developers, testers, dev-ops engineers, UI/UX professionals.',
+    shortDescription: 'Built and led 20+ engineers across framework, QA, DevOps, and UI/UX teams.',
     type: 'work',
     skills: [
       'Engineering Management',
@@ -223,6 +228,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: 'VirtaMed AG',
     description:
       'Expanded doctorate thesis framework to enable ease of use for modelers and non-technically experienced people. Ported multi-threaded application to Windows, built versatile interface for parsing models, animations, and scripts.',
+    shortDescription: 'Developed core 3D medical simulation framework in C++, C#, and Python.',
     type: 'work',
     skills: [
       'C++',
@@ -259,6 +265,7 @@ export const timelineEvents: TimelineEvent[] = [
     company: 'Cymicon, New Zealand',
     description:
       'International internship experience in software development, gaining global perspective.',
+    shortDescription: 'International software development experience.',
     type: 'work',
     skills: [
       'Software Development',

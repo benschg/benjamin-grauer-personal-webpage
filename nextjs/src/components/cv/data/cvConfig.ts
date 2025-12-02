@@ -2,6 +2,7 @@ import type {
   CVData,
   CVExperienceEntry,
   CVEducationEntry,
+  CVFunctionEntry,
   CVPageLayout,
   CVReferenceEntry,
 } from '../types/CVTypes';
@@ -16,12 +17,12 @@ export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
     sidebar: ['successes', 'qualifications', 'skills', 'languages'],
-    main: ['header', 'slogan', 'profile', 'usp', 'functions'],
+    main: ['header', 'slogan', 'profile', 'usp'],
   },
   // Page 2
   {
     sidebar: ['education', 'courses', 'portfolio', 'volunteer', 'aboutMe'],
-    main: ['sideProjects', 'references'],
+    main: ['functions', 'sideProjects', 'references'],
   },
   // Page 3 - First 3 experience entries
   {
@@ -86,6 +87,35 @@ const getCoursesFromTimeline = (): { name: string; provider: string; year: strin
       const yearB = parseInt(b.year.split('-')[0]);
       return yearB - yearA;
     });
+};
+
+// Extract function titles from work timeline, showing company only on first role
+const getFunctionsFromTimeline = (): CVFunctionEntry[] => {
+  const workEvents = timelineEvents
+    .filter((event) => event.type === 'work')
+    .sort((a, b) => {
+      const yearA = parseInt(a.year.split('-')[0]);
+      const yearB = parseInt(b.year.split('-')[0]);
+      return yearB - yearA;
+    });
+
+  // Track which companies we've already shown
+  const seenCompanies = new Set<string>();
+
+  return workEvents.map((event, index) => {
+    const isFirstForCompany = !seenCompanies.has(event.company);
+    seenCompanies.add(event.company);
+
+    const companyPart = isFirstForCompany ? `${event.company}, ` : '';
+    // Only show description for the first 4 roles (most recent)
+    const showDescription = index < 4;
+
+    return {
+      title: event.title,
+      subtitle: `${companyPart}${event.year}`,
+      description: showDescription ? event.shortDescription : undefined,
+    };
+  });
 };
 
 // Get references from JSON environment variable
@@ -189,7 +219,8 @@ export const cvData: CVData = {
       photo: sharedProfile.photo,
     },
 
-    slogan: 'TODO: Add a catchy slogan or personal motto that captures your professional essence.',
+    slogan:
+      'Transforming complex challenges into elegant solutions through collaborative leadership. Empowering engineers to ship products that matter.',
 
     profile: `Experienced engineering leader with 15+ years in software development,
 specializing in building and scaling high-performing teams. Proven track record in
@@ -205,12 +236,7 @@ aligned development, and fostering collaborative engineering cultures.`,
       },
     ],
 
-    functions: [
-      // TODO: Add functions/roles you've held
-      { title: 'Head of Applications & Frameworks', description: 'Current role' },
-      { title: 'Engineering Manager', description: 'Previous role' },
-      { title: 'Senior Software Engineer', description: 'Earlier role' },
-    ],
+    functions: getFunctionsFromTimeline(),
 
     experience: getExperienceFromTimeline(),
 
