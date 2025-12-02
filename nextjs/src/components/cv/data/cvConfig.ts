@@ -89,7 +89,7 @@ const getCoursesFromTimeline = (): { name: string; provider: string; year: strin
     });
 };
 
-// Extract function titles from work timeline, showing company only on first role
+// Extract function titles from work timeline
 const getFunctionsFromTimeline = (): CVFunctionEntry[] => {
   const workEvents = timelineEvents
     .filter((event) => event.type === 'work')
@@ -99,20 +99,13 @@ const getFunctionsFromTimeline = (): CVFunctionEntry[] => {
       return yearB - yearA;
     });
 
-  // Track which companies we've already shown
-  const seenCompanies = new Set<string>();
-
   return workEvents.map((event, index) => {
-    const isFirstForCompany = !seenCompanies.has(event.company);
-    seenCompanies.add(event.company);
-
-    const companyPart = isFirstForCompany ? `${event.company}, ` : '';
     // Only show description for the first 4 roles (most recent)
     const showDescription = index < 4;
 
     return {
       title: event.title,
-      subtitle: `${companyPart}${event.year}`,
+      subtitle: `${event.company}, ${event.year}`,
       description: showDescription ? event.shortDescription : undefined,
     };
   });
@@ -229,10 +222,20 @@ simulators to drone logistics platforms. Passionate about user experience, value
 aligned development, and fostering collaborative engineering cultures.`,
 
     usp: [
-      // TODO: Add USPs, competences, key skills
       {
-        title: 'TODO: Add USP',
-        description: 'Description of unique selling point or key competence',
+        title: 'Servant Leadership',
+        description:
+          'Empowering engineers through mentorship, clear vision, and removing obstacles. Fostering environments where people and products thrive together.',
+      },
+      {
+        title: 'Value-Stream Optimization',
+        description:
+          'Aligning engineering efforts with business outcomes. Streamlining processes to maximize delivery velocity and product impact.',
+      },
+      {
+        title: '3D Graphics & Visualization',
+        description:
+          'Specialized expertise in real-time 3D applications and medical simulation. Bridging the gap between cutting-edge graphics and practical user experiences.',
       },
     ],
 
