@@ -69,7 +69,13 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
         );
       case 'slogan':
         // Use dynamic slogan from version
-        return <CVSlogan key="slogan" slogan={activeContent.slogan || cvData.main.slogan} />;
+        return (
+          <CVSlogan
+            key="slogan"
+            slogan={activeContent.slogan || cvData.main.slogan}
+            website={cvData.main.header.website}
+          />
+        );
       case 'profile':
         // Use dynamic profile from version
         return <CVProfile key="profile" profile={activeContent.profile} />;
