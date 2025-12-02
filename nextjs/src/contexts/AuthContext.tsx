@@ -4,6 +4,8 @@ import { createContext, useContext, useEffect, useState, useCallback } from 'rea
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 
+const AUTH_REDIRECT_KEY = 'auth_redirect_path';
+
 interface AuthState {
   user: User | null;
   isAdmin: boolean;
@@ -71,16 +73,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
-    // Pass current path so we can redirect back after auth
+    // Store current path in localStorage for retrieval after OAuth callback
     const currentPath = window.location.pathname;
+    localStorage.setItem(AUTH_REDIRECT_KEY, currentPath);
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(currentPath)}`,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
 
     if (error) {
+      localStorage.removeItem(AUTH_REDIRECT_KEY);
       setState(prev => ({ ...prev, loading: false, error: error.message }));
     }
   }, [supabase]);
@@ -109,3 +114,6 @@ export function useAuth(): AuthContextType {
   }
   return context;
 }
+
+// Export the key for use in the callback route
+export { AUTH_REDIRECT_KEY };
