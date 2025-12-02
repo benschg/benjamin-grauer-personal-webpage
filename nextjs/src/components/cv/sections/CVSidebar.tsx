@@ -198,7 +198,11 @@ const CVSidebar = ({
           <div className="cv-sidebar-contact">
             {showPrivateInfo ? (
               <>
-                {header.website && <div className="cv-sidebar-contact-item">{header.website}</div>}
+                {header.website && (
+                  <div className="cv-sidebar-contact-item">
+                    Check out more at {header.website}
+                  </div>
+                )}
                 <div className="cv-sidebar-contact-item">{header.email}</div>
                 {header.phone && <div className="cv-sidebar-contact-item">{header.phone}</div>}
                 {header.location && (
