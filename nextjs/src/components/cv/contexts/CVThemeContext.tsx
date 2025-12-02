@@ -13,6 +13,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
   const [theme, setTheme] = useState<CVTheme>('dark');
   const [showPhoto, setShowPhoto] = useState(true);
   const [showPrivateInfo, setShowPrivateInfo] = useState(false);
+  const [showExperience, setShowExperience] = useState(true);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -26,9 +27,22 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
     setShowPrivateInfo((prev) => !prev);
   }, []);
 
+  const toggleExperience = useCallback(() => {
+    setShowExperience((prev) => !prev);
+  }, []);
+
   return (
     <CVThemeContext.Provider
-      value={{ theme, toggleTheme, showPhoto, togglePhoto, showPrivateInfo, togglePrivateInfo }}
+      value={{
+        theme,
+        toggleTheme,
+        showPhoto,
+        togglePhoto,
+        showPrivateInfo,
+        togglePrivateInfo,
+        showExperience,
+        toggleExperience,
+      }}
     >
       {children}
     </CVThemeContext.Provider>

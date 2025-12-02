@@ -16,7 +16,7 @@ import { cvAboutMe } from '@/data/interestsData';
 export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
-    sidebar: ['successes', 'qualifications', 'skills', 'languages'],
+    sidebar: ['qualifications', 'successes', 'skills', 'languages'],
     main: ['header', 'slogan', 'profile', 'usp'],
   },
   // Page 2
@@ -147,8 +147,10 @@ export const cvData: CVData = {
     ],
 
     qualifications: [
-      // TODO: Add qualifications
-      { title: 'TODO: Add qualifications', institution: 'Institution', year: '2024' },
+      { title: '15+ Years Experience' },
+      { title: '20+ Engineers Led' },
+      { title: '4 Industries' },
+      { title: '40+ Projects Delivered' },
     ],
 
     skills: [

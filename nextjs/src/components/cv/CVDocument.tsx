@@ -23,7 +23,7 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, showPrivateInfo } = useCVTheme();
+  const { theme, showPhoto, showPrivateInfo, showExperience } = useCVTheme();
   const { activeContent, isEditing, activeVersion } = useCVVersion();
 
   // Convert AI-generated work experience to CV format if available
@@ -102,10 +102,21 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
     }
   };
 
-  // Filter out empty pages (pages where both sidebar and main are empty)
-  const activePages = cvPageLayouts.filter(
-    (page) => page.sidebar.length > 0 || page.main.length > 0
-  );
+  // Check if a page contains only experience sections
+  const isExperienceOnlyPage = (page: (typeof cvPageLayouts)[number]): boolean => {
+    if (page.sidebar.length > 0) return false;
+    return page.main.every((section) => {
+      if (isSlicedSection(section)) return section.type === 'experience';
+      return section === 'experience';
+    });
+  };
+
+  // Filter out empty pages and experience-only pages when showExperience is false
+  const activePages = cvPageLayouts.filter((page) => {
+    if (page.sidebar.length === 0 && page.main.length === 0) return false;
+    if (!showExperience && isExperienceOnlyPage(page)) return false;
+    return true;
+  });
 
   const totalPages = activePages.length;
 
