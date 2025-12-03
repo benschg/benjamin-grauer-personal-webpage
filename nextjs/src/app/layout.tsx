@@ -3,6 +3,7 @@ import { Orbitron, Quicksand } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from '@/theme';
 import { AuthProvider } from '@/contexts';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 
 const orbitron = Orbitron({
@@ -35,6 +36,7 @@ export default function RootLayout({
             <AuthProvider>{children}</AuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
+        <Analytics />
       </body>
     </html>
   );

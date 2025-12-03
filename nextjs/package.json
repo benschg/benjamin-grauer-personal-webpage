@@ -19,6 +19,7 @@
     "@sparticuz/chromium-min": "^141.0.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.86.0",
+    "@vercel/analytics": "^1.6.0",
     "firebase": "^12.6.0",
     "framer-motion": "^12.23.25",
     "next": "16.0.6",
