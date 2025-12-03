@@ -88,7 +88,7 @@ async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
   return result;
 }
 
-// Merge multiple PDFs into one
+// Merge multiple PDFs into one (separator page is now rendered by Puppeteer with the main CV)
 async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promise<Uint8Array> {
   const fs = await import('fs/promises');
   const path = await import('path');
@@ -96,7 +96,7 @@ async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promis
   // Create a new PDF document
   const mergedPdf = await PDFDocument.create();
 
-  // Load and add the main CV PDF
+  // Load and add the main CV PDF (includes separator page rendered by Puppeteer)
   const mainDoc = await PDFDocument.load(mainPdf);
   const mainPages = await mergedPdf.copyPages(mainDoc, mainDoc.getPageIndices());
   mainPages.forEach((page) => mergedPdf.addPage(page));
@@ -355,6 +355,9 @@ export async function POST(request: Request) {
     const browser = await launchBrowser();
 
     const page = await browser.newPage();
+
+    // Set viewport to match A4 at 96 DPI for consistent rendering with screen display
+    await page.setViewport({ width: 794, height: 1123 });
 
     // Set content and wait for fonts and images to load
     await page.setContent(fullHtml, {

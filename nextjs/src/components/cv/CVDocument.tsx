@@ -15,6 +15,7 @@ import {
   CVSidebar,
 } from './sections';
 import CVAttachmentCards from './components/CVAttachmentCards';
+import CVSeparatorPage from './components/CVSeparatorPage';
 import { cvPageLayouts, cvData } from './data/cvConfig';
 import type { CVMainSectionType, CVSlicedSection, CVExperienceEntry } from './types/CVTypes';
 import CVPage from './components/CVPage';
@@ -27,7 +28,7 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, showPrivateInfo, showExperience, zoom } = useCVTheme();
+  const { theme, showPhoto, privacyLevel, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing, activeVersion } = useCVVersion();
 
   // Convert AI-generated work experience to CV format if available
@@ -110,7 +111,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           <CVReferences
             key="references"
             data={cvData.main.references}
-            showPrivateInfo={showPrivateInfo}
+            showPrivateInfo={privacyLevel === 'full'}
           />
         );
       default:
@@ -152,13 +153,14 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
       {activePages.map((pageLayout, pageIndex) => {
         const hasSidebar = pageLayout.sidebar.length > 0;
 
+        const showPersonalInfo = privacyLevel !== 'none';
         return (
           <CVPage
             key={pageIndex}
             pageNumber={pageIndex + 1}
             totalPages={totalPages}
-            email={showPrivateInfo ? cvData.main.header.email : undefined}
-            phone={showPrivateInfo ? cvData.main.header.phone : undefined}
+            email={showPersonalInfo ? cvData.main.header.email : undefined}
+            phone={showPersonalInfo ? cvData.main.header.phone : undefined}
             linkedin={cvData.main.header.linkedin}
             website={cvData.main.header.website}
             zoom={zoom}
@@ -171,7 +173,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
                   sections={pageLayout.sidebar}
                   showPhoto={pageIndex === 0 && showPhoto}
                   showContact={pageIndex === 0}
-                  showPrivateInfo={showPrivateInfo}
+                  showPrivateInfo={showPersonalInfo}
                 />
                 <div className="cv-main-content">
                   {pageLayout.main.map((sectionType, idx) => (
@@ -189,6 +191,8 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           </CVPage>
         );
       })}
+      {/* Separator page - shown when attachments are enabled */}
+      <CVSeparatorPage zoom={zoom} />
       {/* Attachment cards preview - shown when attachments are enabled */}
       <CVAttachmentCards />
     </div>

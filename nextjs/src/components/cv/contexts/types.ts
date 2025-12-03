@@ -2,13 +2,16 @@ import { createContext } from 'react';
 
 export type CVTheme = 'dark' | 'light';
 
+// Privacy levels: 'none' = hidden, 'personal' = show my contact info, 'full' = show all including reference contacts
+export type PrivacyLevel = 'none' | 'personal' | 'full';
+
 export interface CVThemeContextType {
   theme: CVTheme;
   toggleTheme: () => void;
   showPhoto: boolean;
   togglePhoto: () => void;
-  showPrivateInfo: boolean;
-  togglePrivateInfo: () => void;
+  privacyLevel: PrivacyLevel;
+  cyclePrivacyLevel: () => void;
   showExperience: boolean;
   toggleExperience: () => void;
   showAttachments: boolean;
