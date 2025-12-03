@@ -1,8 +1,8 @@
 // Section types for sidebar (left) and main content (right)
 export type CVSidebarSectionType =
   | 'successes'
-  | 'qualifications'
-  | 'skills'
+  | 'hardSkills'
+  | 'softSkills'
   | 'languages'
   | 'education'
   | 'courses'
@@ -150,8 +150,8 @@ export interface CVAboutMeEntry {
 // Sidebar data structure
 export interface CVSidebarData {
   successes: CVSuccessEntry[];
-  qualifications: CVQualificationEntry[];
-  skills: string[];
+  hardSkills: string[];
+  softSkills: string[];
   languages: CVLanguage[];
   education: CVEducationEntry[];
   courses: CVCourseEntry[];

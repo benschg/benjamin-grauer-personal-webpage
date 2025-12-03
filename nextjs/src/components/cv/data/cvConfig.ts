@@ -17,7 +17,7 @@ import { careerAspirations } from "@/data/careerAspirationsData";
 export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
-    sidebar: ["qualifications", "successes", "skills", "languages"],
+    sidebar: ["successes", "hardSkills", "softSkills", "languages"],
     main: ["header", "badges", "slogan", "profile", "usp", "lookingFor"],
   },
   // Page 2
@@ -147,22 +147,13 @@ export const cvData: CVData = {
   // SIDEBAR (Left side - super short)
   sidebar: {
     successes: [
-      { title: "10+ Teams Built" },
-      { title: "100+ People Hired" },
-      { title: "Certified ISO 9001 twice" },
-      { title: "Restructured teams to value-stream alignment" },
-      { title: "Simplified 30 CLI tools into 1 unified app" },
-      { title: "Brining legacy systems to the cloud" },
-    ],
-
-    qualifications: [
-      { title: "15+ Years Experience" },
-      { title: "20+ Engineers Led" },
-      { title: "4 Industries" },
       { title: "40+ Projects Delivered" },
+      { title: "Enabled teams to focus on the value chain" },
+      { title: "Simplified 30 CLI tools into 1 unified app" },
+      { title: "Bringing legacy systems to the cloud" },
     ],
 
-    skills: [
+    hardSkills: [
       "React/TypeScript",
       "C#/.NET",
       "Python",
@@ -171,8 +162,14 @@ export const cvData: CVData = {
       "AWS",
       "DevOps",
       "3D Graphics",
+    ],
+
+    softSkills: [
       "Team Leadership",
       "Agile/Scrum",
+      "Mentoring",
+      "Stakeholder Management",
+      "Technical Communication",
     ],
 
     languages: [
@@ -274,22 +271,23 @@ aligned development, and fostering collaborative engineering cultures.`,
 
     sideProjects: [
       {
-        name: "Docugap",
-        description: "AI-powered document gap analysis tool",
+        name: "DocuGap",
+        description:
+          "AI-powered document change analysis and categorization tool",
         link: "https://docugap.com",
         technologies: ["Next.js", "TypeScript", "AI"],
-      },
-      {
-        name: "Orxonox",
-        description: "Open-source 3D space shooter game engine (ETH award winner)",
-        link: "https://orxonox.net",
-        technologies: ["C++", "OpenGL", "Lua"],
       },
       {
         name: "AI Mosaic Studio",
         description: "AI-powered photo-to-mosaic transformation tool",
         link: "https://mosaic-studio.0verall.com",
         technologies: ["AI/ML", "Image Processing"],
+      },
+      {
+        name: "Orxonox",
+        description: "Open-source 3D space shooter game & engine",
+        link: "https://orxonox.net",
+        technologies: ["C++", "OpenGL", "Lua"],
       },
     ],
 

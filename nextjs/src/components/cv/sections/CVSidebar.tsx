@@ -40,29 +40,26 @@ const CVSidebar = ({
           </div>
         ) : null;
 
-      case 'qualifications':
-        return data.qualifications.length > 0 ? (
-          <div key="qualifications" className="cv-sidebar-section">
-            <div className="cv-sidebar-list">
-              {data.qualifications.map((qual, index) => (
-                <div key={index} className="cv-sidebar-list-item">
-                  <span className="cv-sidebar-list-title">{qual.title}</span>
-                  {qual.institution && (
-                    <span className="cv-sidebar-list-subtitle">{qual.institution}</span>
-                  )}
-                  {qual.year && <span className="cv-sidebar-list-year">{qual.year}</span>}
-                </div>
+      case 'hardSkills':
+        return data.hardSkills.length > 0 ? (
+          <div key="hardSkills" className="cv-sidebar-section">
+            <h3 className="cv-sidebar-title">Hard Skills</h3>
+            <div className="cv-sidebar-skills">
+              {data.hardSkills.map((skill, index) => (
+                <span key={index} className="cv-sidebar-skill">
+                  {skill}
+                </span>
               ))}
             </div>
           </div>
         ) : null;
 
-      case 'skills':
-        return data.skills.length > 0 ? (
-          <div key="skills" className="cv-sidebar-section">
-            <h3 className="cv-sidebar-title">Skills</h3>
+      case 'softSkills':
+        return data.softSkills.length > 0 ? (
+          <div key="softSkills" className="cv-sidebar-section">
+            <h3 className="cv-sidebar-title">Soft Skills</h3>
             <div className="cv-sidebar-skills">
-              {data.skills.map((skill, index) => (
+              {data.softSkills.map((skill, index) => (
                 <span key={index} className="cv-sidebar-skill">
                   {skill}
                 </span>

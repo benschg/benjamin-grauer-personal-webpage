@@ -6,7 +6,7 @@ export interface CareerAspiration {
 
 export const careerAspirations: CareerAspiration[] = [
   {
-    title: "Empower People",
+    title: "Empower people",
     description:
       "Creating tools and solutions that enable others to achieve their potential",
     icon: "People",
