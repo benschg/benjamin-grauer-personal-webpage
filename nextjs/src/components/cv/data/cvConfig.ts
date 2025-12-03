@@ -158,10 +158,10 @@ export const cvData: CVData = {
       "C#/.NET",
       "Python",
       "C++",
-      "Cloud Architecture",
+      "Cloud architecture",
       "AWS",
       "DevOps",
-      "3D Graphics",
+      "3D graphics",
     ],
 
     softSkills: [
