@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from '@/theme';
 import { AuthProvider } from '@/contexts';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 const orbitron = Orbitron({
@@ -37,6 +38,7 @@ export default function RootLayout({
           </ThemeProvider>
         </AppRouterCacheProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
