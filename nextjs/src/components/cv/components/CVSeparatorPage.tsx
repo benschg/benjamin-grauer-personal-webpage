@@ -1,6 +1,5 @@
 'use client';
 
-import { Box, Typography } from '@mui/material';
 import { useCVTheme } from '../contexts';
 
 interface CVSeparatorPageProps {
@@ -35,8 +34,10 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
   }
 
   const isDark = theme === 'dark';
+  const bgColor = isDark ? '#343a40' : '#ffffff';
   const textColor = isDark ? '#ffffff' : '#1a1a1a';
   const mutedColor = isDark ? '#b0b0b0' : '#666666';
+  const accentColor = '#89665d';
 
   // Calculate CSS custom properties for manual zoom (matching CVPage)
   const getZoomStyles = (): React.CSSProperties => {
@@ -53,109 +54,115 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
   };
 
   return (
-    <Box
-      className={`cv-page cv-separator-page cv-no-print ${zoom > 0 ? 'cv-page-manual-zoom' : ''}`}
-      style={getZoomStyles()}
-      sx={{
-        bgcolor: isDark ? '#343a40' : '#ffffff',
+    <div
+      className={`cv-page cv-separator-page ${zoom > 0 ? 'cv-page-manual-zoom' : ''}`}
+      style={{
+        ...getZoomStyles(),
+        backgroundColor: bgColor,
         display: 'flex',
         flexDirection: 'column',
         position: 'relative',
       }}
     >
       {/* Top accent bar */}
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
           height: '20px',
-          bgcolor: '#89665d',
+          backgroundColor: accentColor,
         }}
       />
 
       {/* Bottom accent bar */}
-      <Box
-        sx={{
+      <div
+        style={{
           position: 'absolute',
           bottom: 0,
           left: 0,
           right: 0,
           height: '20px',
-          bgcolor: '#89665d',
+          backgroundColor: accentColor,
         }}
       />
 
       {/* Content */}
-      <Box
-        sx={{
+      <div
+        style={{
           flex: 1,
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          px: 4,
-          py: 6,
+          padding: '48px 32px',
         }}
       >
         {/* Title */}
-        <Typography
-          sx={{
+        <h1
+          style={{
             fontFamily: 'Orbitron, sans-serif',
             fontSize: '2rem',
             fontWeight: 700,
-            color: '#89665d',
+            color: accentColor,
             textAlign: 'center',
-            mb: 1,
+            margin: '0 0 8px 0',
           }}
         >
           References & Certificates
-        </Typography>
+        </h1>
 
-        <Typography
-          sx={{
+        <p
+          style={{
             fontFamily: 'Quicksand, sans-serif',
             fontSize: '0.8rem',
             color: textColor,
             textAlign: 'center',
-            mb: 3,
+            margin: '0 0 24px 0',
           }}
         >
           The following pages contain professional references and certifications
-        </Typography>
+        </p>
 
         {/* Decorative line */}
-        <Box sx={{ width: '200px', height: '3px', bgcolor: '#89665d', mb: 4 }} />
+        <div
+          style={{
+            width: '200px',
+            height: '3px',
+            backgroundColor: accentColor,
+            marginBottom: '32px',
+          }}
+        />
 
         {/* Two columns */}
-        <Box
-          sx={{
+        <div
+          style={{
             display: 'flex',
-            gap: 4,
+            gap: '32px',
             width: '100%',
             maxWidth: '600px',
           }}
         >
           {/* References column */}
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{
+          <div style={{ flex: 1 }}>
+            <h2
+              style={{
                 fontFamily: 'Orbitron, sans-serif',
                 fontSize: '0.9rem',
                 fontWeight: 600,
-                color: '#89665d',
-                mb: 1.5,
-                borderBottom: '2px solid #89665d',
-                pb: 0.5,
+                color: accentColor,
+                margin: '0 0 12px 0',
+                paddingBottom: '4px',
+                borderBottom: `2px solid ${accentColor}`,
               }}
             >
               References ({references.length})
-            </Typography>
+            </h2>
             {references.map((ref, idx) => (
-              <Box key={idx} sx={{ mb: 1.5 }}>
-                <Typography
-                  sx={{
+              <div key={idx} style={{ marginBottom: '12px' }}>
+                <div
+                  style={{
                     fontFamily: 'Quicksand, sans-serif',
                     fontSize: '0.7rem',
                     fontWeight: 600,
@@ -164,9 +171,9 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
                   }}
                 >
                   {ref.company}
-                </Typography>
-                <Typography
-                  sx={{
+                </div>
+                <div
+                  style={{
                     fontFamily: 'Quicksand, sans-serif',
                     fontSize: '0.6rem',
                     color: mutedColor,
@@ -174,9 +181,9 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
                   }}
                 >
                   {ref.authors} ({ref.year})
-                </Typography>
-                <Typography
-                  sx={{
+                </div>
+                <div
+                  style={{
                     fontFamily: 'Quicksand, sans-serif',
                     fontSize: '0.6rem',
                     fontStyle: 'italic',
@@ -185,30 +192,30 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
                   }}
                 >
                   {ref.role}
-                </Typography>
-              </Box>
+                </div>
+              </div>
             ))}
-          </Box>
+          </div>
 
           {/* Certificates column */}
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              sx={{
+          <div style={{ flex: 1 }}>
+            <h2
+              style={{
                 fontFamily: 'Orbitron, sans-serif',
                 fontSize: '0.9rem',
                 fontWeight: 600,
-                color: '#89665d',
-                mb: 1.5,
-                borderBottom: '2px solid #89665d',
-                pb: 0.5,
+                color: accentColor,
+                margin: '0 0 12px 0',
+                paddingBottom: '4px',
+                borderBottom: `2px solid ${accentColor}`,
               }}
             >
               Certificates ({certificates.length})
-            </Typography>
+            </h2>
             {certificates.map((cert, idx) => (
-              <Box key={idx} sx={{ mb: 1.5 }}>
-                <Typography
-                  sx={{
+              <div key={idx} style={{ marginBottom: '12px' }}>
+                <div
+                  style={{
                     fontFamily: 'Quicksand, sans-serif',
                     fontSize: '0.7rem',
                     fontWeight: 600,
@@ -217,9 +224,9 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
                   }}
                 >
                   {cert.name}
-                </Typography>
-                <Typography
-                  sx={{
+                </div>
+                <div
+                  style={{
                     fontFamily: 'Quicksand, sans-serif',
                     fontSize: '0.6rem',
                     color: mutedColor,
@@ -227,13 +234,13 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
                   }}
                 >
                   {cert.issuer} ({cert.year})
-                </Typography>
-              </Box>
+                </div>
+              </div>
             ))}
-          </Box>
-        </Box>
-      </Box>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
