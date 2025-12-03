@@ -53,7 +53,7 @@ const CVPageContent = () => {
             ? `Benjamin_Grauer_CV_with_attachments_${theme}.pdf`
             : `Benjamin_Grauer_CV_${theme}.pdf`,
           baseUrl: window.location.origin,
-          attachments: showAttachments ? [CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH] : undefined,
+          attachments: showAttachments ? [REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH] : undefined,
         }),
       });
 

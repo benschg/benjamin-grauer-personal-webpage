@@ -143,18 +143,18 @@ const CVAttachmentCards = () => {
         }}
       >
         <AttachmentCard
-          title="Certificates"
-          description="Professional certifications and training certificates"
-          icon={<EmojiEvents sx={{ fontSize: 48 }} />}
-          pdfPath={CERTIFICATES_PDF_PATH}
-          downloadName="Benjamin_Grauer_Certificates.pdf"
-        />
-        <AttachmentCard
           title="References"
           description="Professional references and recommendations"
           icon={<ContactPage sx={{ fontSize: 48 }} />}
           pdfPath={REFERENCES_PDF_PATH}
           downloadName="Benjamin_Grauer_References.pdf"
+        />
+        <AttachmentCard
+          title="Certificates"
+          description="Professional certifications and training certificates"
+          icon={<EmojiEvents sx={{ fontSize: 48 }} />}
+          pdfPath={CERTIFICATES_PDF_PATH}
+          downloadName="Benjamin_Grauer_Certificates.pdf"
         />
       </Box>
     </Box>

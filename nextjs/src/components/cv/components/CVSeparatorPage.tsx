@@ -54,7 +54,7 @@ const CVSeparatorPage = ({ zoom = 0 }: CVSeparatorPageProps) => {
 
   return (
     <Box
-      className={`cv-page cv-separator-page ${zoom > 0 ? 'cv-page-manual-zoom' : ''}`}
+      className={`cv-page cv-separator-page cv-no-print ${zoom > 0 ? 'cv-page-manual-zoom' : ''}`}
       style={getZoomStyles()}
       sx={{
         bgcolor: isDark ? '#343a40' : '#ffffff',
