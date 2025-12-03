@@ -149,7 +149,7 @@ export const cvData: CVData = {
     successes: [
       { title: "40+ Projects Delivered" },
       { title: "Enabled teams to focus on the value chain" },
-      { title: "Simplified 30 CLI tools into 1 unified app" },
+      { title: "Consolidated 30 CLI tools into 1 unified app" },
       { title: "Bringing legacy systems to the cloud" },
     ],
 
@@ -165,11 +165,14 @@ export const cvData: CVData = {
     ],
 
     softSkills: [
-      "Team Leadership",
-      "Agile/Scrum",
+      "Team Growth",
       "Mentoring",
-      "Stakeholder Management",
-      "Technical Communication",
+      "Coaching",
+      "Empathy",
+      "Technical communication",
+      "Stakeholder management",
+      "Change management",
+      "Creative learning",
     ],
 
     languages: [
