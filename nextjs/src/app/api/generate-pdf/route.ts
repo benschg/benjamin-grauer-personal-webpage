@@ -412,7 +412,10 @@ export async function POST(request: Request) {
     console.error('Error generating PDF:', error);
 
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json(
+        { error: error.message, stack: error.stack },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
