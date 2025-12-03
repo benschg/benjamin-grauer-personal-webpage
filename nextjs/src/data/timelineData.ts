@@ -18,8 +18,8 @@ export const timelineEvents: TimelineEvent[] = [
     title: 'Head of Applications and Frameworks',
     company: 'Verity AG',
     description:
-      'Member of a team of 5 dev heads. Focused on leveling up user experience and simplicity of applications throughout the entire product lifecycle and streamlining teams toward client-oriented impact. Successfully spearheaded value-stream aligned teams and transformed 30 CLI tools into one intuitive web application for rollout.',
-    shortDescription: 'Unified 30 CLI tools into one intuitive web app. Led value-stream aligned teams for drone logistics.',
+      'Member of a team of 5 dev heads responsible for leading 70+ engineers across the software organization. Focused on leveling up user experience and simplicity of applications throughout the entire product lifecycle and streamlining teams toward client-oriented impact. Successfully spearheaded value-stream aligned teams and transformed 30 CLI tools into one intuitive web application for rollout. Championed cross-functional collaboration between hardware, firmware, and software teams to deliver integrated drone logistics solutions. Established skills hubs fostering knowledge sharing and professional growth across the organization.',
+    shortDescription: 'Led 70+ engineers across the software organization. Unified 30 CLI tools into one intuitive web app. Championed cross-functional collaboration between hardware, firmware, and software teams. Established skills hubs fostering knowledge sharing across the organization.',
     type: 'work',
     skills: [
       'AWS',
@@ -46,8 +46,8 @@ export const timelineEvents: TimelineEvent[] = [
     title: 'Head of Software',
     company: '9T Labs AG',
     description:
-      'Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations.',
-    shortDescription: 'Built cloud platform and 3D CAD design suite for carbon fiber manufacturing.',
+      'Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations. Built and mentored a team of software engineers from scratch, establishing coding standards and development practices. Drove the adoption of modern DevOps practices including CI/CD pipelines, infrastructure as code, and automated testing. Collaborated closely with mechanical engineers and material scientists to translate complex manufacturing requirements into intuitive software solutions.',
+    shortDescription: 'Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers from scratch, establishing coding standards and DevOps practices including CI/CD pipelines. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.',
     type: 'work',
     skills: [
       'Cloud Platform Development',
@@ -88,8 +88,8 @@ export const timelineEvents: TimelineEvent[] = [
     title: 'Head of Data Services',
     company: 'VirtaMed AG',
     description:
-      "Entrusted with development lead of VirtaMed's data services, aiming to interconnect simulators globally, manage updates remotely, and store training results in centralized databases in strict compliance with data protection regulations. Managed digitalization IoT project with nearshoring team.",
-    shortDescription: 'Connected global simulator fleet to cloud with GDPR-compliant IoT platform.',
+      "Entrusted with development lead of VirtaMed's data services, aiming to interconnect simulators globally, manage updates remotely, and store training results in centralized databases in strict compliance with data protection regulations. Managed digitalization IoT project with nearshoring team. Designed and implemented a cloud-native architecture enabling real-time monitoring of simulator health and usage analytics across hospitals worldwide. Led the evaluation and establishment of nearshoring partnerships within the EU, successfully integrating remote teams into the development workflow. Created comprehensive Power BI dashboards providing actionable insights for sales, support, and product development teams.",
+    shortDescription: 'Connected global simulator fleet to cloud with GDPR-compliant IoT platform. Designed cloud-native architecture for real-time monitoring of simulator health and usage analytics across hospitals worldwide. Led nearshoring partnerships within the EU and created Power BI dashboards providing actionable insights for sales, support, and product teams.',
     type: 'work',
     skills: [
       'Cloud & IoT Technologies',
