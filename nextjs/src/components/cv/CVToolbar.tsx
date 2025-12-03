@@ -24,6 +24,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonOffIcon from '@mui/icons-material/PersonOff';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
+import SecurityIcon from '@mui/icons-material/Security';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -56,8 +57,8 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     toggleTheme,
     showPhoto,
     togglePhoto,
-    showPrivateInfo,
-    togglePrivateInfo,
+    privacyLevel,
+    cyclePrivacyLevel,
     showExperience,
     toggleExperience,
     showAttachments,
@@ -67,6 +68,25 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     zoomOut,
     resetZoom,
   } = useCVTheme();
+
+  // Helper to get privacy icon and tooltip
+  const getPrivacyIcon = () => {
+    if (privacyLevel === 'none') return <LockIcon />;
+    if (privacyLevel === 'personal') return <LockOpenIcon />;
+    return <SecurityIcon />;
+  };
+
+  const getPrivacyTooltip = () => {
+    if (privacyLevel === 'none') return 'Show Personal Contact Info';
+    if (privacyLevel === 'personal') return 'Show All (incl. Reference Contacts)';
+    return 'Hide Private Info';
+  };
+
+  const getPrivacyColor = () => {
+    if (privacyLevel === 'none') return 'rgba(255,255,255,0.4)';
+    if (privacyLevel === 'personal') return 'white';
+    return '#89665d'; // accent color for full
+  };
   const { user, isAdmin, signIn, signOut } = useAuth();
   const {
     activeVersion,
@@ -311,12 +331,9 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
 
       {/* Floating Sidebar for Display Toggles - Desktop Only */}
       <Box className="cv-floating-sidebar cv-no-print" sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <Tooltip title={showPrivateInfo ? 'Hide Private Info' : 'Show Private Info'} placement="left">
-          <IconButton
-            onClick={togglePrivateInfo}
-            sx={{ color: showPrivateInfo ? 'white' : 'rgba(255,255,255,0.4)' }}
-          >
-            {showPrivateInfo ? <LockOpenIcon /> : <LockIcon />}
+        <Tooltip title={getPrivacyTooltip()} placement="left">
+          <IconButton onClick={cyclePrivacyLevel} sx={{ color: getPrivacyColor() }}>
+            {getPrivacyIcon()}
           </IconButton>
         </Tooltip>
         <Tooltip title={showPhoto ? 'Hide Photo' : 'Show Photo'} placement="left">
@@ -431,9 +448,9 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
 
         {/* Private Info Toggle */}
         <SpeedDialAction
-          icon={showPrivateInfo ? <LockOpenIcon /> : <LockIcon />}
-          tooltipTitle={showPrivateInfo ? 'Hide Private Info' : 'Show Private Info'}
-          onClick={togglePrivateInfo}
+          icon={getPrivacyIcon()}
+          tooltipTitle={getPrivacyTooltip()}
+          onClick={cyclePrivacyLevel}
         />
 
         {/* Photo Toggle */}

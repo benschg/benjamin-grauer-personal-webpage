@@ -219,7 +219,7 @@
 .cv-sidebar-contact-item {
   display: flex;
   align-items: flex-start;
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   color: var(--cv-text-muted);
   word-break: break-all;
 }
@@ -230,7 +230,7 @@
 }
 
 .cv-sidebar-contact-private {
-  font-size: 0.6rem;
+  font-size: 0.65rem;
   color: var(--cv-text-muted);
   font-style: italic;
 }
