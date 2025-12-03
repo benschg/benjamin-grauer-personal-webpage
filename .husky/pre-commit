@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# Change to frontend directory and run lint-staged
-cd frontend && npx lint-staged
+# Change to nextjs directory and run lint-staged
+cd nextjs && npx lint-staged
