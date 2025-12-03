@@ -14,9 +14,9 @@ interface PdfGenerationRequest {
 // Check if running in production/Vercel environment
 const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 
-// Remote Chromium binary for Vercel
+// Remote Chromium binary for Vercel - must match @sparticuz/chromium-min version
 const CHROMIUM_URL =
-  'https://github.com/nicholasgriffintn/chromium-binaries/releases/download/Chromium-v131.0.6778.204_linux_x64/Chromium-v131.0.6778.204_linux_x64.tar.gz';
+  'https://github.com/Sparticuz/chromium/releases/download/v141.0.0/chromium-v141.0.0-pack.tar';
 
 async function launchBrowser(): Promise<Browser> {
   if (isProduction) {
@@ -412,10 +412,7 @@ export async function POST(request: Request) {
     console.error('Error generating PDF:', error);
 
     if (error instanceof Error) {
-      return NextResponse.json(
-        { error: error.message, stack: error.stack },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
