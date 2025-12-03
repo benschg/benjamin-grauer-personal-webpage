@@ -1,6 +1,7 @@
 import {
   GitHub,
   LinkedIn,
+  Language,
   SportsEsports,
   YouTube,
   DirectionsRun,
@@ -11,6 +12,7 @@ import type { SocialLink } from './SocialLink';
 export const socialLinks: SocialLink[] = [
   { name: 'GitHub', url: 'http://github.com/benschg', icon: GitHub },
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/benjamin-grauer', icon: LinkedIn },
+  { name: 'Website', url: 'https://benjamingrauer.com', icon: Language },
   {
     name: 'Steam',
     url: 'https://steamcommunity.com/profiles/76561197970355967',

@@ -151,6 +151,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
             email={showPrivateInfo ? cvData.main.header.email : undefined}
             phone={showPrivateInfo ? cvData.main.header.phone : undefined}
             linkedin={cvData.main.header.linkedin}
+            website={cvData.main.header.website}
             zoom={zoom}
           >
             {hasSidebar ? (

@@ -3,6 +3,7 @@
 import { forwardRef, useRef, useEffect, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import LanguageIcon from '@mui/icons-material/Language';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
 
@@ -13,12 +14,13 @@ interface CVPageProps {
   email?: string;
   phone?: string;
   linkedin?: string;
+  website?: string;
   zoom?: number; // 0 = auto (CSS media queries), > 0 = manual zoom level
 }
 
 const CVPage = forwardRef<HTMLDivElement, CVPageProps>(
-  ({ children, pageNumber, totalPages, email, phone, linkedin, zoom = 0 }, ref) => {
-    const hasContact = email || phone || linkedin;
+  ({ children, pageNumber, totalPages, email, phone, linkedin, website, zoom = 0 }, ref) => {
+    const hasContact = email || phone || linkedin || website;
     const contentRef = useRef<HTMLDivElement>(null);
 
     // Check if content overflows in sidebar and main content
@@ -99,6 +101,13 @@ const CVPage = forwardRef<HTMLDivElement, CVPageProps>(
               <span className="cv-footer-item">
                 <LinkedInIcon sx={{ fontSize: 14, mr: 0.3 }} />
                 {linkedin}
+              </span>
+            )}
+            {linkedin && website && <span className="cv-footer-separator">|</span>}
+            {website && (
+              <span className="cv-footer-item">
+                <LanguageIcon sx={{ fontSize: 14, mr: 0.3 }} />
+                {website}
               </span>
             )}
           </div>

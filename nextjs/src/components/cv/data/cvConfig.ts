@@ -207,7 +207,7 @@ export const cvData: CVData = {
       },
     ],
 
-    hobbies: ["Triathlon", "Reading", "Crafting"],
+    hobbies: ["Triathlon", "Reading", "Crafting", "Video Games"],
 
     aboutMe: cvAboutMe,
   },

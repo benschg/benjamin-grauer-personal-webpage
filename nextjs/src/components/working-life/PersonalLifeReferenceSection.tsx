@@ -4,34 +4,20 @@ import Link from 'next/link';
 import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material';
 import { ArrowForward, FamilyRestroom, DirectionsRun, Flight, Hiking } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { personalHighlights } from '../../data/interestsData';
+
+const highlightIcons = [
+  <FamilyRestroom key="family" sx={{ fontSize: 28 }} />,
+  <DirectionsRun key="sports" sx={{ fontSize: 28 }} />,
+  <Flight key="adventures" sx={{ fontSize: 28 }} />,
+  <Hiking key="hobbies" sx={{ fontSize: 28 }} />,
+];
 
 const PersonalLifeReferenceSection = () => {
-  const highlights = [
-    {
-      icon: <FamilyRestroom sx={{ fontSize: 28 }} />,
-      title: 'Family & Life',
-      description: 'Devoted husband and father',
-      color: '#FF6B9D',
-    },
-    {
-      icon: <DirectionsRun sx={{ fontSize: 28 }} />,
-      title: 'Sports & Fitness',
-      description: 'Triathlon & winter swimming',
-      color: '#4CAF50',
-    },
-    {
-      icon: <Flight sx={{ fontSize: 28 }} />,
-      title: 'Adventures',
-      description: 'Travel, diving & hiking',
-      color: '#2196F3',
-    },
-    {
-      icon: <Hiking sx={{ fontSize: 28 }} />,
-      title: 'Hobbies',
-      description: '3D design, cooking & reading',
-      color: '#FF9800',
-    },
-  ];
+  const highlights = personalHighlights.map((highlight, index) => ({
+    ...highlight,
+    icon: highlightIcons[index],
+  }));
 
   return (
     <Box
@@ -80,6 +66,7 @@ const PersonalLifeReferenceSection = () => {
           {highlights.map((highlight, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <motion.div
+                style={{ height: '100%' }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
