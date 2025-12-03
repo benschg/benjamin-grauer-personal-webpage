@@ -14,9 +14,9 @@ interface PdfGenerationRequest {
 // Check if running in production/Vercel environment
 const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 
-// Chromium binary URL - must match @sparticuz/chromium-min version
-const CHROMIUM_URL =
-  'https://github.com/Sparticuz/chromium/releases/download/v141.0.0/chromium-v141.0.0-pack.x64.tar';
+// Self-hosted Chromium binary - must match @sparticuz/chromium-min version
+// Using production domain to avoid auth issues on preview deployments
+const CHROMIUM_URL = 'https://benjamingrauer.ch/chromium-v141.0.0-pack.tar';
 
 async function launchBrowser(): Promise<Browser> {
   if (isProduction) {
