@@ -298,7 +298,8 @@ aligned development, and fostering collaborative engineering cultures.`,
     domains: [
       {
         name: "Medical simulation",
-        description: "Flight simulators for doctors",
+        description:
+          "Building the equivalent to flight simulators for endoscopic medical procedures",
       },
       {
         name: "Drone logistics",
