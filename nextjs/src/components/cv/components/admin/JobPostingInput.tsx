@@ -65,6 +65,7 @@ import {
 const getDataSourcePreview = (key: keyof CVDataSourceSelection): string => {
   // Create a selection with only this key enabled
   const singleSelection: CVDataSourceSelection = {
+    successes: false,
     whatLookingFor: false,
     workExperience: false,
     technicalSkills: false,

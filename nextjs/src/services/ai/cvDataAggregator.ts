@@ -16,8 +16,8 @@ export type { CVDataSourceSelection };
 export interface AggregatedCVData {
   successes?: {
     achievements: Array<{
-      value: string;
-      label: string;
+      title: string;
+      subtitle?: string;
     }>;
   };
   whatLookingFor?: {
@@ -120,8 +120,8 @@ export function aggregateCVData(selection: CVDataSourceSelection): AggregatedCVD
   if (selection.successes) {
     data.successes = {
       achievements: cvData.sidebar.successes.map((s) => ({
-        value: s.value,
-        label: s.label,
+        title: s.title,
+        subtitle: s.subtitle,
       })),
     };
   }
@@ -246,7 +246,10 @@ export function formatDataForPrompt(data: AggregatedCVData): string {
   if (data.successes) {
     sections.push('=== KEY ACHIEVEMENTS & SUCCESSES ===');
     for (const achievement of data.successes.achievements) {
-      sections.push(`${achievement.value} ${achievement.label}`);
+      const text = achievement.subtitle
+        ? `${achievement.title} (${achievement.subtitle})`
+        : achievement.title;
+      sections.push(`• ${text}`);
     }
     sections.push('');
   }
