@@ -148,7 +148,7 @@ export const cvData: CVData = {
     successes: [
       { title: "10+ Teams Built" },
       { title: "100+ People Hired" },
-      { title: "ISO9001 implemented twice" },
+      { title: "Certified ISO 9001 twice" },
       { title: "Restructured teams to value-stream alignment" },
       { title: "Simplified 30 CLI tools into 1 unified app" },
       { title: "Brining legacy systems to the cloud" },
