@@ -165,7 +165,7 @@ export const cvData: CVData = {
     ],
 
     softSkills: [
-      "Team Growth",
+      "Team growth",
       "Mentoring",
       "Coaching",
       "Empathy",
