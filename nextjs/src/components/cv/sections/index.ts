@@ -7,6 +7,7 @@ export { default as CVUSP } from './CVUSP';
 export { default as CVFunctions } from './CVFunctions';
 export { default as CVExperience } from './CVExperience';
 export { default as CVSideProjects } from './CVSideProjects';
+export { default as CVDomains } from './CVDomains';
 export { default as CVReferences } from './CVReferences';
 export { default as CVLookingFor } from './CVLookingFor';
 

@@ -10,6 +10,7 @@ import {
   CVFunctions,
   CVExperience,
   CVSideProjects,
+  CVDomains,
   CVReferences,
   CVSidebar,
 } from './sections';
@@ -102,6 +103,8 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
         return <CVExperience key="experience" entries={experienceEntries} />;
       case 'sideProjects':
         return <CVSideProjects key="sideProjects" data={cvData.main.sideProjects} />;
+      case 'domains':
+        return <CVDomains key="domains" data={cvData.main.domains} />;
       case 'references':
         return (
           <CVReferences

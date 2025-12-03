@@ -5,6 +5,7 @@ import type {
   CVFunctionEntry,
   CVPageLayout,
   CVReferenceEntry,
+  CVDomainEntry,
 } from "../types/CVTypes";
 import { timelineEvents } from "@/data/timelineData";
 import { sharedProfile } from "@/data/shared-profile";
@@ -23,7 +24,7 @@ export const cvPageLayouts: CVPageLayout[] = [
   // Page 2
   {
     sidebar: ["education", "courses", "portfolio", "volunteer", "aboutMe"],
-    main: ["functions", "sideProjects", "references"],
+    main: ["functions", "sideProjects", "domains", "references"],
   },
   // Page 3 - First 3 experience entries
   {
@@ -293,6 +294,29 @@ aligned development, and fostering collaborative engineering cultures.`,
         technologies: ["C++", "OpenGL", "Lua"],
       },
     ],
+
+    domains: [
+      {
+        name: "Medical simulation",
+        description: "VR surgical training simulators",
+      },
+      {
+        name: "Drone logistics",
+        description: "Autonomous warehouse systems",
+      },
+      {
+        name: "Advanced manufacturing",
+        description: "Carbon fiber 3D printing",
+      },
+      {
+        name: "Compliance",
+        description: "Document change management systems",
+      },
+      {
+        name: "Game development",
+        description: "Open-source 3D engines",
+      },
+    ] as CVDomainEntry[],
 
     references: getReferences(),
   },

@@ -29,6 +29,7 @@ export type CVMainSectionType =
   | 'functions' // Functions I was in
   | 'experience' // Work contracts (all)
   | 'sideProjects' // Side projects I am proud of
+  | 'domains' // Industries/domains worked in
   | 'references' // Professional references
   | CVSlicedSection; // Sliced section for pagination
 
@@ -173,6 +174,12 @@ export interface CVLookingForData {
   items: string[];
 }
 
+// Domain entry for industries worked in
+export interface CVDomainEntry {
+  name: string;
+  description: string;
+}
+
 // Main content data structure
 export interface CVMainData {
   header: CVHeaderData;
@@ -184,6 +191,7 @@ export interface CVMainData {
   functions: CVFunctionEntry[];
   experience: CVExperienceEntry[];
   sideProjects: CVSideProjectEntry[];
+  domains: CVDomainEntry[];
   references: CVReferenceEntry[];
 }
 

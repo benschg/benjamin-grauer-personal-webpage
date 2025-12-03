@@ -1362,6 +1362,30 @@
 }
 
 /* ============================================ */
+/* DOMAINS / INDUSTRIES                         */
+/* ============================================ */
+
+.cv-domains-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.cv-domains-item {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.cv-domains-name {
+  font-weight: 600;
+  color: var(--cv-text-primary);
+}
+
+.cv-domains-desc {
+  color: var(--cv-text-secondary);
+}
+
+/* ============================================ */
 /* REFERENCES                                   */
 /* ============================================ */
 
