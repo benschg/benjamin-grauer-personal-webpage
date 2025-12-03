@@ -9,6 +9,7 @@ import type {
 import { timelineEvents } from "@/data/timelineData";
 import { sharedProfile } from "@/data/shared-profile";
 import { cvAboutMe } from "@/data/interestsData";
+import { careerAspirations } from "@/data/careerAspirationsData";
 
 // Page layouts - define which sections appear on each page
 // Add more pages as needed - no cap on number of pages
@@ -17,7 +18,7 @@ export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
     sidebar: ["qualifications", "successes", "skills", "languages"],
-    main: ["header", "slogan", "profile", "usp"],
+    main: ["header", "badges", "slogan", "profile", "usp", "lookingFor"],
   },
   // Page 2
   {
@@ -228,6 +229,13 @@ export const cvData: CVData = {
       photo: sharedProfile.photo,
     },
 
+    badges: [
+      { value: "15+", label: "Years Experience" },
+      { value: "10+", label: "Teams Empowered" },
+      { value: "100+", label: "People Hired" },
+      { value: "2x", label: "ISO9001 Certified" },
+    ],
+
     slogan:
       "Transforming complex challenges into elegant solutions through collaborative leadership. Empowering engineers to ship products that matter.",
 
@@ -254,6 +262,11 @@ aligned development, and fostering collaborative engineering cultures.`,
           "Specialized expertise in real-time 3D applications and medical simulation. Bridging the gap between cutting-edge graphics and practical user experiences.",
       },
     ],
+
+    lookingFor: {
+      intro: "Combining technical excellence with human-centered leadership:",
+      items: careerAspirations.map((a) => a.title),
+    },
 
     functions: getFunctionsFromTimeline(),
 

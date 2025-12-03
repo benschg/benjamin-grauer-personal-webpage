@@ -21,9 +21,11 @@ export interface CVSlicedSection {
 
 export type CVMainSectionType =
   | 'header' // Name and Claim
+  | 'badges' // Key highlights/stats
   | 'slogan'
   | 'profile'
   | 'usp' // USP, competences, skills
+  | 'lookingFor' // What I'm looking for
   | 'functions' // Functions I was in
   | 'experience' // Work contracts (all)
   | 'sideProjects' // Side projects I am proud of
@@ -159,12 +161,26 @@ export interface CVSidebarData {
   aboutMe: CVAboutMeEntry[];
 }
 
+// Badge entry for key highlights
+export interface CVBadgeEntry {
+  label: string;
+  value: string;
+}
+
+// Looking for entry
+export interface CVLookingForData {
+  intro: string;
+  items: string[];
+}
+
 // Main content data structure
 export interface CVMainData {
   header: CVHeaderData;
+  badges: CVBadgeEntry[];
   slogan: string;
   profile: string;
   usp: CVUSPEntry[];
+  lookingFor: CVLookingForData;
   functions: CVFunctionEntry[];
   experience: CVExperienceEntry[];
   sideProjects: CVSideProjectEntry[];

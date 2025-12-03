@@ -6,49 +6,54 @@ export interface CareerAspiration {
 
 export const careerAspirations: CareerAspiration[] = [
   {
-    title: 'Empower People',
-    description: 'Creating tools and solutions that enable others to achieve their potential',
-    icon: 'People',
+    title: "Empower People",
+    description:
+      "Creating tools and solutions that enable others to achieve their potential",
+    icon: "People",
   },
   {
-    title: 'Creativity',
-    description: 'Bringing innovative ideas to life through technology and design',
-    icon: 'Lightbulb',
+    title: "Project orchestration",
+    description: "Leading teams and projects to successful outcomes",
+    icon: "ManageAccounts",
   },
   {
-    title: 'Project Management',
-    description: 'Leading teams and projects to successful outcomes',
-    icon: 'ManageAccounts',
+    title: "Creativity & growth",
+    description:
+      "Bringing innovative ideas to life through technology and design",
+    icon: "Lightbulb",
   },
   {
-    title: 'Playful Approach',
-    description: 'Making problem-solving engaging and enjoyable',
-    icon: 'SportsEsports',
+    title: "Honesty & playfulness",
+    description: "Making problem-solving engaging and enjoyable",
+    icon: "SportsEsports",
   },
   {
-    title: '3D Graphics',
-    description: 'Creating immersive visual experiences and interactive content',
-    icon: 'ThreeDRotation',
+    title: "Visualization & 3D graphics",
+    description:
+      "Creating immersive visual experiences and interactive content",
+    icon: "ThreeDRotation",
   },
   {
-    title: 'Cloud & Machine Learning',
-    description: 'Leveraging modern technologies for scalable solutions',
-    icon: 'Cloud',
+    title: "Cloud development & modern technologies",
+    description: "Leveraging modern technologies for scalable solutions",
+    icon: "Cloud",
   },
   {
-    title: 'Hands-on Programming',
-    description: 'Staying close to the code and implementation details',
-    icon: 'Code',
+    title: "Great user experiences",
+    description: "Creating user-centered designs that delight and engage",
+    icon: "Palette",
   },
+
   {
-    title: 'Deployment',
-    description: 'Ensuring smooth delivery and operations of software products',
-    icon: 'Rocket',
+    title: "Continuous delivery",
+    description: "Ensuring smooth delivery and operations of software products",
+    icon: "Rocket",
   },
+
   {
-    title: 'UX Design',
-    description: 'Creating user-centered designs that delight and engage',
-    icon: 'Palette',
+    title: "Staying hands-on",
+    description: "Staying close to the code and implementation details",
+    icon: "Code",
   },
 ];
 

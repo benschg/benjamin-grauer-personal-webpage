@@ -840,6 +840,72 @@
   gap: 0.25rem;
 }
 
+/* Badges Section */
+.cv-badges {
+  margin-top: -0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.cv-badges-container {
+  display: flex;
+  justify-content: flex-start;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cv-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cv-badge-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--cv-accent);
+  line-height: 1.2;
+}
+
+.cv-badge-label {
+  font-size: 0.65rem;
+  color: var(--cv-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Looking For Section */
+.cv-looking-for {
+  margin-bottom: 0.75rem;
+}
+
+.cv-looking-for h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--cv-text-primary);
+}
+
+.cv-looking-for-intro {
+  font-size: 0.8rem;
+  color: var(--cv-text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.cv-looking-for-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cv-looking-for-item {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.5rem;
+  background-color: var(--cv-skill-bg);
+  color: var(--cv-text-secondary);
+  border-radius: 3px;
+}
+
 /* Experience Section */
 .cv-experience-entry {
   margin-bottom: 1rem;

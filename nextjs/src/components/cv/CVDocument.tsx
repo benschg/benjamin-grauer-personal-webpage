@@ -2,9 +2,11 @@ import { forwardRef, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import {
   CVHeader,
+  CVBadges,
   CVSlogan,
   CVProfile,
   CVUSP,
+  CVLookingFor,
   CVFunctions,
   CVExperience,
   CVSideProjects,
@@ -68,15 +70,11 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
             data={{ ...cvData.main.header, title: activeContent.tagline, photo: undefined }}
           />
         );
+      case 'badges':
+        return <CVBadges key="badges" badges={cvData.main.badges} />;
       case 'slogan':
         // Use dynamic slogan from version
-        return (
-          <CVSlogan
-            key="slogan"
-            slogan={activeContent.slogan || cvData.main.slogan}
-            website={cvData.main.header.website}
-          />
-        );
+        return <CVSlogan key="slogan" slogan={activeContent.slogan || cvData.main.slogan} />;
       case 'profile':
         // Use dynamic profile from version
         return <CVProfile key="profile" profile={activeContent.profile} />;
@@ -90,6 +88,14 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           return <CVUSP key="usp" data={uspFromAchievements} />;
         }
         return <CVUSP key="usp" data={cvData.main.usp} />;
+      case 'lookingFor':
+        return (
+          <CVLookingFor
+            key="lookingFor"
+            intro={cvData.main.lookingFor.intro}
+            items={cvData.main.lookingFor.items}
+          />
+        );
       case 'functions':
         return <CVFunctions key="functions" data={cvData.main.functions} />;
       case 'experience':
