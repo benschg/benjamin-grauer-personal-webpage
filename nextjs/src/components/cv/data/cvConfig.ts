@@ -155,8 +155,8 @@ export const cvData: CVData = {
 
     hardSkills: [
       "React/TypeScript",
-      "C#/.NET",
       "Python",
+      "C#/.NET",
       "C++",
       "Cloud architecture",
       "AWS",
