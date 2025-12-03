@@ -148,14 +148,10 @@ export const cvData: CVData = {
     successes: [
       { title: "10+ Teams Built" },
       { title: "100+ People Hired" },
-      { title: "New Perspectives Introduced" },
       { title: "ISO 9001 Implemented twice" },
       { title: "Restructured teams to value-stream alignment" },
       { title: "Simplified 30 CLI tools into 1 unified app" },
-      {
-        title: "Brining legacy systems to the cloud",
-        subtitle: "VirtaMed IoT platform",
-      },
+      { title: "Brining legacy systems to the cloud" },
     ],
 
     qualifications: [

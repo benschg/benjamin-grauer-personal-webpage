@@ -132,7 +132,7 @@ const CVAttachmentCards = () => {
           color: '#b0b0b0',
         }}
       >
-        These documents will be appended to the PDF when downloading or printing.
+        These documents will be appended to the PDF when downloading.
       </Typography>
       <Box
         sx={{
