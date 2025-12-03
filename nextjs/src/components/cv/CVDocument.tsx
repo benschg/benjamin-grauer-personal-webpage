@@ -15,6 +15,7 @@ import {
   CVSidebar,
 } from './sections';
 import CVAttachmentCards from './components/CVAttachmentCards';
+import CVSeparatorPage from './components/CVSeparatorPage';
 import { cvPageLayouts, cvData } from './data/cvConfig';
 import type { CVMainSectionType, CVSlicedSection, CVExperienceEntry } from './types/CVTypes';
 import CVPage from './components/CVPage';
@@ -189,6 +190,8 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           </CVPage>
         );
       })}
+      {/* Separator page - shown when attachments are enabled */}
+      <CVSeparatorPage zoom={zoom} />
       {/* Attachment cards preview - shown when attachments are enabled */}
       <CVAttachmentCards />
     </div>

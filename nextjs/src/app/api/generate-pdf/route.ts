@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
-import { PDFDocument } from 'pdf-lib';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
 
 interface PdfGenerationRequest {
   html: string;
@@ -88,8 +88,237 @@ async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
   return result;
 }
 
+// References data
+const references = [
+  { company: 'Verity AG', authors: 'L. Gherardi & S. Neeskens', role: 'Head of Applications & Framework', year: '2025' },
+  { company: '9T Labs AG', authors: 'C. Houwink & S. Skribe-Negre', role: 'Head of Software', year: '2023' },
+  { company: 'VirtaMed AG', authors: 'R. Sierra (Co-CEO)', role: 'Cloud Platform Development', year: '2020' },
+  { company: 'VirtaMed AG', authors: 'Internal HR', role: 'Full Tenure Reference', year: '2020' },
+  { company: 'Harvard Medical School', authors: 'Prof. R. Kikinis, M.D.', role: "Master's Thesis", year: '2020' },
+  { company: 'Cymicon', authors: 'J.P. Morrison (CEO)', role: 'R&D Internship', year: '2007' },
+];
+
+// Certificates data
+const certificates = [
+  { name: 'MSc ETH Electrical Engineering', issuer: 'ETH Zürich', year: '2008' },
+  { name: 'Certified ScrumMaster (CSM)', issuer: 'Scrum Alliance', year: '2012' },
+  { name: 'Management 3.0', issuer: 'Jurgen Appelo', year: '2016' },
+  { name: 'CPRE Foundation Level', issuer: 'IREB', year: '2017' },
+  { name: 'Leading Digital Transformation', issuer: 'Ionology', year: '2017' },
+  { name: 'ICP-BAF Business Agility', issuer: 'ICAgile', year: '2019' },
+];
+
+// Create a separator page for References and Certificates section
+async function createSeparatorPage(
+  pdfDoc: PDFDocument,
+  theme: 'dark' | 'light'
+): Promise<void> {
+  // A4 dimensions in points (1 point = 1/72 inch)
+  const A4_WIDTH = 595.28;
+  const A4_HEIGHT = 841.89;
+
+  const page = pdfDoc.addPage([A4_WIDTH, A4_HEIGHT]);
+
+  // Theme colors
+  const colors =
+    theme === 'dark'
+      ? {
+          background: rgb(0.204, 0.227, 0.251), // #343a40
+          accent: rgb(0.537, 0.4, 0.365), // #89665d
+          text: rgb(1, 1, 1), // white
+          muted: rgb(0.69, 0.69, 0.69), // #b0b0b0
+        }
+      : {
+          background: rgb(1, 1, 1), // white
+          accent: rgb(0.537, 0.4, 0.365), // #89665d
+          text: rgb(0.1, 0.1, 0.1), // near black
+          muted: rgb(0.4, 0.4, 0.4), // #666666
+        };
+
+  // Fill background
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: A4_WIDTH,
+    height: A4_HEIGHT,
+    color: colors.background,
+  });
+
+  // Draw decorative accent line at top
+  page.drawRectangle({
+    x: 0,
+    y: A4_HEIGHT - 20,
+    width: A4_WIDTH,
+    height: 20,
+    color: colors.accent,
+  });
+
+  // Draw decorative accent line at bottom
+  page.drawRectangle({
+    x: 0,
+    y: 0,
+    width: A4_WIDTH,
+    height: 20,
+    color: colors.accent,
+  });
+
+  // Embed fonts
+  const fontBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const fontRegular = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const fontItalic = await pdfDoc.embedFont(StandardFonts.HelveticaOblique);
+
+  // Main title - "References & Certificates"
+  const titleText = 'References & Certificates';
+  const titleFontSize = 32;
+  const titleWidth = fontBold.widthOfTextAtSize(titleText, titleFontSize);
+  const titleX = (A4_WIDTH - titleWidth) / 2;
+  const titleY = A4_HEIGHT - 100;
+
+  page.drawText(titleText, {
+    x: titleX,
+    y: titleY,
+    size: titleFontSize,
+    font: fontBold,
+    color: colors.accent,
+  });
+
+  // Subtitle
+  const subtitleText = 'The following pages contain professional references and certifications';
+  const subtitleFontSize = 11;
+  const subtitleWidth = fontRegular.widthOfTextAtSize(subtitleText, subtitleFontSize);
+  const subtitleX = (A4_WIDTH - subtitleWidth) / 2;
+  const subtitleY = titleY - 30;
+
+  page.drawText(subtitleText, {
+    x: subtitleX,
+    y: subtitleY,
+    size: subtitleFontSize,
+    font: fontRegular,
+    color: colors.text,
+  });
+
+  // Draw decorative horizontal line under subtitle
+  const lineWidth = 200;
+  const lineX = (A4_WIDTH - lineWidth) / 2;
+  page.drawRectangle({
+    x: lineX,
+    y: subtitleY - 20,
+    width: lineWidth,
+    height: 3,
+    color: colors.accent,
+  });
+
+  // Two columns layout
+  const columnWidth = 220;
+  const columnGap = 40;
+  const totalWidth = columnWidth * 2 + columnGap;
+  const leftColumnX = (A4_WIDTH - totalWidth) / 2;
+  const rightColumnX = leftColumnX + columnWidth + columnGap;
+  const contentY = subtitleY - 60;
+
+  // References column header
+  const refHeaderText = `References (${references.length})`;
+  page.drawText(refHeaderText, {
+    x: leftColumnX,
+    y: contentY,
+    size: 14,
+    font: fontBold,
+    color: colors.accent,
+  });
+
+  // References header underline
+  page.drawRectangle({
+    x: leftColumnX,
+    y: contentY - 5,
+    width: columnWidth,
+    height: 2,
+    color: colors.accent,
+  });
+
+  // Certificates column header
+  const certHeaderText = `Certificates (${certificates.length})`;
+  page.drawText(certHeaderText, {
+    x: rightColumnX,
+    y: contentY,
+    size: 14,
+    font: fontBold,
+    color: colors.accent,
+  });
+
+  // Certificates header underline
+  page.drawRectangle({
+    x: rightColumnX,
+    y: contentY - 5,
+    width: columnWidth,
+    height: 2,
+    color: colors.accent,
+  });
+
+  // Draw references
+  let refY = contentY - 30;
+  for (const ref of references) {
+    // Company name
+    page.drawText(ref.company, {
+      x: leftColumnX,
+      y: refY,
+      size: 10,
+      font: fontBold,
+      color: colors.text,
+    });
+    refY -= 12;
+
+    // Authors and year
+    page.drawText(`${ref.authors} (${ref.year})`, {
+      x: leftColumnX,
+      y: refY,
+      size: 8,
+      font: fontRegular,
+      color: colors.muted,
+    });
+    refY -= 11;
+
+    // Role
+    page.drawText(ref.role, {
+      x: leftColumnX,
+      y: refY,
+      size: 8,
+      font: fontItalic,
+      color: colors.muted,
+    });
+    refY -= 18;
+  }
+
+  // Draw certificates
+  let certY = contentY - 30;
+  for (const cert of certificates) {
+    // Certificate name
+    page.drawText(cert.name, {
+      x: rightColumnX,
+      y: certY,
+      size: 10,
+      font: fontBold,
+      color: colors.text,
+    });
+    certY -= 12;
+
+    // Issuer and year
+    page.drawText(`${cert.issuer} (${cert.year})`, {
+      x: rightColumnX,
+      y: certY,
+      size: 8,
+      font: fontRegular,
+      color: colors.muted,
+    });
+    certY -= 22;
+  }
+}
+
 // Merge multiple PDFs into one
-async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promise<Uint8Array> {
+async function mergePdfs(
+  mainPdf: Uint8Array,
+  attachmentPaths: string[],
+  theme: 'dark' | 'light'
+): Promise<Uint8Array> {
   const fs = await import('fs/promises');
   const path = await import('path');
 
@@ -100,6 +329,9 @@ async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promis
   const mainDoc = await PDFDocument.load(mainPdf);
   const mainPages = await mergedPdf.copyPages(mainDoc, mainDoc.getPageIndices());
   mainPages.forEach((page) => mergedPdf.addPage(page));
+
+  // Add separator page before attachments
+  await createSeparatorPage(mergedPdf, theme);
 
   // Load and add each attachment PDF
   for (const attachmentPath of attachmentPaths) {
@@ -399,7 +631,7 @@ export async function POST(request: Request) {
     // If attachments are provided, merge them with the CV PDF
     let finalPdf: Uint8Array = pdfBuffer;
     if (params.attachments && params.attachments.length > 0) {
-      finalPdf = await mergePdfs(pdfBuffer, params.attachments);
+      finalPdf = await mergePdfs(pdfBuffer, params.attachments, params.theme);
     }
 
     // Return PDF - convert Uint8Array to Buffer for NextResponse
