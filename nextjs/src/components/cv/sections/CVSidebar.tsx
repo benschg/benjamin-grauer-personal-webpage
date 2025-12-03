@@ -39,7 +39,6 @@ const CVSidebar = ({
       case 'qualifications':
         return data.qualifications.length > 0 ? (
           <div key="qualifications" className="cv-sidebar-section">
-            <h3 className="cv-sidebar-title">Qualifications</h3>
             <div className="cv-sidebar-list">
               {data.qualifications.map((qual, index) => (
                 <div key={index} className="cv-sidebar-list-item">
