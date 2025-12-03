@@ -11,13 +11,35 @@ interface CVPageProps {
   email?: string;
   phone?: string;
   linkedin?: string;
+  zoom?: number; // 0 = auto (CSS media queries), > 0 = manual zoom level
 }
 
 const CVPage = forwardRef<HTMLDivElement, CVPageProps>(
-  ({ children, pageNumber, totalPages, email, phone, linkedin }, ref) => {
+  ({ children, pageNumber, totalPages, email, phone, linkedin, zoom = 0 }, ref) => {
     const hasContact = email || phone || linkedin;
+
+    // Calculate CSS custom properties for manual zoom
+    // These are used by the CSS to apply transforms with !important to override media queries
+    const getZoomStyles = (): React.CSSProperties => {
+      if (zoom === 0) return {}; // Auto mode - let CSS handle it
+
+      // Calculate negative margins to compensate for scaling
+      const scaleFactor = 1 - zoom;
+      return {
+        '--manual-zoom-transform': `scale(${zoom})`,
+        '--manual-zoom-margin-bottom': `calc(-297mm * ${scaleFactor})`,
+        '--manual-zoom-margin-left': `calc(-210mm * ${scaleFactor / 2})`,
+        '--manual-zoom-margin-right': `calc(-210mm * ${scaleFactor / 2})`,
+        transformOrigin: 'top center',
+      } as React.CSSProperties;
+    };
+
     return (
-      <div className="cv-page" ref={ref}>
+      <div
+        className={`cv-page ${zoom > 0 ? 'cv-page-manual-zoom' : ''}`}
+        ref={ref}
+        style={getZoomStyles()}
+      >
         <div className="cv-page-content">{children}</div>
         <div className="cv-page-footer">
           <div className="cv-footer-contact">

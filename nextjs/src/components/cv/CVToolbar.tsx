@@ -31,6 +31,8 @@ import CancelIcon from '@mui/icons-material/Cancel';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
 import MenuIcon from '@mui/icons-material/Menu';
+import AddIcon from '@mui/icons-material/Add';
+import RemoveIcon from '@mui/icons-material/Remove';
 import { useCVTheme, useCVVersion } from './contexts';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
@@ -52,6 +54,10 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     togglePrivateInfo,
     showExperience,
     toggleExperience,
+    zoom,
+    zoomIn,
+    zoomOut,
+    resetZoom,
   } = useCVTheme();
   const { user, isAdmin, signIn, signOut } = useAuth();
   const {
@@ -235,6 +241,30 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             {theme === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
           </IconButton>
         </Tooltip>
+      </Box>
+
+      {/* Bottom Zoom Bar - Always Visible */}
+      <Box className="cv-bottom-zoom-bar cv-no-print">
+        <IconButton onClick={zoomOut} size="small" sx={{ color: 'white' }}>
+          <RemoveIcon fontSize="small" />
+        </IconButton>
+        <Tooltip title={zoom === 0 ? 'Auto' : 'Reset to Auto'} placement="top">
+          <Button
+            onClick={resetZoom}
+            size="small"
+            sx={{
+              color: zoom === 0 ? 'rgba(255,255,255,0.5)' : 'white',
+              minWidth: '50px',
+              fontSize: '0.75rem',
+              padding: '2px 8px',
+            }}
+          >
+            {zoom === 0 ? 'Auto' : `${Math.round(zoom * 100)}%`}
+          </Button>
+        </Tooltip>
+        <IconButton onClick={zoomIn} size="small" sx={{ color: 'white' }}>
+          <AddIcon fontSize="small" />
+        </IconButton>
       </Box>
 
       {/* Mobile SpeedDial - All Controls */}
