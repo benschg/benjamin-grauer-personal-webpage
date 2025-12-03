@@ -63,7 +63,7 @@ const ProfessionalHero = () => {
           >
             <Box
               component="img"
-              src="/Benjamin_Grauer_ProfilePic_2_Transparent_1024.webp"
+              src={sharedProfile.photo}
               alt="Benjamin Grauer Profile Picture"
               sx={{
                 width: { xs: 200, sm: 250, md: 300 },
