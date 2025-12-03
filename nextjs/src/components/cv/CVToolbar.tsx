@@ -12,6 +12,8 @@ import {
   SpeedDial,
   SpeedDialAction,
   SpeedDialIcon,
+  Snackbar,
+  Alert,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -33,7 +35,11 @@ import WorkOffIcon from '@mui/icons-material/WorkOff';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileOffIcon from '@mui/icons-material/LinkOff';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useCVTheme, useCVVersion } from './contexts';
+import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/data/documents';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
 
@@ -54,6 +60,8 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     togglePrivateInfo,
     showExperience,
     toggleExperience,
+    showAttachments,
+    toggleAttachments,
     zoom,
     zoomIn,
     zoomOut,
@@ -70,6 +78,20 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
   } = useCVVersion();
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
+  const [printWarningOpen, setPrintWarningOpen] = useState(false);
+
+  const handlePrintClick = () => {
+    if (showAttachments) {
+      setPrintWarningOpen(true);
+    } else {
+      onPrint();
+    }
+  };
+
+  const handleConfirmPrint = () => {
+    setPrintWarningOpen(false);
+    onPrint();
+  };
 
   const handleBack = () => {
     router.push('/working-life');
@@ -203,7 +225,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Tooltip>
           )}
           <Tooltip title="Print">
-            <IconButton onClick={onPrint} sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}>
+            <IconButton onClick={handlePrintClick} sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}>
               <PrintIcon />
             </IconButton>
           </Tooltip>
@@ -211,6 +233,80 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
 
         {/* AI Customization Dialog */}
         <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
+
+        {/* Print warning when attachments are enabled */}
+        <Snackbar
+          open={printWarningOpen}
+          onClose={() => setPrintWarningOpen(false)}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+          <Alert
+            severity="warning"
+            onClose={() => setPrintWarningOpen(false)}
+            sx={{ width: '100%', maxWidth: '500px' }}
+          >
+            <Box sx={{ mb: 1.5 }}>
+              <strong>Attachments cannot be included when printing.</strong>
+            </Box>
+            <Box sx={{ mb: 1, fontSize: '0.875rem' }}>
+              View documents separately or download the complete PDF with all attachments.
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
+              <Button
+                color="inherit"
+                size="small"
+                href={CERTIFICATES_PDF_PATH}
+                target="_blank"
+                rel="noopener noreferrer"
+                startIcon={<OpenInNewIcon />}
+              >
+                Certificates
+              </Button>
+              <Button
+                color="inherit"
+                size="small"
+                href={REFERENCES_PDF_PATH}
+                target="_blank"
+                rel="noopener noreferrer"
+                startIcon={<OpenInNewIcon />}
+              >
+                References
+              </Button>
+            </Box>
+            <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: 'flex-end' }}>
+              <Button
+                color="inherit"
+                size="small"
+                onClick={() => setPrintWarningOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                color="inherit"
+                size="small"
+                variant="outlined"
+                onClick={handleConfirmPrint}
+                startIcon={<PrintIcon />}
+              >
+                Print Anyway
+              </Button>
+              {onDownloadPdf && (
+                <Button
+                  color="inherit"
+                  size="small"
+                  variant="outlined"
+                  onClick={() => {
+                    setPrintWarningOpen(false);
+                    onDownloadPdf();
+                  }}
+                  startIcon={<DownloadIcon />}
+                >
+                  Download All
+                </Button>
+              )}
+            </Box>
+          </Alert>
+        </Snackbar>
       </Box>
 
       {/* Floating Sidebar for Display Toggles - Desktop Only */}
@@ -237,6 +333,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             sx={{ color: showExperience ? 'white' : 'rgba(255,255,255,0.4)' }}
           >
             {showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
+          </IconButton>
+        </Tooltip>
+        <Tooltip title={showAttachments ? 'Hide Attachments (Certificates & References)' : 'Show Attachments (Certificates & References)'} placement="left">
+          <IconButton
+            onClick={toggleAttachments}
+            sx={{ color: showAttachments ? 'white' : 'rgba(255,255,255,0.4)' }}
+          >
+            {showAttachments ? <AttachFileIcon /> : <AttachFileOffIcon />}
           </IconButton>
         </Tooltip>
         <Box
@@ -309,7 +413,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         <SpeedDialAction
           icon={<PrintIcon />}
           tooltipTitle="Print"
-          onClick={onPrint}
+          onClick={handlePrintClick}
         />
 
         {/* Download PDF */}
@@ -344,6 +448,13 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           icon={showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
           tooltipTitle={showExperience ? 'Hide Experience' : 'Show Experience'}
           onClick={toggleExperience}
+        />
+
+        {/* Attachments Toggle */}
+        <SpeedDialAction
+          icon={showAttachments ? <AttachFileIcon /> : <AttachFileOffIcon />}
+          tooltipTitle={showAttachments ? 'Hide Attachments' : 'Show Attachments'}
+          onClick={toggleAttachments}
         />
 
         {/* Theme Toggle */}

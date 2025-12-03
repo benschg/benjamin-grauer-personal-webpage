@@ -11,6 +11,7 @@ import {
   CVReferences,
   CVSidebar,
 } from './sections';
+import CVAttachmentCards from './components/CVAttachmentCards';
 import { cvPageLayouts, cvData } from './data/cvConfig';
 import type { CVMainSectionType, CVSlicedSection, CVExperienceEntry } from './types/CVTypes';
 import CVPage from './components/CVPage';
@@ -178,6 +179,8 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           </CVPage>
         );
       })}
+      {/* Attachment cards preview - shown when attachments are enabled */}
+      <CVAttachmentCards />
     </div>
   );
 });

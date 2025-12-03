@@ -10,13 +10,18 @@ export interface Document {
   downloadAs: string;
 }
 
+// PDF path constants for reuse
+export const REFERENCES_PDF_PATH = '/working-life/documents/References_Benjamin_20251120.pdf';
+export const CERTIFICATES_PDF_PATH = '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf';
+export const FULL_CV_PDF_PATH = '/working-life/documents/CV-Benjamin.Grauer.20251110_anon_full.pdf';
+
 export const documents: Document[] = [
   {
     title: 'References',
     description: 'Professional references and recommendations',
     icon: ContactPage,
     fileType: 'PDF',
-    downloadUrl: '/working-life/documents/References_Benjamin_20251120.pdf',
+    downloadUrl: REFERENCES_PDF_PATH,
     downloadAs: 'Benjamin_Grauer_References.pdf',
   },
   {
@@ -24,7 +29,7 @@ export const documents: Document[] = [
     description: 'Professional certifications and training certificates',
     icon: EmojiEvents,
     fileType: 'PDF',
-    downloadUrl: '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf',
+    downloadUrl: CERTIFICATES_PDF_PATH,
     downloadAs: 'Benjamin_Grauer_Certificates.pdf',
   },
   {
@@ -32,7 +37,7 @@ export const documents: Document[] = [
     description: 'Complete curriculum vitae with detailed work history (references on request)',
     icon: Description,
     fileType: 'PDF',
-    downloadUrl: '/working-life/documents/CV-Benjamin.Grauer.20251110_anon_full.pdf',
+    downloadUrl: FULL_CV_PDF_PATH,
     downloadAs: 'Benjamin_Grauer_CV.pdf',
   },
 ];
