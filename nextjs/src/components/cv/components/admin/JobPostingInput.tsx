@@ -29,6 +29,7 @@ import {
   Checkbox,
   Paper,
   Tooltip,
+  LinearProgress,
 } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -64,6 +65,7 @@ import {
 const getDataSourcePreview = (key: keyof CVDataSourceSelection): string => {
   // Create a selection with only this key enabled
   const singleSelection: CVDataSourceSelection = {
+    successes: false,
     whatLookingFor: false,
     workExperience: false,
     technicalSkills: false,
@@ -618,6 +620,15 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
       </Accordion>
 
       {error && <Alert severity="error">{error}</Alert>}
+
+      {isGenerating && (
+        <Box sx={{ width: '100%', mb: 2 }}>
+          <LinearProgress />
+          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+            AI is analyzing your data and generating customized content...
+          </Typography>
+        </Box>
+      )}
 
       <Button
         variant="contained"

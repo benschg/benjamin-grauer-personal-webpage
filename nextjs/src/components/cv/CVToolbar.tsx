@@ -2,7 +2,17 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button, Box, Typography, IconButton, Tooltip, CircularProgress } from '@mui/material';
+import {
+  Button,
+  Box,
+  Typography,
+  IconButton,
+  Tooltip,
+  CircularProgress,
+  SpeedDial,
+  SpeedDialAction,
+  SpeedDialIcon,
+} from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -20,6 +30,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useCVTheme, useCVVersion } from './contexts';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
@@ -52,27 +63,52 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     isSaving,
   } = useCVVersion();
   const [customizationOpen, setCustomizationOpen] = useState(false);
+  const [speedDialOpen, setSpeedDialOpen] = useState(false);
 
   const handleBack = () => {
     router.push('/working-life');
+  };
+
+  const handleSpeedDialClose = () => {
+    setSpeedDialOpen(false);
+  };
+
+  const handleSpeedDialOpen = () => {
+    setSpeedDialOpen(true);
   };
 
   return (
     <>
       {/* Top Toolbar */}
       <Box className="cv-toolbar cv-no-print">
-        <Button startIcon={<ArrowBackIcon />} onClick={handleBack} sx={{ color: 'white' }}>
-          Back to Working Life
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={handleBack}
+          sx={{
+            color: 'white',
+            minWidth: 'auto',
+            '& .MuiButton-startIcon': {
+              margin: { xs: 0, sm: '0 8px 0 -4px' },
+            },
+          }}
+        >
+          <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+            Back to Working Life
+          </Box>
         </Button>
         <Typography
           variant="h6"
           sx={{
             fontFamily: 'Orbitron',
             letterSpacing: '0.1em',
-            display: { xs: 'none', sm: 'block' },
           }}
         >
-          Curriculum Vitae
+          <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+            Curriculum Vitae
+          </Box>
+          <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+            CV
+          </Box>
         </Typography>
         <Box className="cv-toolbar-actions">
           {/* Admin controls - only show when admin is logged in */}
@@ -142,7 +178,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                 <IconButton
                   onClick={onDownloadPdf}
                   disabled={isDownloading}
-                  sx={{ color: 'white' }}
+                  sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}
                 >
                   {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
                 </IconButton>
@@ -150,7 +186,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Tooltip>
           )}
           <Tooltip title="Print">
-            <IconButton onClick={onPrint} sx={{ color: 'white' }}>
+            <IconButton onClick={onPrint} sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}>
               <PrintIcon />
             </IconButton>
           </Tooltip>
@@ -160,8 +196,8 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
       </Box>
 
-      {/* Floating Sidebar for Display Toggles */}
-      <Box className="cv-floating-sidebar cv-no-print">
+      {/* Floating Sidebar for Display Toggles - Desktop Only */}
+      <Box className="cv-floating-sidebar cv-no-print" sx={{ display: { xs: 'none', md: 'flex' } }}>
         <Tooltip title={showPrivateInfo ? 'Hide Private Info' : 'Show Private Info'} placement="left">
           <IconButton
             onClick={togglePrivateInfo}
@@ -199,6 +235,83 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             {theme === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
           </IconButton>
         </Tooltip>
+      </Box>
+
+      {/* Mobile SpeedDial - All Controls */}
+      <Box
+        className="cv-no-print"
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 9999,
+        }}
+      >
+        <SpeedDial
+          ariaLabel="CV Controls"
+          direction="up"
+          icon={<SpeedDialIcon icon={<MenuIcon />} />}
+          onClose={handleSpeedDialClose}
+          onOpen={handleSpeedDialOpen}
+          open={speedDialOpen}
+          sx={{
+            '& .MuiSpeedDial-fab': {
+              bgcolor: '#343a40',
+              '&:hover': {
+                bgcolor: '#89665d',
+              },
+            },
+          }}
+        >
+        {/* Print */}
+        <SpeedDialAction
+          icon={<PrintIcon />}
+          tooltipTitle="Print"
+          onClick={onPrint}
+        />
+
+        {/* Download PDF */}
+        {onDownloadPdf && (
+          <SpeedDialAction
+            icon={isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+            tooltipTitle={isDownloading ? 'Generating...' : 'Download PDF'}
+            onClick={() => {
+              if (!isDownloading) {
+                onDownloadPdf();
+              }
+            }}
+          />
+        )}
+
+        {/* Private Info Toggle */}
+        <SpeedDialAction
+          icon={showPrivateInfo ? <LockOpenIcon /> : <LockIcon />}
+          tooltipTitle={showPrivateInfo ? 'Hide Private Info' : 'Show Private Info'}
+          onClick={togglePrivateInfo}
+        />
+
+        {/* Photo Toggle */}
+        <SpeedDialAction
+          icon={showPhoto ? <PersonIcon /> : <PersonOffIcon />}
+          tooltipTitle={showPhoto ? 'Hide Photo' : 'Show Photo'}
+          onClick={togglePhoto}
+        />
+
+        {/* Experience Toggle */}
+        <SpeedDialAction
+          icon={showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
+          tooltipTitle={showExperience ? 'Hide Experience' : 'Show Experience'}
+          onClick={toggleExperience}
+        />
+
+        {/* Theme Toggle */}
+        <SpeedDialAction
+          icon={theme === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          tooltipTitle={theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+          onClick={toggleTheme}
+        />
+      </SpeedDial>
       </Box>
     </>
   );

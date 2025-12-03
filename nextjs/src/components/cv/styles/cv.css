@@ -82,6 +82,11 @@
   padding: 12mm 15mm 8mm 12mm;
 }
 
+/* Full-width content (no sidebar) */
+.cv-main-content.cv-full-width {
+  padding: 12mm 15mm 8mm 15mm;
+}
+
 /* Sidebar */
 .cv-sidebar {
   width: 55mm;
@@ -95,12 +100,12 @@
 
 .cv-sidebar-photo {
   text-align: center;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.2rem;
 }
 
 .cv-sidebar-photo img {
-  width: 80px;
-  height: 100px;
+  width: 110px;
+  height: 137px;
   object-fit: cover;
 }
 
@@ -267,7 +272,8 @@
     .cv-page {
       transform: scale(0.85);
       margin-bottom: calc(-297mm * 0.15);
-      margin-right: calc(-210mm * 0.15);
+      margin-left: calc(-210mm * 0.075);
+      margin-right: calc(-210mm * 0.075);
     }
   }
 
@@ -276,7 +282,8 @@
     .cv-page {
       transform: scale(0.7);
       margin-bottom: calc(-297mm * 0.3);
-      margin-right: calc(-210mm * 0.3);
+      margin-left: calc(-210mm * 0.15);
+      margin-right: calc(-210mm * 0.15);
     }
   }
 
@@ -288,24 +295,113 @@
     }
   }
 
-  @media (max-width: 900px) {
+  /* Tablet screens */
+  @media (max-width: 900px) and (min-width: 820px) {
     .cv-page {
-      transform: scale(0.55);
-      margin-bottom: calc(-297mm * 0.45);
+      transform: scale(0.68);
+      margin-bottom: calc(-297mm * 0.32);
+      margin-left: calc(-210mm * 0.16);
+      margin-right: calc(-210mm * 0.16);
     }
   }
 
-  @media (max-width: 600px) {
+  /* Medium tablet / iPad portrait */
+  @media (max-width: 819px) and (min-width: 768px) {
     .cv-page {
-      transform: scale(0.4);
-      margin-bottom: calc(-297mm * 0.6);
+      transform: scale(0.63);
+      margin-bottom: calc(-297mm * 0.37);
+      margin-left: calc(-210mm * 0.185);
+      margin-right: calc(-210mm * 0.185);
+    }
+  }
+
+  /* Small tablet portrait */
+  @media (max-width: 767px) and (min-width: 681px) {
+    .cv-page {
+      transform: scale(0.60);
+      margin-bottom: calc(-297mm * 0.40);
+      margin-left: calc(-210mm * 0.20);
+      margin-right: calc(-210mm * 0.20);
+    }
+  }
+
+  /* Large phone landscape / Small tablet */
+  @media (max-width: 680px) and (min-width: 601px) {
+    .cv-page {
+      transform: scale(0.56);
+      margin-bottom: calc(-297mm * 0.44);
+      margin-left: calc(-210mm * 0.22);
+      margin-right: calc(-210mm * 0.22);
+    }
+  }
+
+  /* Mobile screens - uniform scaling to maintain all proportions */
+  @media (max-width: 600px) {
+    body,
+    html {
+      margin: 0 !important;
+      padding: 0 !important;
+      width: 100% !important;
+      overflow-x: hidden !important;
     }
 
     .cv-document-wrapper {
-      padding: 1rem;
+      padding: 0;
       gap: 1rem;
+      width: 100%;
+      justify-content: center;
+      align-items: flex-start;
     }
   }
+
+  /* Large phones (iPhone 14 Pro Max, Pixel 7 Pro) */
+  @media (max-width: 600px) and (min-width: 430px) {
+    .cv-page {
+      transform: scale(0.54);
+      transform-origin: top center;
+      margin-bottom: calc(-297mm * 0.46);
+      margin-left: calc(-210mm * 0.23);
+      margin-right: calc(-210mm * 0.23);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Standard phones (iPhone 14, Pixel) */
+  @media (max-width: 429px) and (min-width: 391px) {
+    .cv-page {
+      transform: scale(0.50);
+      transform-origin: top center;
+      margin-bottom: calc(-297mm * 0.50);
+      margin-left: calc(-210mm * 0.25);
+      margin-right: calc(-210mm * 0.25);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Standard phones (iPhone 13, 12) */
+  @media (max-width: 390px) and (min-width: 376px) {
+    .cv-page {
+      transform: scale(0.47);
+      transform-origin: top center;
+      margin-bottom: calc(-297mm * 0.53);
+      margin-left: calc(-210mm * 0.265);
+      margin-right: calc(-210mm * 0.265);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+
+  /* Small phones (iPhone SE, small Android) */
+  @media (max-width: 375px) {
+    .cv-page {
+      transform: scale(0.44);
+      transform-origin: top center;
+      margin-bottom: calc(-297mm * 0.56);
+      margin-left: calc(-210mm * 0.28);
+      margin-right: calc(-210mm * 0.28);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    }
+  }
+
 }
 
 /* Print Styles - Dark Theme */

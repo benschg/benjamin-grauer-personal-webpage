@@ -33,16 +33,56 @@ async function launchBrowser(): Promise<Browser> {
     const puppeteer = await import('puppeteer');
 
     return puppeteer.default.launch({
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+      ],
       defaultViewport: { width: 794, height: 1123 }, // A4 at 96 DPI
       headless: true,
     });
   }
 }
 
-// Convert relative image URLs to absolute URLs
-function fixImageUrls(html: string, baseUrl: string): string {
-  // Fix src attributes with relative paths
-  return html.replace(/src="\/([^"]+)"/g, `src="${baseUrl}/$1"`);
+// Convert relative image URLs to absolute URLs or base64 data URLs
+async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
+  const fs = await import('fs/promises');
+  const path = await import('path');
+
+  // Find all image src attributes
+  const imgRegex = /src="\/([^"]+)"/g;
+  let result = html;
+  const matches = [...html.matchAll(imgRegex)];
+
+  for (const match of matches) {
+    const imagePath = match[1];
+    const fullPath = path.join(process.cwd(), 'public', imagePath);
+
+    try {
+      // Try to read the file and convert to base64
+      const imageBuffer = await fs.readFile(fullPath);
+      const ext = path.extname(imagePath).toLowerCase();
+      let mimeType = 'image/jpeg';
+
+      if (ext === '.png') mimeType = 'image/png';
+      else if (ext === '.webp') mimeType = 'image/webp';
+      else if (ext === '.jpg' || ext === '.jpeg') mimeType = 'image/jpeg';
+      else if (ext === '.gif') mimeType = 'image/gif';
+
+      const base64 = imageBuffer.toString('base64');
+      const dataUrl = `data:${mimeType};base64,${base64}`;
+
+      result = result.replace(`src="/${imagePath}"`, `src="${dataUrl}"`);
+    } catch (error) {
+      // If file read fails, fall back to absolute URL
+      console.warn(`Could not read image ${imagePath}, using absolute URL`);
+      result = result.replace(`src="/${imagePath}"`, `src="${baseUrl}/${imagePath}"`);
+    }
+  }
+
+  return result;
 }
 
 // Fix MUI SVG icons - they render with currentColor which doesn't work in static HTML
@@ -86,8 +126,8 @@ export async function POST(request: Request) {
     const url = new URL(request.url);
     const baseUrl = params.baseUrl || `${url.protocol}//${url.host}`;
 
-    // Fix relative image URLs to absolute
-    let fixedHtml = fixImageUrls(params.html, baseUrl);
+    // Fix relative image URLs to base64 data URLs
+    let fixedHtml = await fixImageUrls(params.html, baseUrl);
 
     // Fix SVG icons for PDF rendering
     fixedHtml = fixSvgIcons(fixedHtml, params.theme);

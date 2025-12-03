@@ -88,8 +88,8 @@ export interface CVUSPEntry {
 
 // Sidebar sections
 export interface CVSuccessEntry {
-  value: string;
-  label: string;
+  title: string;
+  subtitle?: string;
 }
 
 export interface CVQualificationEntry {

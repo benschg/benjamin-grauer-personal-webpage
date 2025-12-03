@@ -1,7 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { TextField, ClickAwayListener, Box } from '@mui/material';
+import { TextField, ClickAwayListener, Box, IconButton, CircularProgress, Popover, Button } from '@mui/material';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
 
 interface EditableTextProps {
   value: string;
@@ -12,6 +13,9 @@ interface EditableTextProps {
   className?: string;
   placeholder?: string;
   maxLength?: number;
+  onRegenerate?: (customInstructions?: string) => void;
+  isRegenerating?: boolean;
+  showCharacterCount?: boolean;
 }
 
 const EditableText = ({
@@ -23,10 +27,15 @@ const EditableText = ({
   className,
   placeholder = 'Click to edit...',
   maxLength,
+  onRegenerate,
+  isRegenerating = false,
+  showCharacterCount = false,
 }: EditableTextProps) => {
   const [localValue, setLocalValue] = useState(value);
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [customInstructions, setCustomInstructions] = useState('');
 
   // Sync local value with prop
   useEffect(() => {
@@ -55,6 +64,24 @@ const EditableText = ({
       handleBlur();
     }
   };
+
+  const handleRegenerateClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleRegenerateClose = () => {
+    setAnchorEl(null);
+    setCustomInstructions('');
+  };
+
+  const handleRegenerateSubmit = () => {
+    if (onRegenerate) {
+      onRegenerate(customInstructions || undefined);
+    }
+    handleRegenerateClose();
+  };
+
+  const popoverOpen = Boolean(anchorEl);
 
   if (!isEditing) {
     // Render as normal text based on variant
@@ -97,6 +124,81 @@ const EditableText = ({
           },
         }}
       >
+        {onRegenerate && (
+          <>
+            <Box
+              sx={{
+                position: 'absolute',
+                top: -32,
+                right: 0,
+                zIndex: 1,
+              }}
+            >
+              <IconButton
+                size="small"
+                onClick={handleRegenerateClick}
+                disabled={isRegenerating}
+                title="Regenerate with AI (with optional prompt)"
+                sx={{
+                  bgcolor: 'primary.main',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: 'primary.dark',
+                  },
+                  '&:disabled': {
+                    bgcolor: 'grey.400',
+                  },
+                }}
+              >
+                {isRegenerating ? (
+                  <CircularProgress size={16} sx={{ color: 'white' }} />
+                ) : (
+                  <AutorenewIcon fontSize="small" />
+                )}
+              </IconButton>
+            </Box>
+            <Popover
+              open={popoverOpen}
+              anchorEl={anchorEl}
+              onClose={handleRegenerateClose}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'right',
+              }}
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+              }}
+            >
+              <Box sx={{ p: 2, width: 400 }}>
+                <TextField
+                  fullWidth
+                  multiline
+                  rows={3}
+                  label="Custom Instructions (optional)"
+                  placeholder="e.g., Make it more technical, focus on leadership, use shorter sentences..."
+                  value={customInstructions}
+                  onChange={(e) => setCustomInstructions(e.target.value)}
+                  variant="outlined"
+                  size="small"
+                />
+                <Box sx={{ display: 'flex', gap: 1, mt: 2, justifyContent: 'flex-end' }}>
+                  <Button onClick={handleRegenerateClose} size="small">
+                    Cancel
+                  </Button>
+                  <Button
+                    onClick={handleRegenerateSubmit}
+                    variant="contained"
+                    size="small"
+                    startIcon={<AutorenewIcon />}
+                  >
+                    Regenerate
+                  </Button>
+                </Box>
+              </Box>
+            </Popover>
+          </>
+        )}
         <TextField
           inputRef={inputRef}
           value={localValue}
@@ -109,7 +211,13 @@ const EditableText = ({
           fullWidth
           size="small"
           placeholder={placeholder}
-          helperText={maxLength ? `${localValue.length}/${maxLength}` : undefined}
+          helperText={
+            showCharacterCount
+              ? `${localValue.length} characters`
+              : maxLength
+                ? `${localValue.length}/${maxLength}`
+                : undefined
+          }
           FormHelperTextProps={{
             sx: { textAlign: 'right', mr: 0 },
           }}

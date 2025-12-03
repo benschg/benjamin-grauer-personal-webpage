@@ -20,16 +20,19 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import { useCVVersion } from '../../contexts';
 import type { CVVersion } from '@/types/database.types';
+import GeneratedContentPreview from './GeneratedContentPreview';
 
 const CVVersionManager = () => {
-  const { versions, activeVersion, selectVersion, deleteVersion, setDefaultVersion } =
+  const { versions, activeVersion, selectVersion, deleteVersion, setDefaultVersion, updateVersion } =
     useCVVersion();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [versionToDelete, setVersionToDelete] = useState<CVVersion | null>(null);
   const [previewVersion, setPreviewVersion] = useState<CVVersion | null>(null);
+  const [editVersion, setEditVersion] = useState<CVVersion | null>(null);
 
   const handleDeleteClick = (version: CVVersion) => {
     setVersionToDelete(version);
@@ -41,6 +44,13 @@ const CVVersionManager = () => {
       await deleteVersion(versionToDelete.id);
       setDeleteDialogOpen(false);
       setVersionToDelete(null);
+    }
+  };
+
+  const handleEditSave = async (name: string, content: any) => {
+    if (editVersion) {
+      await updateVersion(editVersion.id, { name, content });
+      setEditVersion(null);
     }
   };
 
@@ -105,6 +115,17 @@ const CVVersionManager = () => {
                   }}
                 >
                   <VisibilityIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Edit">
+                <IconButton
+                  onClick={() => {
+                    selectVersion(version.id);
+                    setEditVersion(version);
+                  }}
+                  color="primary"
+                >
+                  <EditIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title={version.is_default ? 'Default version' : 'Set as default'}>
@@ -178,6 +199,58 @@ const CVVersionManager = () => {
         <DialogActions>
           <Button onClick={() => setPreviewVersion(null)}>Close</Button>
         </DialogActions>
+      </Dialog>
+
+      {/* Edit Dialog with GeneratedContentPreview */}
+      <Dialog
+        open={!!editVersion}
+        onClose={() => setEditVersion(null)}
+        maxWidth="md"
+        fullWidth
+      >
+        <DialogTitle>
+          Edit Version: {editVersion?.name}
+          <IconButton
+            onClick={() => setEditVersion(null)}
+            sx={{ position: 'absolute', right: 8, top: 8 }}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          {editVersion && editVersion.job_context?.companyResearch && (
+            <GeneratedContentPreview
+              originalContent={{
+                tagline: '',
+                profile: '',
+                slogan: '',
+              }}
+              generatedContent={editVersion.content}
+              companyResearch={editVersion.job_context.companyResearch}
+              jobInputData={{
+                company: editVersion.job_context.company,
+                jobTitle: editVersion.job_context.position,
+                jobPosting: editVersion.job_context.jobPosting || '',
+                jobPostingUrl: editVersion.job_context.jobPostingUrl,
+                companyWebsite: editVersion.job_context.companyWebsite,
+                dataSourceSelection: editVersion.job_context.dataSourceSelection,
+              }}
+              onSave={handleEditSave}
+              isSaving={false}
+            />
+          )}
+          {editVersion && !editVersion.job_context?.companyResearch && (
+            <Box sx={{ p: 3, textAlign: 'center' }}>
+              <Typography color="text.secondary" gutterBottom>
+                This version doesn&apos;t have stored job context data.
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                AI regeneration is not available for versions created before the context storage
+                feature. You can still edit text manually using the inline editor on the CV page.
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
       </Dialog>
     </Box>
   );

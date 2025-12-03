@@ -23,11 +23,13 @@ const CVSidebar = ({
         return data.successes.length > 0 ? (
           <div key="successes" className="cv-sidebar-section">
             <h3 className="cv-sidebar-title">Successes</h3>
-            <div className="cv-sidebar-highlights">
+            <div className="cv-sidebar-list">
               {data.successes.map((success, index) => (
-                <div key={index} className="cv-sidebar-highlight">
-                  <span className="cv-sidebar-highlight-value">{success.value}</span>
-                  <span className="cv-sidebar-highlight-label">{success.label}</span>
+                <div key={index} className="cv-sidebar-list-item">
+                  <span className="cv-sidebar-list-title">{success.title}</span>
+                  {success.subtitle && (
+                    <span className="cv-sidebar-list-subtitle">{success.subtitle}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -198,7 +200,11 @@ const CVSidebar = ({
           <div className="cv-sidebar-contact">
             {showPrivateInfo ? (
               <>
-                {header.website && <div className="cv-sidebar-contact-item">{header.website}</div>}
+                {header.website && (
+                  <div className="cv-sidebar-contact-item">
+                    Check out more at {header.website}
+                  </div>
+                )}
                 <div className="cv-sidebar-contact-item">{header.email}</div>
                 {header.phone && <div className="cv-sidebar-contact-item">{header.phone}</div>}
                 {header.location && (

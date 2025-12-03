@@ -24,8 +24,10 @@ import EditIcon from '@mui/icons-material/Edit';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
-import type { CVVersionContent, CVWorkExperienceEntry, CVSkillCategory } from '@/services/cv/cvVersion.types';
-import type { CompanyResearch } from '@/services/ai/gemini.service';
+import AutorenewIcon from '@mui/icons-material/Autorenew';
+import type { CVVersionContent } from '@/services/cv/cvVersion.types';
+import type { CompanyResearch, RegenerateCVItemParams } from '@/services/ai/gemini.service';
+import { regenerateCVItem } from '@/services/ai/gemini.service';
 import type { JobInputData } from './JobPostingInput';
 
 interface GeneratedContentPreviewProps {
@@ -53,9 +55,33 @@ const GeneratedContentPreview = ({
     companyName ? `${companyName} - ${jobTitle}` : jobTitle
   );
   const [isEditing, setIsEditing] = useState(false);
+  const [regeneratingItems, setRegeneratingItems] = useState<Set<string>>(new Set());
 
   const handleSave = async () => {
     await onSave(versionName, editedContent);
+  };
+
+  // Handler for regenerating individual items
+  const handleRegenerateItem = async (
+    itemId: string,
+    params: RegenerateCVItemParams,
+    onSuccess: (newValue: string) => void
+  ) => {
+    setRegeneratingItems((prev) => new Set(prev).add(itemId));
+
+    try {
+      const result = await regenerateCVItem(params);
+      onSuccess(result.newValue);
+    } catch (error) {
+      console.error('Failed to regenerate item:', error);
+      alert(error instanceof Error ? error.message : 'Failed to regenerate item');
+    } finally {
+      setRegeneratingItems((prev) => {
+        const next = new Set(prev);
+        next.delete(itemId);
+        return next;
+      });
+    }
   };
 
   // Helper functions for editing arrays
@@ -141,43 +167,93 @@ const GeneratedContentPreview = ({
     label: string;
     original: string;
     field: 'tagline' | 'profile' | 'slogan' | 'education';
-  }) => (
-    <Box sx={{ mb: 3 }}>
-      <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-        {label}
-      </Typography>
-      <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
-        <Paper sx={{ p: 2, bgcolor: 'background.paper' }}>
-          <Typography variant="caption" color="text.secondary">
-            Original
-          </Typography>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            {original || '(empty)'}
-          </Typography>
-        </Paper>
-        <Paper sx={{ p: 2, bgcolor: 'background.paper', border: '2px solid', borderColor: 'primary.main' }}>
-          <Typography variant="caption" sx={{ color: 'primary.light', fontWeight: 'bold' }}>
-            Generated (AI)
-          </Typography>
-          {isEditing ? (
-            <TextField
-              multiline
-              fullWidth
-              value={(editedContent[field] as string) || ''}
-              onChange={(e) => setEditedContent({ ...editedContent, [field]: e.target.value })}
-              variant="outlined"
-              size="small"
-              sx={{ mt: 1 }}
-            />
-          ) : (
-            <Typography variant="body2" sx={{ mt: 1 }}>
-              {(editedContent[field] as string) || '(empty)'}
+  }) => {
+    const itemId = `content-${field}`;
+    const isRegenerating = regeneratingItems.has(itemId);
+
+    const handleRegenerate = () => {
+      const itemType = field as 'tagline' | 'profile' | 'slogan';
+      handleRegenerateItem(
+        itemId,
+        {
+          itemType,
+          currentValue: (editedContent[field] as string) || '',
+          context: {
+            companyName,
+            jobTitle,
+            jobPosting: jobInputData?.jobPosting,
+            companyResearch,
+          },
+        },
+        (newValue) => {
+          setEditedContent({ ...editedContent, [field]: newValue });
+        }
+      );
+    };
+
+    return (
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+          {label}
+        </Typography>
+        <Box sx={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 2 }}>
+          <Paper sx={{ p: 2, bgcolor: 'background.paper' }}>
+            <Typography variant="caption" color="text.secondary">
+              Original
             </Typography>
-          )}
-        </Paper>
+            <Typography variant="body2" sx={{ mt: 1 }}>
+              {original || '(empty)'}
+            </Typography>
+          </Paper>
+          <Paper sx={{ p: 2, bgcolor: 'background.paper', border: '2px solid', borderColor: 'primary.main' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+              <Typography variant="caption" sx={{ color: 'primary.light', fontWeight: 'bold' }}>
+                Generated (AI)
+              </Typography>
+              {field !== 'education' && (
+                <IconButton
+                  size="small"
+                  onClick={handleRegenerate}
+                  disabled={isRegenerating || !isEditing}
+                  title="Regenerate with AI"
+                >
+                  <AutorenewIcon
+                    fontSize="small"
+                    sx={{
+                      animation: isRegenerating ? 'spin 1s linear infinite' : 'none',
+                      '@keyframes spin': {
+                        '0%': { transform: 'rotate(0deg)' },
+                        '100%': { transform: 'rotate(360deg)' },
+                      },
+                    }}
+                  />
+                </IconButton>
+              )}
+            </Box>
+            {isEditing ? (
+              <TextField
+                multiline
+                fullWidth
+                value={(editedContent[field] as string) || ''}
+                onChange={(e) => setEditedContent({ ...editedContent, [field]: e.target.value })}
+                variant="outlined"
+                size="small"
+                helperText={
+                  field === 'profile'
+                    ? `${((editedContent[field] as string) || '').length} characters`
+                    : undefined
+                }
+              />
+            ) : (
+              <Typography variant="body2">
+                {(editedContent[field] as string) || '(empty)'}
+              </Typography>
+            )}
+          </Paper>
+        </Box>
       </Box>
-    </Box>
-  );
+    );
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
@@ -247,36 +323,81 @@ const GeneratedContentPreview = ({
               </AccordionSummary>
               <AccordionDetails>
                 <List dense>
-                  {exp.bullets.map((bullet, bulletIndex) => (
-                    <ListItem
-                      key={bulletIndex}
-                      secondaryAction={
-                        isEditing && (
-                          <IconButton
-                            edge="end"
+                  {exp.bullets.map((bullet, bulletIndex) => {
+                    const bulletId = `bullet-${expIndex}-${bulletIndex}`;
+                    const isBulletRegenerating = regeneratingItems.has(bulletId);
+
+                    const handleRegenerateBullet = () => {
+                      handleRegenerateItem(
+                        bulletId,
+                        {
+                          itemType: 'workExperienceBullet',
+                          currentValue: bullet,
+                          context: {
+                            companyName,
+                            jobTitle,
+                            jobPosting: jobInputData?.jobPosting,
+                            companyResearch,
+                            workExperienceTitle: exp.title,
+                            workExperienceCompany: exp.company,
+                          },
+                        },
+                        (newValue) => {
+                          updateWorkExperienceBullet(expIndex, bulletIndex, newValue);
+                        }
+                      );
+                    };
+
+                    return (
+                      <ListItem
+                        key={bulletIndex}
+                        secondaryAction={
+                          isEditing && (
+                            <Box sx={{ display: 'flex', gap: 0.5 }}>
+                              <IconButton
+                                size="small"
+                                onClick={handleRegenerateBullet}
+                                disabled={isBulletRegenerating}
+                                title="Regenerate with AI"
+                              >
+                                <AutorenewIcon
+                                  fontSize="small"
+                                  sx={{
+                                    animation: isBulletRegenerating ? 'spin 1s linear infinite' : 'none',
+                                    '@keyframes spin': {
+                                      '0%': { transform: 'rotate(0deg)' },
+                                      '100%': { transform: 'rotate(360deg)' },
+                                    },
+                                  }}
+                                />
+                              </IconButton>
+                              <IconButton
+                                edge="end"
+                                size="small"
+                                onClick={() => removeWorkExperienceBullet(expIndex, bulletIndex)}
+                              >
+                                <DeleteIcon fontSize="small" />
+                              </IconButton>
+                            </Box>
+                          )
+                        }
+                      >
+                        {isEditing ? (
+                          <TextField
+                            fullWidth
+                            multiline
                             size="small"
-                            onClick={() => removeWorkExperienceBullet(expIndex, bulletIndex)}
-                          >
-                            <DeleteIcon fontSize="small" />
-                          </IconButton>
-                        )
-                      }
-                    >
-                      {isEditing ? (
-                        <TextField
-                          fullWidth
-                          multiline
-                          size="small"
-                          value={bullet}
-                          onChange={(e) =>
-                            updateWorkExperienceBullet(expIndex, bulletIndex, e.target.value)
-                          }
-                        />
-                      ) : (
-                        <ListItemText primary={`• ${bullet}`} />
-                      )}
-                    </ListItem>
-                  ))}
+                            value={bullet}
+                            onChange={(e) =>
+                              updateWorkExperienceBullet(expIndex, bulletIndex, e.target.value)
+                            }
+                          />
+                        ) : (
+                          <ListItemText primary={`• ${bullet}`} />
+                        )}
+                      </ListItem>
+                    );
+                  })}
                 </List>
                 {isEditing && (
                   <Button
@@ -340,30 +461,73 @@ const GeneratedContentPreview = ({
             Key Achievements
           </Typography>
           <List dense>
-            {editedContent.keyAchievements.map((achievement, index) => (
-              <ListItem
-                key={index}
-                secondaryAction={
-                  isEditing && (
-                    <IconButton edge="end" size="small" onClick={() => removeKeyAchievement(index)}>
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  )
-                }
-              >
-                {isEditing ? (
-                  <TextField
-                    fullWidth
-                    multiline
-                    size="small"
-                    value={achievement}
-                    onChange={(e) => updateKeyAchievement(index, e.target.value)}
-                  />
-                ) : (
-                  <ListItemText primary={`• ${achievement}`} />
-                )}
-              </ListItem>
-            ))}
+            {editedContent.keyAchievements.map((achievement, index) => {
+              const achievementId = `achievement-${index}`;
+              const isAchievementRegenerating = regeneratingItems.has(achievementId);
+
+              const handleRegenerateAchievement = () => {
+                handleRegenerateItem(
+                  achievementId,
+                  {
+                    itemType: 'keyAchievement',
+                    currentValue: achievement,
+                    context: {
+                      companyName,
+                      jobTitle,
+                      jobPosting: jobInputData?.jobPosting,
+                      companyResearch,
+                    },
+                  },
+                  (newValue) => {
+                    updateKeyAchievement(index, newValue);
+                  }
+                );
+              };
+
+              return (
+                <ListItem
+                  key={index}
+                  secondaryAction={
+                    isEditing && (
+                      <Box sx={{ display: 'flex', gap: 0.5 }}>
+                        <IconButton
+                          size="small"
+                          onClick={handleRegenerateAchievement}
+                          disabled={isAchievementRegenerating}
+                          title="Regenerate with AI"
+                        >
+                          <AutorenewIcon
+                            fontSize="small"
+                            sx={{
+                              animation: isAchievementRegenerating ? 'spin 1s linear infinite' : 'none',
+                              '@keyframes spin': {
+                                '0%': { transform: 'rotate(0deg)' },
+                                '100%': { transform: 'rotate(360deg)' },
+                              },
+                            }}
+                          />
+                        </IconButton>
+                        <IconButton edge="end" size="small" onClick={() => removeKeyAchievement(index)}>
+                          <DeleteIcon fontSize="small" />
+                        </IconButton>
+                      </Box>
+                    )
+                  }
+                >
+                  {isEditing ? (
+                    <TextField
+                      fullWidth
+                      multiline
+                      size="small"
+                      value={achievement}
+                      onChange={(e) => updateKeyAchievement(index, e.target.value)}
+                    />
+                  ) : (
+                    <ListItemText primary={`• ${achievement}`} />
+                  )}
+                </ListItem>
+              );
+            })}
           </List>
           {isEditing && (
             <Button size="small" startIcon={<AddIcon />} onClick={addKeyAchievement}>

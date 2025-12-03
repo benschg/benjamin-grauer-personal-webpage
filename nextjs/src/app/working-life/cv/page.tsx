@@ -80,6 +80,10 @@ const CVPageContent = () => {
       sx={{
         minHeight: '100vh',
         bgcolor: '#1a1d20',
+        margin: 0,
+        padding: 0,
+        width: '100%',
+        overflow: 'hidden',
       }}
     >
       <CVToolbar
