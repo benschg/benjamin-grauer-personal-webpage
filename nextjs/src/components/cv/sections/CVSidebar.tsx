@@ -135,7 +135,7 @@ const CVSidebar = ({
       case 'volunteer':
         return data.volunteer.length > 0 ? (
           <div key="volunteer" className="cv-sidebar-section">
-            <h3 className="cv-sidebar-title">Volunteer Work</h3>
+            <h3 className="cv-sidebar-title">Volunteering</h3>
             <div className="cv-sidebar-list">
               {data.volunteer.map((vol, index) => (
                 <div key={index} className="cv-sidebar-list-item">
