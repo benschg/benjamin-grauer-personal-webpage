@@ -273,12 +273,23 @@ aligned development, and fostering collaborative engineering cultures.`,
     experience: getExperienceFromTimeline(),
 
     sideProjects: [
-      // TODO: Add side projects you're proud of
       {
-        name: "TODO: Add side project",
-        description: "Description of the project",
-        link: "https://example.com",
-        technologies: ["React", "TypeScript"],
+        name: "Docugap",
+        description: "AI-powered document gap analysis tool",
+        link: "https://docugap.com",
+        technologies: ["Next.js", "TypeScript", "AI"],
+      },
+      {
+        name: "Orxonox",
+        description: "Open-source 3D space shooter game engine (ETH award winner)",
+        link: "https://orxonox.net",
+        technologies: ["C++", "OpenGL", "Lua"],
+      },
+      {
+        name: "AI Mosaic Studio",
+        description: "AI-powered photo-to-mosaic transformation tool",
+        link: "https://mosaic-studio.0verall.com",
+        technologies: ["AI/ML", "Image Processing"],
       },
     ],
 
