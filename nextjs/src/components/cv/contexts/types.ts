@@ -11,6 +11,10 @@ export interface CVThemeContextType {
   togglePrivateInfo: () => void;
   showExperience: boolean;
   toggleExperience: () => void;
+  zoom: number;
+  zoomIn: () => void;
+  zoomOut: () => void;
+  resetZoom: () => void;
 }
 
 export const CVThemeContext = createContext<CVThemeContextType | undefined>(undefined);

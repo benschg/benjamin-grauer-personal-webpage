@@ -23,7 +23,7 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, showPrivateInfo, showExperience } = useCVTheme();
+  const { theme, showPhoto, showPrivateInfo, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing, activeVersion } = useCVVersion();
 
   // Convert AI-generated work experience to CV format if available
@@ -150,6 +150,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
             email={showPrivateInfo ? cvData.main.header.email : undefined}
             phone={showPrivateInfo ? cvData.main.header.phone : undefined}
             linkedin={cvData.main.header.linkedin}
+            zoom={zoom}
           >
             {hasSidebar ? (
               <div className="cv-two-column">
