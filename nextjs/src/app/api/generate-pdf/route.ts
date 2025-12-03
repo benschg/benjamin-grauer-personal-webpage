@@ -78,7 +78,7 @@ async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
       const dataUrl = `data:${mimeType};base64,${base64}`;
 
       result = result.replace(`src="/${imagePath}"`, `src="${dataUrl}"`);
-    } catch (error) {
+    } catch {
       // If file read fails, fall back to absolute URL
       console.warn(`Could not read image ${imagePath}, using absolute URL`);
       result = result.replace(`src="/${imagePath}"`, `src="${baseUrl}/${imagePath}"`);

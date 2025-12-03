@@ -303,7 +303,7 @@ export async function POST(request: Request) {
     const jobPostingContext = await buildJobPostingContext(params);
 
     // Step 1: Research the company
-    let researchPrompt = COMPANY_RESEARCH_PROMPT.replace('{jobTitle}', params.jobTitle)
+    const researchPrompt = COMPANY_RESEARCH_PROMPT.replace('{jobTitle}', params.jobTitle)
       .replace(
         '{companyLine}',
         params.company ? `Target Company: ${params.company}` : ''

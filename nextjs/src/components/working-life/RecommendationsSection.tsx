@@ -3,22 +3,25 @@
 import { Box, Typography, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import RecommendationCard from './RecommendationCard';
-import { recommendations, recommendationsSectionContent } from './content';
+import { recommendations, recommendationsSectionContent, Recommendation } from './content';
+
+// Fisher-Yates shuffle helper
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 const RecommendationsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
-
-  const shuffledRecommendations = useMemo(() => {
-    const shuffled = [...recommendations];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }, []);
+  // Use lazy initializer - shuffles once on first render (client-side)
+  const [shuffledRecommendations] = useState<Recommendation[]>(() => shuffleArray(recommendations));
 
   const totalPages = Math.ceil(shuffledRecommendations.length / itemsPerPage);
   const startIndex = currentIndex * itemsPerPage;

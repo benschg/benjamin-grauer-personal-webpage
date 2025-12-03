@@ -23,7 +23,7 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
 import { useCVVersion } from '../../contexts';
-import type { CVVersion } from '@/types/database.types';
+import type { CVVersion, CVVersionContent } from '@/types/database.types';
 import GeneratedContentPreview from './GeneratedContentPreview';
 
 const CVVersionManager = () => {
@@ -47,7 +47,7 @@ const CVVersionManager = () => {
     }
   };
 
-  const handleEditSave = async (name: string, content: any) => {
+  const handleEditSave = async (name: string, content: CVVersionContent) => {
     if (editVersion) {
       await updateVersion(editVersion.id, { name, content });
       setEditVersion(null);
@@ -151,7 +151,7 @@ const CVVersionManager = () => {
         <DialogTitle>Delete Version?</DialogTitle>
         <DialogContent>
           <Typography>
-            Are you sure you want to delete "{versionToDelete?.name}"? This action cannot be undone.
+            Are you sure you want to delete &quot;{versionToDelete?.name}&quot;? This action cannot be undone.
           </Typography>
         </DialogContent>
         <DialogActions>
