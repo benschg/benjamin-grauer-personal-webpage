@@ -6,11 +6,12 @@ import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
 import { CVThemeProvider, CVVersionProvider, useCVTheme } from '@/components/cv/contexts';
+import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/data/documents';
 
 // Component that uses the context
 const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
-  const { theme } = useCVTheme();
+  const { theme, showAttachments } = useCVTheme();
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
@@ -48,8 +49,11 @@ const CVPageContent = () => {
           html,
           css: cvStyles,
           theme,
-          filename: `Benjamin_Grauer_CV_${theme}.pdf`,
+          filename: showAttachments
+            ? `Benjamin_Grauer_CV_with_attachments_${theme}.pdf`
+            : `Benjamin_Grauer_CV_${theme}.pdf`,
           baseUrl: window.location.origin,
+          attachments: showAttachments ? [CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH] : undefined,
         }),
       });
 
@@ -62,7 +66,9 @@ const CVPageContent = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `Benjamin_Grauer_CV_${theme}.pdf`;
+      link.download = showAttachments
+        ? `Benjamin_Grauer_CV_with_attachments_${theme}.pdf`
+        : `Benjamin_Grauer_CV_${theme}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -73,7 +79,7 @@ const CVPageContent = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [theme, cvStyles]);
+  }, [theme, cvStyles, showAttachments]);
 
   return (
     <Box

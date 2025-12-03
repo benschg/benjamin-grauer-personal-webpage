@@ -33,6 +33,8 @@ import WorkOffIcon from '@mui/icons-material/WorkOff';
 import MenuIcon from '@mui/icons-material/Menu';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import AttachFileIcon from '@mui/icons-material/AttachFile';
+import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import { useCVTheme, useCVVersion } from './contexts';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
@@ -54,6 +56,8 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     togglePrivateInfo,
     showExperience,
     toggleExperience,
+    showAttachments,
+    toggleAttachments,
     zoom,
     zoomIn,
     zoomOut,
@@ -239,6 +243,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             {showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
           </IconButton>
         </Tooltip>
+        <Tooltip title={showAttachments ? 'Hide Attachments (Certificates & References)' : 'Show Attachments (Certificates & References)'} placement="left">
+          <IconButton
+            onClick={toggleAttachments}
+            sx={{ color: showAttachments ? 'white' : 'rgba(255,255,255,0.4)' }}
+          >
+            {showAttachments ? <AttachFileIcon /> : <AttachFileOffIcon />}
+          </IconButton>
+        </Tooltip>
         <Box
           sx={{
             width: '24px',
@@ -344,6 +356,13 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           icon={showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
           tooltipTitle={showExperience ? 'Hide Experience' : 'Show Experience'}
           onClick={toggleExperience}
+        />
+
+        {/* Attachments Toggle */}
+        <SpeedDialAction
+          icon={showAttachments ? <AttachFileIcon /> : <AttachFileOffIcon />}
+          tooltipTitle={showAttachments ? 'Hide Attachments' : 'Show Attachments'}
+          onClick={toggleAttachments}
         />
 
         {/* Theme Toggle */}

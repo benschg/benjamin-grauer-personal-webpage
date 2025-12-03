@@ -20,6 +20,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
   const [showPhoto, setShowPhoto] = useState(true);
   const [showPrivateInfo, setShowPrivateInfo] = useState(false);
   const [showExperience, setShowExperience] = useState(true);
+  const [showAttachments, setShowAttachments] = useState(false);
   const [zoom, setZoom] = useState(0); // 0 = auto, otherwise manual zoom level
 
   const toggleTheme = useCallback(() => {
@@ -36,6 +37,10 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
 
   const toggleExperience = useCallback(() => {
     setShowExperience((prev) => !prev);
+  }, []);
+
+  const toggleAttachments = useCallback(() => {
+    setShowAttachments((prev) => !prev);
   }, []);
 
   const zoomIn = useCallback(() => {
@@ -67,6 +72,8 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
         togglePrivateInfo,
         showExperience,
         toggleExperience,
+        showAttachments,
+        toggleAttachments,
         zoom,
         zoomIn,
         zoomOut,

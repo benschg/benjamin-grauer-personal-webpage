@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
+import { PDFDocument } from 'pdf-lib';
 
 interface PdfGenerationRequest {
   html: string;
@@ -7,6 +8,7 @@ interface PdfGenerationRequest {
   theme: 'dark' | 'light';
   filename?: string;
   baseUrl?: string;
+  attachments?: string[]; // Array of PDF paths to append (e.g., ['/working-life/documents/Certificates.pdf'])
 }
 
 // Check if running in production/Vercel environment
@@ -83,6 +85,39 @@ async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
   }
 
   return result;
+}
+
+// Merge multiple PDFs into one
+async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promise<Uint8Array> {
+  const fs = await import('fs/promises');
+  const path = await import('path');
+
+  // Create a new PDF document
+  const mergedPdf = await PDFDocument.create();
+
+  // Load and add the main CV PDF
+  const mainDoc = await PDFDocument.load(mainPdf);
+  const mainPages = await mergedPdf.copyPages(mainDoc, mainDoc.getPageIndices());
+  mainPages.forEach((page) => mergedPdf.addPage(page));
+
+  // Load and add each attachment PDF
+  for (const attachmentPath of attachmentPaths) {
+    try {
+      // Remove leading slash and resolve path from public folder
+      const relativePath = attachmentPath.startsWith('/') ? attachmentPath.slice(1) : attachmentPath;
+      const fullPath = path.join(process.cwd(), 'public', relativePath);
+
+      const attachmentBytes = await fs.readFile(fullPath);
+      const attachmentDoc = await PDFDocument.load(attachmentBytes);
+      const attachmentPages = await mergedPdf.copyPages(attachmentDoc, attachmentDoc.getPageIndices());
+      attachmentPages.forEach((page) => mergedPdf.addPage(page));
+    } catch (err) {
+      console.warn(`Could not load attachment PDF ${attachmentPath}:`, err);
+      // Continue with other attachments even if one fails
+    }
+  }
+
+  return mergedPdf.save();
 }
 
 // Fix MUI SVG icons - they render with currentColor which doesn't work in static HTML
@@ -360,8 +395,14 @@ export async function POST(request: Request) {
 
     await browser.close();
 
+    // If attachments are provided, merge them with the CV PDF
+    let finalPdf: Uint8Array = pdfBuffer;
+    if (params.attachments && params.attachments.length > 0) {
+      finalPdf = await mergePdfs(pdfBuffer, params.attachments);
+    }
+
     // Return PDF - convert Uint8Array to Buffer for NextResponse
-    return new NextResponse(Buffer.from(pdfBuffer), {
+    return new NextResponse(Buffer.from(finalPdf), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${params.filename || 'Benjamin_Grauer_CV.pdf'}"`,

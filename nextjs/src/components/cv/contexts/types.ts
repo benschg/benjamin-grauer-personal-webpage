@@ -11,6 +11,8 @@ export interface CVThemeContextType {
   togglePrivateInfo: () => void;
   showExperience: boolean;
   toggleExperience: () => void;
+  showAttachments: boolean;
+  toggleAttachments: () => void;
   zoom: number;
   zoomIn: () => void;
   zoomOut: () => void;
