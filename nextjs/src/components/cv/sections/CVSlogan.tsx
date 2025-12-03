@@ -65,7 +65,6 @@ const CVSlogan = ({ slogan, website }: CVSloganProps) => {
         <div className="cv-section cv-website-mention">
           <p style={{ fontSize: '0.85rem', color: 'var(--cv-text-muted)', margin: 0 }}>
             <LanguageIcon sx={{ fontSize: 14, verticalAlign: 'middle', mr: 0.5 }} />
-            Check out more at{' '}
             <a
               href={`https://${website}`}
               target="_blank"
