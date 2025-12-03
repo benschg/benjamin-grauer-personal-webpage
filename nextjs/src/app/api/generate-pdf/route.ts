@@ -14,20 +14,23 @@ interface PdfGenerationRequest {
 // Check if running in production/Vercel environment
 const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL;
 
-// Remote Chromium binary for Vercel - must match @sparticuz/chromium-min version
-const CHROMIUM_URL =
-  'https://github.com/Sparticuz/chromium/releases/download/v141.0.0/chromium-v141.0.0-pack.tar';
+// Self-hosted Chromium binary - must match @sparticuz/chromium-min version
+// Hosted in public folder for faster downloads than GitHub
+const CHROMIUM_PATH = '/chromium-v141.0.0-pack.tar';
 
-async function launchBrowser(): Promise<Browser> {
+async function launchBrowser(baseUrl: string): Promise<Browser> {
   if (isProduction) {
     // Production: Use puppeteer-core with remote chromium for serverless
     const puppeteer = await import('puppeteer-core');
     const chromium = await import('@sparticuz/chromium-min');
 
+    // Construct full URL to self-hosted Chromium binary
+    const chromiumUrl = `${baseUrl}${CHROMIUM_PATH}`;
+
     return puppeteer.default.launch({
       args: chromium.default.args,
       defaultViewport: { width: 794, height: 1123 }, // A4 at 96 DPI
-      executablePath: await chromium.default.executablePath(CHROMIUM_URL),
+      executablePath: await chromium.default.executablePath(chromiumUrl),
       headless: true,
     });
   } else {
@@ -351,7 +354,7 @@ export async function POST(request: Request) {
     `.trim();
 
     // Launch Puppeteer (uses different strategy for dev vs prod)
-    const browser = await launchBrowser();
+    const browser = await launchBrowser(baseUrl);
 
     const page = await browser.newPage();
 
