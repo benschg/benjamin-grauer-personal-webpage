@@ -166,17 +166,28 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           {/* Auth button */}
           {user ? (
             <Tooltip title={`Sign out (${user.email})`}>
-              <IconButton onClick={signOut} sx={{ color: 'white', mr: 1 }}>
+              <IconButton onClick={signOut} sx={{ color: 'white' }}>
                 <LogoutIcon />
               </IconButton>
             </Tooltip>
           ) : (
             <Tooltip title="Admin Sign In">
-              <IconButton onClick={signIn} sx={{ color: '#666', mr: 1 }}>
+              <IconButton onClick={signIn} sx={{ color: '#666' }}>
                 <LoginIcon />
               </IconButton>
             </Tooltip>
           )}
+
+          {/* Separator */}
+          <Box
+            sx={{
+              width: '1px',
+              height: '24px',
+              backgroundColor: 'rgba(255, 255, 255, 0.3)',
+              mx: 1,
+              display: { xs: 'none', md: 'block' },
+            }}
+          />
 
           {onDownloadPdf && (
             <Tooltip title={isDownloading ? 'Generating PDF...' : 'Download PDF'}>
