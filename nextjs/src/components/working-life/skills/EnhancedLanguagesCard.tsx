@@ -5,7 +5,7 @@ import { getContrastColor } from '@/utils/colorUtils';
 import { Language, ExpandMore, School, WorkspacePremium } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { languages } from '@/data/languagesData';
+import { languages } from '../content';
 
 const EnhancedLanguagesCard = () => {
   const [expandedLanguage, setExpandedLanguage] = useState<string | null>(null);

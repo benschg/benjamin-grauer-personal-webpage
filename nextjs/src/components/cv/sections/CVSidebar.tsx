@@ -1,4 +1,8 @@
 import type { CVSidebarData, CVHeaderData, CVSidebarSectionType } from '../types/CVTypes';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneIcon from '@mui/icons-material/Phone';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import LanguageIcon from '@mui/icons-material/Language';
 
 interface CVSidebarProps {
   data: CVSidebarData;
@@ -36,29 +40,26 @@ const CVSidebar = ({
           </div>
         ) : null;
 
-      case 'qualifications':
-        return data.qualifications.length > 0 ? (
-          <div key="qualifications" className="cv-sidebar-section">
-            <div className="cv-sidebar-list">
-              {data.qualifications.map((qual, index) => (
-                <div key={index} className="cv-sidebar-list-item">
-                  <span className="cv-sidebar-list-title">{qual.title}</span>
-                  {qual.institution && (
-                    <span className="cv-sidebar-list-subtitle">{qual.institution}</span>
-                  )}
-                  {qual.year && <span className="cv-sidebar-list-year">{qual.year}</span>}
-                </div>
+      case 'hardSkills':
+        return data.hardSkills.length > 0 ? (
+          <div key="hardSkills" className="cv-sidebar-section">
+            <h3 className="cv-sidebar-title">Hard Skills</h3>
+            <div className="cv-sidebar-skills">
+              {data.hardSkills.map((skill, index) => (
+                <span key={index} className="cv-sidebar-skill">
+                  {skill}
+                </span>
               ))}
             </div>
           </div>
         ) : null;
 
-      case 'skills':
-        return data.skills.length > 0 ? (
-          <div key="skills" className="cv-sidebar-section">
-            <h3 className="cv-sidebar-title">Skills</h3>
+      case 'softSkills':
+        return data.softSkills.length > 0 ? (
+          <div key="softSkills" className="cv-sidebar-section">
+            <h3 className="cv-sidebar-title">Soft Skills</h3>
             <div className="cv-sidebar-skills">
-              {data.skills.map((skill, index) => (
+              {data.softSkills.map((skill, index) => (
                 <span key={index} className="cv-sidebar-skill">
                   {skill}
                 </span>
@@ -120,8 +121,11 @@ const CVSidebar = ({
             <div className="cv-sidebar-list">
               {data.portfolio.map((item, index) => (
                 <div key={index} className="cv-sidebar-list-item">
-                  <span className="cv-sidebar-list-title">{item.name}</span>
-                  {item.link && <span className="cv-sidebar-list-link">{item.link}</span>}
+                  {item.link ? (
+                    <a href={item.link.startsWith('http') ? item.link : `https://${item.link}`} className="cv-sidebar-list-link">{item.name}</a>
+                  ) : (
+                    <span className="cv-sidebar-list-title">{item.name}</span>
+                  )}
                 </div>
               ))}
             </div>
@@ -199,22 +203,35 @@ const CVSidebar = ({
           <div className="cv-sidebar-contact">
             {showPrivateInfo ? (
               <>
-                {header.website && (
-                  <div className="cv-sidebar-contact-item">{header.website}</div>
+                <div className="cv-sidebar-contact-item">
+                  <EmailIcon sx={{ fontSize: 12, mr: 0.5 }} />
+                  {header.email}
+                </div>
+                {header.phone && (
+                  <div className="cv-sidebar-contact-item">
+                    <PhoneIcon sx={{ fontSize: 12, mr: 0.5 }} />
+                    {header.phone}
+                  </div>
                 )}
-                <div className="cv-sidebar-contact-item">{header.email}</div>
-                {header.phone && <div className="cv-sidebar-contact-item">{header.phone}</div>}
                 {header.location && (
                   <div className="cv-sidebar-contact-item cv-sidebar-contact-address">
+                    <LocationOnIcon sx={{ fontSize: 12, mr: 0.5, flexShrink: 0 }} />
                     {/* Split address: street on first line, postal code + city on second */}
                     {header.location.includes(',') ? (
-                      <>
+                      <span>
                         <span>{header.location.split(',')[0].trim()}</span>
+                        <br />
                         <span>{header.location.split(',').slice(1).join(',').trim()}</span>
-                      </>
+                      </span>
                     ) : (
                       <span>{header.location}</span>
                     )}
+                  </div>
+                )}
+                {header.website && (
+                  <div className="cv-sidebar-contact-item">
+                    <LanguageIcon sx={{ fontSize: 12, mr: 0.5 }} />
+                    {header.website}
                   </div>
                 )}
               </>

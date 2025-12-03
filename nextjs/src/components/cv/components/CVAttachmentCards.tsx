@@ -3,7 +3,7 @@
 import { Box, Card, CardContent, Typography, Button } from '@mui/material';
 import { ContactPage, EmojiEvents, Download, OpenInNew } from '@mui/icons-material';
 import { useCVTheme } from '../contexts';
-import { REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH } from '@/data/documents';
+import { REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH } from '@/components/working-life/content';
 
 interface AttachmentCardProps {
   title: string;

@@ -11,28 +11,19 @@ const CVSideProjects = ({ data }: CVSideProjectsProps) => {
       <div className="cv-side-projects-list">
         {data.map((project, index) => (
           <div key={index} className="cv-side-projects-item">
-            <div className="cv-side-projects-header">
-              <h3>{project.name}</h3>
-              {project.link && (
-                <a
-                  href={project.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="cv-side-projects-link"
-                >
-                  {project.link}
-                </a>
-              )}
-            </div>
-            <p>{project.description}</p>
-            {project.technologies && project.technologies.length > 0 && (
-              <div className="cv-side-projects-tech">
-                {project.technologies.map((tech, techIndex) => (
-                  <span key={techIndex} className="cv-side-projects-tech-tag">
-                    {tech}
-                  </span>
-                ))}
-              </div>
+            <span className="cv-side-projects-text">
+              <span className="cv-side-projects-name">{project.name}</span>
+              <span className="cv-side-projects-desc"> - {project.description}</span>
+            </span>
+            {project.link && (
+              <a
+                href={project.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cv-side-projects-link"
+              >
+                {project.link.replace('https://', '')}
+              </a>
             )}
           </div>
         ))}

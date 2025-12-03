@@ -13,7 +13,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { softSkills } from '@/data/softSkillsData';
+import { softSkills } from '../content';
 
 const categoryIcons: Record<string, React.ReactNode> = {
   Leadership: <Groups sx={{ fontSize: 20 }} />,

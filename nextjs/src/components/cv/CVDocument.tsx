@@ -2,12 +2,15 @@ import { forwardRef, useMemo } from 'react';
 import type { ReactNode } from 'react';
 import {
   CVHeader,
+  CVBadges,
   CVSlogan,
   CVProfile,
   CVUSP,
+  CVLookingFor,
   CVFunctions,
   CVExperience,
   CVSideProjects,
+  CVDomains,
   CVReferences,
   CVSidebar,
 } from './sections';
@@ -68,15 +71,11 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
             data={{ ...cvData.main.header, title: activeContent.tagline, photo: undefined }}
           />
         );
+      case 'badges':
+        return <CVBadges key="badges" badges={cvData.main.badges} />;
       case 'slogan':
         // Use dynamic slogan from version
-        return (
-          <CVSlogan
-            key="slogan"
-            slogan={activeContent.slogan || cvData.main.slogan}
-            website={cvData.main.header.website}
-          />
-        );
+        return <CVSlogan key="slogan" slogan={activeContent.slogan || cvData.main.slogan} />;
       case 'profile':
         // Use dynamic profile from version
         return <CVProfile key="profile" profile={activeContent.profile} />;
@@ -90,12 +89,22 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           return <CVUSP key="usp" data={uspFromAchievements} />;
         }
         return <CVUSP key="usp" data={cvData.main.usp} />;
+      case 'lookingFor':
+        return (
+          <CVLookingFor
+            key="lookingFor"
+            intro={cvData.main.lookingFor.intro}
+            items={cvData.main.lookingFor.items}
+          />
+        );
       case 'functions':
         return <CVFunctions key="functions" data={cvData.main.functions} />;
       case 'experience':
         return <CVExperience key="experience" entries={experienceEntries} />;
       case 'sideProjects':
         return <CVSideProjects key="sideProjects" data={cvData.main.sideProjects} />;
+      case 'domains':
+        return <CVDomains key="domains" data={cvData.main.domains} />;
       case 'references':
         return (
           <CVReferences
@@ -151,6 +160,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
             email={showPrivateInfo ? cvData.main.header.email : undefined}
             phone={showPrivateInfo ? cvData.main.header.phone : undefined}
             linkedin={cvData.main.header.linkedin}
+            website={cvData.main.header.website}
             zoom={zoom}
           >
             {hasSidebar ? (

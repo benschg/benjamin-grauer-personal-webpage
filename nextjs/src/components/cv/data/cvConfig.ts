@@ -5,8 +5,9 @@ import type {
   CVFunctionEntry,
   CVPageLayout,
   CVReferenceEntry,
+  CVDomainEntry,
 } from "../types/CVTypes";
-import { timelineEvents } from "@/data/timelineData";
+import { timelineEvents, careerAspirations } from "@/components/working-life/content";
 import { sharedProfile } from "@/data/shared-profile";
 import { cvAboutMe } from "@/data/interestsData";
 
@@ -16,13 +17,13 @@ import { cvAboutMe } from "@/data/interestsData";
 export const cvPageLayouts: CVPageLayout[] = [
   // Page 1
   {
-    sidebar: ["qualifications", "successes", "skills", "languages"],
-    main: ["header", "slogan", "profile", "usp"],
+    sidebar: ["successes", "hardSkills", "softSkills", "languages"],
+    main: ["header", "badges", "slogan", "profile", "usp", "lookingFor"],
   },
   // Page 2
   {
     sidebar: ["education", "courses", "portfolio", "volunteer", "aboutMe"],
-    main: ["functions", "sideProjects", "references"],
+    main: ["functions", "sideProjects", "domains", "references"],
   },
   // Page 3 - First 3 experience entries
   {
@@ -146,32 +147,32 @@ export const cvData: CVData = {
   // SIDEBAR (Left side - super short)
   sidebar: {
     successes: [
-      { title: "10+ Teams Built" },
-      { title: "100+ People Hired" },
-      { title: "ISO 9001 Implemented twice" },
-      { title: "Restructured teams to value-stream alignment" },
-      { title: "Simplified 30 CLI tools into 1 unified app" },
-      { title: "Brining legacy systems to the cloud" },
-    ],
-
-    qualifications: [
-      { title: "15+ Years Experience" },
-      { title: "20+ Engineers Led" },
-      { title: "4 Industries" },
       { title: "40+ Projects Delivered" },
+      { title: "Enabled teams to focus on the value chain" },
+      { title: "Consolidated 30 CLI tools into 1 unified app" },
+      { title: "Bringing legacy systems to the cloud" },
     ],
 
-    skills: [
+    hardSkills: [
       "React/TypeScript",
-      "C#/.NET",
       "Python",
+      "C#/.NET",
       "C++",
-      "Cloud Architecture",
+      "Cloud architecture",
       "AWS",
       "DevOps",
-      "3D Graphics",
-      "Team Leadership",
-      "Agile/Scrum",
+      "3D graphics",
+    ],
+
+    softSkills: [
+      "Team growth",
+      "Mentoring",
+      "Coaching",
+      "Empathy",
+      "Technical communication",
+      "Stakeholder management",
+      "Change management",
+      "Creative learning",
     ],
 
     languages: [
@@ -185,10 +186,13 @@ export const cvData: CVData = {
     courses: getCoursesFromTimeline(),
 
     portfolio: [
-      // TODO: Add portfolio items
       {
-        name: "TODO: Add portfolio items",
-        link: "https://benjamingrauer.ch/portfolio",
+        name: "benjamingrauer.ch/portfolio",
+        link: "benjamingrauer.ch/portfolio",
+      },
+      {
+        name: "github.com/benschg",
+        link: "github.com/benschg",
       },
     ],
 
@@ -207,7 +211,7 @@ export const cvData: CVData = {
       },
     ],
 
-    hobbies: ["Triathlon", "Reading", "Crafting"],
+    hobbies: ["Triathlon", "Reading", "Crafting", "Video Games"],
 
     aboutMe: cvAboutMe,
   },
@@ -224,6 +228,13 @@ export const cvData: CVData = {
       website: sharedProfile.website,
       photo: sharedProfile.photo,
     },
+
+    badges: [
+      { value: "15+", label: "Years Experience" },
+      { value: "10+", label: "Teams Empowered" },
+      { value: "100+", label: "People Hired" },
+      { value: "2x", label: "ISO9001 Certified" },
+    ],
 
     slogan:
       "Transforming complex challenges into elegant solutions through collaborative leadership. Empowering engineers to ship products that matter.",
@@ -252,19 +263,60 @@ aligned development, and fostering collaborative engineering cultures.`,
       },
     ],
 
+    lookingFor: {
+      intro: "Combining technical excellence with human-centered leadership:",
+      items: careerAspirations.map((a) => a.title),
+    },
+
     functions: getFunctionsFromTimeline(),
 
     experience: getExperienceFromTimeline(),
 
     sideProjects: [
-      // TODO: Add side projects you're proud of
       {
-        name: "TODO: Add side project",
-        description: "Description of the project",
-        link: "https://example.com",
-        technologies: ["React", "TypeScript"],
+        name: "DocuGap",
+        description:
+          "AI-powered document change analysis and categorization tool",
+        link: "https://docugap.com",
+        technologies: ["Next.js", "TypeScript", "AI"],
+      },
+      {
+        name: "AI Mosaic Studio",
+        description: "AI-powered photo-to-mosaic transformation tool",
+        link: "https://mosaic-studio.0verall.com",
+        technologies: ["AI/ML", "Image Processing"],
+      },
+      {
+        name: "Orxonox",
+        description: "Open-source 3D space shooter game & engine",
+        link: "https://orxonox.net",
+        technologies: ["C++", "OpenGL", "Lua"],
       },
     ],
+
+    domains: [
+      {
+        name: "Medical simulation",
+        description:
+          "Building the equivalent to flight simulators for endoscopic medical procedures",
+      },
+      {
+        name: "Drone logistics",
+        description: "Autonomous warehouse systems",
+      },
+      {
+        name: "Advanced manufacturing",
+        description: "Carbon fiber 3D printing",
+      },
+      {
+        name: "Compliance",
+        description: "Document change management systems",
+      },
+      {
+        name: "Game development",
+        description: "Open-source 3D engines",
+      },
+    ] as CVDomainEntry[],
 
     references: getReferences(),
   },

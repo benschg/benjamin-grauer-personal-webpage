@@ -39,7 +39,7 @@ import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { useCVTheme, useCVVersion } from './contexts';
-import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/data/documents';
+import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
 

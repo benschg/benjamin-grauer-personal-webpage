@@ -2,7 +2,7 @@
 
 import { Box, Typography, Card, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
-import workingLifeContent from '@/data/working-life-content.json';
+import { impactSectionContent } from './content';
 
 const ImpactSection = () => {
   return (
@@ -16,7 +16,7 @@ const ImpactSection = () => {
           color: 'text.primary',
         }}
       >
-        {workingLifeContent.impact.title}
+        {impactSectionContent.title}
       </Typography>
       <Card
         sx={{
@@ -34,7 +34,7 @@ const ImpactSection = () => {
             color: 'text.secondary',
           }}
         >
-          {workingLifeContent.impact.description}
+          {impactSectionContent.description}
         </Typography>
         <Typography
           variant="h6"
@@ -45,10 +45,10 @@ const ImpactSection = () => {
             color: 'primary.main',
           }}
         >
-          Experience Highlights
+          {impactSectionContent.highlightsTitle}
         </Typography>
         <List>
-          {workingLifeContent.impact.highlights.map((highlight, index) => (
+          {impactSectionContent.highlights.map((highlight, index) => (
             <ListItem key={index} sx={{ pl: 0 }}>
               <ListItemIcon sx={{ minWidth: 36 }}>
                 <CheckCircle sx={{ color: 'primary.main' }} />

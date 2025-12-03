@@ -20,13 +20,16 @@ export interface Interest {
   quote?: string;
 }
 
-// "About Me" summary for CV sidebar - matches PersonalLifeReferenceSection highlights
-export const cvAboutMe = [
-  { title: 'Family & Life', description: 'Devoted husband and father' },
-  { title: 'Sports & Fitness', description: 'Triathlon & winter swimming' },
-  { title: 'Adventures', description: 'Travel, diving & hiking' },
-  { title: 'Hobbies', description: '3D design, cooking & reading' },
+// Shared highlights for CV sidebar and PersonalLifeReferenceSection
+export const personalHighlights = [
+  { title: 'Family & Life', description: 'Devoted husband and father', color: '#FF6B9D' },
+  { title: 'Sports & Fitness', description: 'Triathlon & winter swimming', color: '#4CAF50' },
+  { title: 'Adventures', description: 'Travel, diving & hiking', color: '#2196F3' },
+  { title: 'Hobbies', description: '3D animations, cooking, reading, crafting & video games', color: '#FF9800' },
 ];
+
+// "About Me" summary for CV sidebar (derived from personalHighlights)
+export const cvAboutMe = personalHighlights.map(({ title, description }) => ({ title, description }));
 
 export const interests: Interest[] = [
   {

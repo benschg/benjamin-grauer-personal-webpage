@@ -4,34 +4,21 @@ import Link from 'next/link';
 import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material';
 import { ArrowForward, FamilyRestroom, DirectionsRun, Flight, Hiking } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { personalHighlights } from '../../data/interestsData';
+import { personalLifeReferenceSectionContent } from './content';
+
+const highlightIcons = [
+  <FamilyRestroom key="family" sx={{ fontSize: 28 }} />,
+  <DirectionsRun key="sports" sx={{ fontSize: 28 }} />,
+  <Flight key="adventures" sx={{ fontSize: 28 }} />,
+  <Hiking key="hobbies" sx={{ fontSize: 28 }} />,
+];
 
 const PersonalLifeReferenceSection = () => {
-  const highlights = [
-    {
-      icon: <FamilyRestroom sx={{ fontSize: 28 }} />,
-      title: 'Family & Life',
-      description: 'Devoted husband and father',
-      color: '#FF6B9D',
-    },
-    {
-      icon: <DirectionsRun sx={{ fontSize: 28 }} />,
-      title: 'Sports & Fitness',
-      description: 'Triathlon & winter swimming',
-      color: '#4CAF50',
-    },
-    {
-      icon: <Flight sx={{ fontSize: 28 }} />,
-      title: 'Adventures',
-      description: 'Travel, diving & hiking',
-      color: '#2196F3',
-    },
-    {
-      icon: <Hiking sx={{ fontSize: 28 }} />,
-      title: 'Hobbies',
-      description: '3D design, cooking & reading',
-      color: '#FF9800',
-    },
-  ];
+  const highlights = personalHighlights.map((highlight, index) => ({
+    ...highlight,
+    icon: highlightIcons[index],
+  }));
 
   return (
     <Box
@@ -59,7 +46,7 @@ const PersonalLifeReferenceSection = () => {
             textAlign: 'center',
           }}
         >
-          Beyond the Professional
+          {personalLifeReferenceSectionContent.title}
         </Typography>
         <Typography
           variant="h6"
@@ -72,14 +59,14 @@ const PersonalLifeReferenceSection = () => {
             px: 2,
           }}
         >
-          There&apos;s more to me than just work! Discover my passions, hobbies, and what drives me
-          outside of the professional realm.
+          {personalLifeReferenceSectionContent.subtitle}
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 4, px: 2 }}>
           {highlights.map((highlight, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <motion.div
+                style={{ height: '100%' }}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
@@ -165,7 +152,7 @@ const PersonalLifeReferenceSection = () => {
                 },
               }}
             >
-              Explore Personal Life
+              {personalLifeReferenceSectionContent.buttonText}
             </Button>
           </motion.div>
           <Typography
@@ -176,7 +163,7 @@ const PersonalLifeReferenceSection = () => {
               fontStyle: 'italic',
             }}
           >
-            Discover the person behind the professional
+            {personalLifeReferenceSectionContent.tagline}
           </Typography>
         </Box>
       </motion.div>

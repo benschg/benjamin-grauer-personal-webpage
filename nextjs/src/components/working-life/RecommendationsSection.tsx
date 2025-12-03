@@ -3,22 +3,25 @@
 import { Box, Typography, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import RecommendationCard from './RecommendationCard';
-import { recommendations } from '@/data/recommendations';
+import { recommendations, recommendationsSectionContent, Recommendation } from './content';
+
+// Fisher-Yates shuffle helper
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
 
 const RecommendationsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
-
-  const shuffledRecommendations = useMemo(() => {
-    const shuffled = [...recommendations];
-    for (let i = shuffled.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-    }
-    return shuffled;
-  }, []);
+  // Use lazy initializer - shuffles once on first render (client-side)
+  const [shuffledRecommendations] = useState<Recommendation[]>(() => shuffleArray(recommendations));
 
   const totalPages = Math.ceil(shuffledRecommendations.length / itemsPerPage);
   const startIndex = currentIndex * itemsPerPage;
@@ -82,7 +85,7 @@ const RecommendationsSection = () => {
               mb: 2,
             }}
           >
-            Professional Recommendations
+            {recommendationsSectionContent.title}
           </Typography>
           <Typography
             variant="h6"
@@ -93,7 +96,7 @@ const RecommendationsSection = () => {
               lineHeight: 1.6,
             }}
           >
-            What colleagues say about working with me (recommendations from LinkedIn)
+            {recommendationsSectionContent.subtitle}
           </Typography>
         </Box>
 
@@ -200,7 +203,7 @@ const RecommendationsSection = () => {
               fontSize: '0.875rem',
             }}
           >
-            Page {currentIndex + 1} of {totalPages} • {shuffledRecommendations.length} recommendations
+            {recommendationsSectionContent.pagination(currentIndex + 1, totalPages, shuffledRecommendations.length)}
           </Typography>
         </Box>
 
@@ -212,10 +215,10 @@ const RecommendationsSection = () => {
               fontStyle: 'italic',
             }}
           >
-            Want to work together?{' '}
+            {recommendationsSectionContent.cta.text}{' '}
             <Box
               component="a"
-              href="https://www.linkedin.com/in/benjamin-grauer/"
+              href={recommendationsSectionContent.cta.linkUrl}
               target="_blank"
               rel="noopener noreferrer"
               sx={{
@@ -227,7 +230,7 @@ const RecommendationsSection = () => {
                 },
               }}
             >
-              Connect with me on LinkedIn
+              {recommendationsSectionContent.cta.linkText}
             </Box>
           </Typography>
         </Box>

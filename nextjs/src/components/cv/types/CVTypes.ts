@@ -1,8 +1,8 @@
 // Section types for sidebar (left) and main content (right)
 export type CVSidebarSectionType =
   | 'successes'
-  | 'qualifications'
-  | 'skills'
+  | 'hardSkills'
+  | 'softSkills'
   | 'languages'
   | 'education'
   | 'courses'
@@ -21,12 +21,15 @@ export interface CVSlicedSection {
 
 export type CVMainSectionType =
   | 'header' // Name and Claim
+  | 'badges' // Key highlights/stats
   | 'slogan'
   | 'profile'
   | 'usp' // USP, competences, skills
+  | 'lookingFor' // What I'm looking for
   | 'functions' // Functions I was in
   | 'experience' // Work contracts (all)
   | 'sideProjects' // Side projects I am proud of
+  | 'domains' // Industries/domains worked in
   | 'references' // Professional references
   | CVSlicedSection; // Sliced section for pagination
 
@@ -148,8 +151,8 @@ export interface CVAboutMeEntry {
 // Sidebar data structure
 export interface CVSidebarData {
   successes: CVSuccessEntry[];
-  qualifications: CVQualificationEntry[];
-  skills: string[];
+  hardSkills: string[];
+  softSkills: string[];
   languages: CVLanguage[];
   education: CVEducationEntry[];
   courses: CVCourseEntry[];
@@ -159,15 +162,36 @@ export interface CVSidebarData {
   aboutMe: CVAboutMeEntry[];
 }
 
+// Badge entry for key highlights
+export interface CVBadgeEntry {
+  label: string;
+  value: string;
+}
+
+// Looking for entry
+export interface CVLookingForData {
+  intro: string;
+  items: string[];
+}
+
+// Domain entry for industries worked in
+export interface CVDomainEntry {
+  name: string;
+  description: string;
+}
+
 // Main content data structure
 export interface CVMainData {
   header: CVHeaderData;
+  badges: CVBadgeEntry[];
   slogan: string;
   profile: string;
   usp: CVUSPEntry[];
+  lookingFor: CVLookingForData;
   functions: CVFunctionEntry[];
   experience: CVExperienceEntry[];
   sideProjects: CVSideProjectEntry[];
+  domains: CVDomainEntry[];
   references: CVReferenceEntry[];
 }
 

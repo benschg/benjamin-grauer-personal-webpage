@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, Box, Chip, Tooltip, Grid, Collapse } fro
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 import { Code, DataObject, Web, ExpandMore } from '@mui/icons-material';
-import { programmingLanguages } from '@/data/programmingLanguagesData';
+import { programmingLanguages } from '../content';
 import { getContrastColor } from '@/utils/colorUtils';
 
 const getLanguageIcon = (iconName?: string) => {

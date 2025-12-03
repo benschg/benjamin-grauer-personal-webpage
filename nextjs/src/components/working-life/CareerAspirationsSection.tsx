@@ -12,7 +12,7 @@ import {
   Rocket,
   Palette,
 } from '@mui/icons-material';
-import { careerAspirations, careerAspirationsIntro } from '@/data/careerAspirationsData';
+import { careerAspirations, careerAspirationsIntro, careerAspirationsSectionContent } from './content';
 
 // Map icon names to components
 const iconMap: Record<string, React.ElementType> = {
@@ -39,7 +39,7 @@ const CareerAspirationsSection = () => {
           color: 'text.primary',
         }}
       >
-        What I Am Looking For
+        {careerAspirationsSectionContent.title}
       </Typography>
       <Typography
         variant="body1"

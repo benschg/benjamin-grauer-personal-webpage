@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Box, Typography, Button } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { portfolioReferenceSectionContent } from './content';
 
 const PortfolioReferenceSection = () => {
   return (
@@ -24,7 +25,7 @@ const PortfolioReferenceSection = () => {
             textAlign: 'center',
           }}
         >
-          See My Work in Action
+          {portfolioReferenceSectionContent.title}
         </Typography>
         <Typography
           variant="h6"
@@ -36,8 +37,7 @@ const PortfolioReferenceSection = () => {
             mx: 'auto',
           }}
         >
-          From medical software to game development, explore the projects that showcase my skills
-          and passion for creating innovative solutions.
+          {portfolioReferenceSectionContent.subtitle}
         </Typography>
 
         <Box sx={{ textAlign: 'center' }}>
@@ -59,7 +59,7 @@ const PortfolioReferenceSection = () => {
                 },
               }}
             >
-              Explore Portfolio
+              {portfolioReferenceSectionContent.buttonText}
             </Button>
           </motion.div>
           <Typography
@@ -70,7 +70,7 @@ const PortfolioReferenceSection = () => {
               fontStyle: 'italic',
             }}
           >
-            Discover my projects across medical software, games, web development, and more
+            {portfolioReferenceSectionContent.tagline}
           </Typography>
         </Box>
       </motion.div>

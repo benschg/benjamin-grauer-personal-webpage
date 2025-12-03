@@ -1,10 +1,12 @@
 'use client';
 
 import { Box, Container, Typography, Grid } from '@mui/material';
-import workingLifeContent from '@/data/working-life-content.json';
 import { sharedProfile } from '@/data/shared-profile';
+import { professionalHeroContent } from './content';
 
 const ProfessionalHero = () => {
+  const paragraphs = professionalHeroContent.description.split('\n\n');
+
   return (
     <Box
       sx={{
@@ -23,7 +25,7 @@ const ProfessionalHero = () => {
                 color: 'text.primary',
               }}
             >
-              {workingLifeContent.hero.title}
+              {professionalHeroContent.title}
             </Typography>
             <Typography
               variant="h5"
@@ -44,10 +46,10 @@ const ProfessionalHero = () => {
                 color: 'text.secondary',
               }}
             >
-              {workingLifeContent.hero.description.split('\n\n').map((paragraph, index) => (
+              {paragraphs.map((paragraph, index) => (
                 <span key={index}>
                   {paragraph}
-                  {index < workingLifeContent.hero.description.split('\n\n').length - 1 && (
+                  {index < paragraphs.length - 1 && (
                     <>
                       <br />
                       <br />
@@ -63,8 +65,8 @@ const ProfessionalHero = () => {
           >
             <Box
               component="img"
-              src="/Benjamin_Grauer_ProfilePic_2_Transparent_1024.webp"
-              alt="Benjamin Grauer Profile Picture"
+              src={sharedProfile.photo}
+              alt={professionalHeroContent.profileImageAlt}
               sx={{
                 width: { xs: 200, sm: 250, md: 300 },
                 height: 'auto',

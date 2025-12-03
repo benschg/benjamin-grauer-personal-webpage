@@ -1,8 +1,8 @@
 'use client';
 
 import { Box, Typography, Grid } from '@mui/material';
-import { documents } from '@/data/documents';
 import DocumentCard from './DocumentCard';
+import { documents, documentsSectionContent } from './content';
 
 const DocumentsSection = () => {
   return (
@@ -16,7 +16,7 @@ const DocumentsSection = () => {
           color: 'text.primary',
         }}
       >
-        Documents
+        {documentsSectionContent.title}
       </Typography>
       <Grid container spacing={3}>
         {documents.map((doc, index) => (

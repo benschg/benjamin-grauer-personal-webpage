@@ -13,7 +13,7 @@ import {
 } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { cliftonStrengths } from '@/data/cliftonStrengthsData';
+import { cliftonStrengths } from '../content';
 
 const domainIcons = {
   'Strategic Thinking': <Psychology sx={{ fontSize: 20 }} />,
