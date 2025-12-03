@@ -4,7 +4,7 @@ import { Card, CardContent, Typography, Box, Chip, Tooltip, Grid, Collapse } fro
 import { getContrastColor } from '@/utils/colorUtils';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { frameworksAndTechnologies } from '@/data/frameworksAndTechnologiesData';
+import { frameworksAndTechnologies } from '../content';
 import {
   Code,
   Web,

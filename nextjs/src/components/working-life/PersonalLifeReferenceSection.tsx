@@ -5,6 +5,7 @@ import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material'
 import { ArrowForward, FamilyRestroom, DirectionsRun, Flight, Hiking } from '@mui/icons-material';
 import { motion } from 'framer-motion';
 import { personalHighlights } from '../../data/interestsData';
+import { personalLifeReferenceSectionContent } from './content';
 
 const highlightIcons = [
   <FamilyRestroom key="family" sx={{ fontSize: 28 }} />,
@@ -45,7 +46,7 @@ const PersonalLifeReferenceSection = () => {
             textAlign: 'center',
           }}
         >
-          Beyond the Professional
+          {personalLifeReferenceSectionContent.title}
         </Typography>
         <Typography
           variant="h6"
@@ -58,8 +59,7 @@ const PersonalLifeReferenceSection = () => {
             px: 2,
           }}
         >
-          There&apos;s more to me than just work! Discover my passions, hobbies, and what drives me
-          outside of the professional realm.
+          {personalLifeReferenceSectionContent.subtitle}
         </Typography>
 
         <Grid container spacing={3} sx={{ mb: 4, px: 2 }}>
@@ -152,7 +152,7 @@ const PersonalLifeReferenceSection = () => {
                 },
               }}
             >
-              Explore Personal Life
+              {personalLifeReferenceSectionContent.buttonText}
             </Button>
           </motion.div>
           <Typography
@@ -163,7 +163,7 @@ const PersonalLifeReferenceSection = () => {
               fontStyle: 'italic',
             }}
           >
-            Discover the person behind the professional
+            {personalLifeReferenceSectionContent.tagline}
           </Typography>
         </Box>
       </motion.div>

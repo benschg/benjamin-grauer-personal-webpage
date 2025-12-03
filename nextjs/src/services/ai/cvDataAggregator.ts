@@ -1,13 +1,16 @@
 // Aggregates data from working-life page for AI CV generation
-import { timelineEvents } from '@/data/timelineData';
-import { softSkills } from '@/data/softSkillsData';
-import { domainExpertise } from '@/data/domainExpertiseData';
-import { programmingLanguages } from '@/data/programmingLanguagesData';
-import { frameworksAndTechnologies } from '@/data/frameworksAndTechnologiesData';
-import { toolsAndPlatforms } from '@/data/toolsAndPlatformsData';
-import { cliftonStrengths } from '@/data/cliftonStrengthsData';
-import { recommendations } from '@/data/recommendations';
-import { careerAspirations, careerAspirationsIntro } from '@/data/careerAspirationsData';
+import {
+  timelineEvents,
+  softSkills,
+  domainExpertise,
+  programmingLanguages,
+  frameworksAndTechnologies,
+  toolsAndPlatforms,
+  cliftonStrengths,
+  recommendations,
+  careerAspirations,
+  careerAspirationsIntro,
+} from '@/components/working-life/content';
 import { cvData } from '@/components/cv/data/cvConfig';
 import type { CVDataSourceSelection } from '@/types/database.types';
 

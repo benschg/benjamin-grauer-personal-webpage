@@ -17,7 +17,7 @@ import {
   Work,
 } from '@mui/icons-material';
 import { getContrastColor } from '@/utils/colorUtils';
-import { toolsAndPlatforms } from '@/data/toolsAndPlatformsData';
+import { toolsAndPlatforms } from '../content';
 
 const getToolIcon = (iconName?: string) => {
   const iconStyle = { fontSize: 20 };

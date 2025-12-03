@@ -18,7 +18,7 @@ import {
   Psychology,
   ViewInAr,
 } from '@mui/icons-material';
-import { domainExpertise } from '@/data/domainExpertiseData';
+import { domainExpertise } from '../content';
 
 const getDomainIcon = (iconName?: string) => {
   const iconStyle = { fontSize: 24 };

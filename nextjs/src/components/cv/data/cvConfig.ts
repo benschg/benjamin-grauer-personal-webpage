@@ -7,10 +7,9 @@ import type {
   CVReferenceEntry,
   CVDomainEntry,
 } from "../types/CVTypes";
-import { timelineEvents } from "@/data/timelineData";
+import { timelineEvents, careerAspirations } from "@/components/working-life/content";
 import { sharedProfile } from "@/data/shared-profile";
 import { cvAboutMe } from "@/data/interestsData";
-import { careerAspirations } from "@/data/careerAspirationsData";
 
 // Page layouts - define which sections appear on each page
 // Add more pages as needed - no cap on number of pages

@@ -2,6 +2,7 @@
 
 import { Box, Typography } from '@mui/material';
 import { SkillsGrid } from './skills';
+import { skillsSectionContent } from './content';
 
 const SkillsSection = () => {
   return (
@@ -15,7 +16,7 @@ const SkillsSection = () => {
           color: 'text.primary',
         }}
       >
-        Skills & Expertise
+        {skillsSectionContent.title}
       </Typography>
       <Typography
         variant="body2"
@@ -26,7 +27,7 @@ const SkillsSection = () => {
           fontStyle: 'italic',
         }}
       >
-        Hover over skills to see detailed experience and projects. Click on mobile devices.
+        {skillsSectionContent.instruction}
       </Typography>
       <SkillsGrid />
     </Box>

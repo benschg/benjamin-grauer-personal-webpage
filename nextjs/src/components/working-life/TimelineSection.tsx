@@ -3,7 +3,7 @@
 import { Work, School, Star, Build, Assignment, Person } from '@mui/icons-material';
 import { GenericTimeline } from '@/components/common/Timeline';
 import type { TimelineEvent, FilterOption } from '@/components/common/Timeline';
-import { timelineEvents } from '@/data/timelineData';
+import { timelineEvents, timelineSectionContent } from './content';
 
 const TimelineSection = () => {
   const workingLifeEvents: TimelineEvent[] = timelineEvents.map((event) => ({
@@ -19,30 +19,30 @@ const TimelineSection = () => {
   }));
 
   const filterOptions: FilterOption[] = [
-    { value: 'all', label: 'All', count: timelineEvents.length },
+    { value: 'all', label: timelineSectionContent.filters.all, count: timelineEvents.length },
     {
       value: 'work',
-      label: 'Work',
+      label: timelineSectionContent.filters.work,
       count: timelineEvents.filter((e) => e.type === 'work').length,
     },
     {
       value: 'education',
-      label: 'Education',
+      label: timelineSectionContent.filters.education,
       count: timelineEvents.filter((e) => e.type === 'education').length,
     },
     {
       value: 'project',
-      label: 'Projects',
+      label: timelineSectionContent.filters.project,
       count: timelineEvents.filter((e) => e.type === 'project').length,
     },
     {
       value: 'certification',
-      label: 'Certifications',
+      label: timelineSectionContent.filters.certification,
       count: timelineEvents.filter((e) => e.type === 'certification').length,
     },
     {
       value: 'personal',
-      label: 'Personal',
+      label: timelineSectionContent.filters.personal,
       count: timelineEvents.filter((e) => e.type === 'personal').length,
     },
   ];
@@ -85,7 +85,7 @@ const TimelineSection = () => {
 
   return (
     <GenericTimeline
-      title="Career Timeline"
+      title={timelineSectionContent.title}
       events={workingLifeEvents}
       getIcon={getIcon}
       getColor={getColor}

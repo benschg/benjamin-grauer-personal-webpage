@@ -6,7 +6,7 @@ import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
 import { CVThemeProvider, CVVersionProvider, useCVTheme } from '@/components/cv/contexts';
-import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/data/documents';
+import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
 // Component that uses the context
 const CVPageContent = () => {

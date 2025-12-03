@@ -3,7 +3,7 @@
 import { Card, CardContent, Typography, Box, Avatar, Chip } from '@mui/material';
 import { motion } from 'framer-motion';
 import { FormatQuote, LinkedIn } from '@mui/icons-material';
-import type { Recommendation } from '@/data/recommendations';
+import type { Recommendation } from './content';
 
 interface RecommendationCardProps {
   recommendation: Recommendation;

@@ -2,7 +2,7 @@
 
 import { Card, CardContent, Button, Typography } from '@mui/material';
 import { Download } from '@mui/icons-material';
-import type { Document } from '@/data/documents';
+import type { Document } from './content';
 
 interface DocumentCardProps {
   document: Document;
