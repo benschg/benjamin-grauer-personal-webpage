@@ -214,6 +214,8 @@
 }
 
 .cv-sidebar-contact-item {
+  display: flex;
+  align-items: flex-start;
   font-size: 0.6rem;
   color: var(--cv-text-muted);
   word-break: break-all;
@@ -221,11 +223,7 @@
 
 .cv-sidebar-contact-address {
   display: flex;
-  flex-direction: column;
-}
-
-.cv-sidebar-contact-address span {
-  display: block;
+  align-items: flex-start;
 }
 
 .cv-sidebar-contact-private {
@@ -1107,9 +1105,10 @@
 }
 
 .cv-sidebar-list-link {
-  font-size: 0.55rem;
-  color: var(--cv-accent);
+  font-size: 0.65rem;
+  color: var(--cv-text);
   word-break: break-all;
+  text-decoration: none;
 }
 
 /* Sidebar Courses (compact layout) */

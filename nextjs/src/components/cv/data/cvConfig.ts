@@ -148,7 +148,7 @@ export const cvData: CVData = {
     successes: [
       { title: "10+ Teams Built" },
       { title: "100+ People Hired" },
-      { title: "ISO 9001 Implemented twice" },
+      { title: "ISO9001 implemented twice" },
       { title: "Restructured teams to value-stream alignment" },
       { title: "Simplified 30 CLI tools into 1 unified app" },
       { title: "Brining legacy systems to the cloud" },
@@ -185,10 +185,13 @@ export const cvData: CVData = {
     courses: getCoursesFromTimeline(),
 
     portfolio: [
-      // TODO: Add portfolio items
       {
-        name: "TODO: Add portfolio items",
-        link: "https://benjamingrauer.ch/portfolio",
+        name: "benjamingrauer.ch/portfolio",
+        link: "benjamingrauer.ch/portfolio",
+      },
+      {
+        name: "github.com/benschg",
+        link: "github.com/benschg",
       },
     ],
 
