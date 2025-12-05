@@ -45,6 +45,7 @@ import BusinessIcon from '@mui/icons-material/Business';
 import WorkIcon from '@mui/icons-material/Work';
 import PreviewIcon from '@mui/icons-material/Preview';
 import DataObjectIcon from '@mui/icons-material/DataObject';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import {
   GEMINI_MODELS,
   DEFAULT_GEMINI_MODEL,
@@ -119,7 +120,7 @@ type JobInputMode = 'text' | 'url';
 const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputProps) => {
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
-  const [jobInputMode, setJobInputMode] = useState<JobInputMode>('text');
+  const [jobInputMode, setJobInputMode] = useState<JobInputMode>('url');
   const [jobPosting, setJobPosting] = useState('');
   const [jobPostingUrl, setJobPostingUrl] = useState('');
   const [companyWebsite, setCompanyWebsite] = useState('');
@@ -129,6 +130,8 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
   const [showPreviousVersions, setShowPreviousVersions] = useState(false);
   const [dataSourceSelection, setDataSourceSelection] = useState<CVDataSourceSelection>(DEFAULT_DATA_SELECTION);
   const [showInputPreview, setShowInputPreview] = useState(false);
+  const [isFetchingJobInfo, setIsFetchingJobInfo] = useState(false);
+  const [fetchError, setFetchError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { versions } = useCVVersion();
@@ -220,6 +223,38 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
     return profileData || '(No data selected)';
   };
 
+  const handleFetchJobInfo = async () => {
+    if (!jobPostingUrl.trim()) return;
+
+    setIsFetchingJobInfo(true);
+    setFetchError(null);
+
+    try {
+      const response = await fetch('/api/fetch-job-info', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: jobPostingUrl }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to fetch job information');
+      }
+
+      const data = await response.json();
+
+      // Auto-fill the fields
+      if (data.company && !company) setCompany(data.company);
+      if (data.jobTitle && !jobTitle) setJobTitle(data.jobTitle);
+      if (data.companyWebsite && !companyWebsite) setCompanyWebsite(data.companyWebsite);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch job information';
+      setFetchError(message);
+    } finally {
+      setIsFetchingJobInfo(false);
+    }
+  };
+
   const handleSubmit = async () => {
     if (!jobTitle.trim()) return;
 
@@ -293,6 +328,75 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
 
       <Divider sx={{ display: versionsWithContext.length > 0 ? 'block' : 'none' }} />
 
+      <Typography variant="h6">Job Posting (Optional)</Typography>
+      <Typography variant="body2" color="text.secondary">
+        Provide the job posting via URL or paste the text for more accurate customization.
+      </Typography>
+
+      <ToggleButtonGroup
+        value={jobInputMode}
+        exclusive
+        onChange={(_, value) => value && setJobInputMode(value)}
+        size="small"
+        disabled={isGenerating}
+      >
+        <ToggleButton value="text">
+          <TextFieldsIcon sx={{ mr: 1 }} />
+          Paste Text
+        </ToggleButton>
+        <ToggleButton value="url">
+          <LinkIcon sx={{ mr: 1 }} />
+          URL
+        </ToggleButton>
+      </ToggleButtonGroup>
+
+      {jobInputMode === 'text' ? (
+        <TextField
+          multiline
+          rows={8}
+          value={jobPosting}
+          onChange={(e) => setJobPosting(e.target.value)}
+          placeholder="Paste the job posting here..."
+          variant="outlined"
+          fullWidth
+          disabled={isGenerating}
+        />
+      ) : (
+        <Box sx={{ display: 'flex', gap: 1, alignItems: 'stretch' }}>
+          <TextField
+            value={jobPostingUrl}
+            onChange={(e) => setJobPostingUrl(e.target.value)}
+            placeholder="https://example.com/jobs/..."
+            variant="outlined"
+            fullWidth
+            disabled={isGenerating || isFetchingJobInfo}
+            InputProps={{
+              startAdornment: <LinkIcon sx={{ mr: 1, color: 'text.secondary' }} />,
+            }}
+          />
+          <Tooltip title="Extract company and job title from URL">
+            <span style={{ display: 'flex' }}>
+              <Button
+                variant="outlined"
+                onClick={handleFetchJobInfo}
+                disabled={!jobPostingUrl.trim() || isGenerating || isFetchingJobInfo}
+                sx={{ minWidth: 56, height: '100%' }}
+              >
+                {isFetchingJobInfo ? <CircularProgress size={20} /> : <AutoFixHighIcon />}
+              </Button>
+            </span>
+          </Tooltip>
+        </Box>
+      )}
+
+      {fetchError && (
+        <Alert severity="warning" onClose={() => setFetchError(null)}>
+          {fetchError}
+        </Alert>
+      )}
+
+      <Divider />
+
       {/* Company and Job Title */}
       <Box sx={{ display: 'flex', gap: 2 }}>
         <TextField
@@ -323,8 +427,6 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
           }}
         />
       </Box>
-
-      <Divider />
 
       {/* Data Sources Selection */}
       <Accordion defaultExpanded>
@@ -432,55 +534,6 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
           </Collapse>
         </AccordionDetails>
       </Accordion>
-
-      <Divider />
-
-      <Typography variant="h6">Job Posting (Optional)</Typography>
-      <Typography variant="body2" color="text.secondary">
-        Provide the job posting via URL or paste the text for more accurate customization.
-      </Typography>
-
-      <ToggleButtonGroup
-        value={jobInputMode}
-        exclusive
-        onChange={(_, value) => value && setJobInputMode(value)}
-        size="small"
-        disabled={isGenerating}
-      >
-        <ToggleButton value="text">
-          <TextFieldsIcon sx={{ mr: 1 }} />
-          Paste Text
-        </ToggleButton>
-        <ToggleButton value="url">
-          <LinkIcon sx={{ mr: 1 }} />
-          URL
-        </ToggleButton>
-      </ToggleButtonGroup>
-
-      {jobInputMode === 'text' ? (
-        <TextField
-          multiline
-          rows={8}
-          value={jobPosting}
-          onChange={(e) => setJobPosting(e.target.value)}
-          placeholder="Paste the job posting here..."
-          variant="outlined"
-          fullWidth
-          disabled={isGenerating}
-        />
-      ) : (
-        <TextField
-          value={jobPostingUrl}
-          onChange={(e) => setJobPostingUrl(e.target.value)}
-          placeholder="https://example.com/jobs/..."
-          variant="outlined"
-          fullWidth
-          disabled={isGenerating}
-          InputProps={{
-            startAdornment: <LinkIcon sx={{ mr: 1, color: 'text.secondary' }} />,
-          }}
-        />
-      )}
 
       <Accordion>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
