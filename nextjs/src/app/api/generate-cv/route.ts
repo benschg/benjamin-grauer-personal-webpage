@@ -42,6 +42,15 @@ interface KeyCompetence {
   description: string;
 }
 
+interface MotivationLetter {
+  subject: string;
+  greeting: string;
+  opening: string;
+  body: string;
+  closing: string;
+  signoff: string;
+}
+
 interface GeneratedCVContent {
   tagline: string;
   profile: string;
@@ -51,6 +60,7 @@ interface GeneratedCVContent {
   keyCompetences?: KeyCompetence[];
   keyAchievements?: string[]; // Legacy, kept for backwards compatibility
   education?: string;
+  motivationLetter?: MotivationLetter;
 }
 
 interface CVGenerationRequest {
@@ -134,6 +144,7 @@ Guidelines:
 5. Reflect the candidate's career aspirations if provided
 6. Maintain authenticity and professionalism
 7. Keep the candidate's genuine voice and personality
+8. AVOID REPETITION: Do NOT repeat the same phrases, terms, or concepts across sections. Each section should bring fresh perspective and varied vocabulary. If you mention something in the tagline, use different wording in the profile. Vary action verbs across work experience bullets.
 
 Section Requirements:
 
@@ -192,6 +203,54 @@ Respond with valid JSON only:
     }
   ],
   "education": "Education summary"
+}
+
+Respond ONLY with valid JSON, no additional text.`;
+
+const MOTIVATION_LETTER_PROMPT = `You are an expert cover letter writer helping to create a compelling motivation letter for a job application.
+
+Candidate's Customized CV:
+- Tagline: {tagline}
+- Profile Summary: {profile}
+
+Target Company & Role Research:
+{companyResearch}
+
+Candidate's Full Profile Data:
+{profileData}
+
+Job Posting:
+{jobPosting}
+
+{customInstructions}
+
+Write a professional, personalized motivation letter (cover letter) that complements the CV. The letter should:
+
+1. Be tailored specifically to the company and role
+2. Highlight the most relevant experiences and skills for this position
+3. Show genuine enthusiasm for the company and role
+4. Connect the candidate's career aspirations to the opportunity
+5. Be concise but impactful (300-400 words total for the body)
+6. Use a professional but warm tone matching the company culture
+7. Avoid generic phrases - be specific and authentic
+8. AVOID REPETITION: Use different phrasing than the CV tagline and profile. Don't copy sentences from the CV - rephrase and expand on ideas with fresh wording. Vary vocabulary throughout the letter (don't repeat the same adjectives or phrases).
+
+Structure:
+- SUBJECT: A compelling email subject line (e.g., "Application: [Role] - [Candidate's key differentiator]")
+- GREETING: Professional greeting (use hiring manager's name if known, otherwise "Dear Hiring Team,")
+- OPENING: Hook the reader - mention the role and your key value proposition (2-3 sentences)
+- BODY: Connect your experience to their needs. Use specific examples. Show you understand their challenges and can contribute to their success (2-3 paragraphs)
+- CLOSING: Express enthusiasm, mention next steps, thank them (2-3 sentences)
+- SIGNOFF: Professional closing (e.g., "Best regards," or "Sincerely,")
+
+Respond with valid JSON only:
+{
+  "subject": "Application: [Role] at [Company] - [Key differentiator]",
+  "greeting": "Dear [Name/Hiring Team],",
+  "opening": "Opening paragraph text...",
+  "body": "Main body paragraphs (can include line breaks with \\n\\n for paragraph separation)...",
+  "closing": "Closing paragraph text...",
+  "signoff": "Best regards,"
 }
 
 Respond ONLY with valid JSON, no additional text.`;
@@ -362,6 +421,28 @@ export async function POST(request: Request) {
     const cvResult = await model.generateContent(cvPrompt);
     const cvText = cvResult.response.text();
     const content = parseJsonResponse<GeneratedCVContent>(cvText);
+
+    // Step 3: Generate motivation letter
+    let motivationPrompt = MOTIVATION_LETTER_PROMPT
+      .replace('{tagline}', content.tagline)
+      .replace('{profile}', content.profile)
+      .replace('{companyResearch}', JSON.stringify(companyResearch, null, 2))
+      .replace('{jobPosting}', jobPostingContext)
+      .replace('{profileData}', params.profileData || '(No additional profile data provided)');
+
+    if (params.customInstructions) {
+      motivationPrompt = motivationPrompt.replace(
+        '{customInstructions}',
+        `Additional Instructions from User:\n${params.customInstructions}`
+      );
+    } else {
+      motivationPrompt = motivationPrompt.replace('{customInstructions}', '');
+    }
+
+    const motivationResult = await model.generateContent(motivationPrompt);
+    const motivationText = motivationResult.response.text();
+    const motivationLetter = parseJsonResponse<MotivationLetter>(motivationText);
+    content.motivationLetter = motivationLetter;
 
     return NextResponse.json({
       content,
