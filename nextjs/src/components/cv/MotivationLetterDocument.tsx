@@ -18,7 +18,7 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
 
     const letter = letterProp || activeContent.motivationLetter;
 
-    // Check if content overflows and add red border indicator
+    // Check if content overflows and add red border indicator to the overflowing element
     const checkOverflow = useCallback(() => {
       if (!containerRef.current) return;
 
@@ -28,7 +28,7 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
       const letterBody = container.querySelector('.motivation-letter-body');
       if (letterBody) {
         const hasOverflow = letterBody.scrollHeight > letterBody.clientHeight + 2;
-        container.classList.toggle('cv-overflow', hasOverflow);
+        letterBody.classList.toggle('cv-overflow', hasOverflow);
       }
     }, []);
 
