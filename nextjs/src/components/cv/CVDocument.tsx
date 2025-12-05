@@ -28,8 +28,11 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, privacyLevel, showExperience, zoom } = useCVTheme();
+  const { theme, showPhoto, privacyLevel, canShowPrivateInfo, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing, activeVersion } = useCVVersion();
+
+  // Enforce privacy: only show private info if user is logged in
+  const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
 
   // Convert AI-generated work experience to CV format if available
   const experienceEntries: CVExperienceEntry[] = useMemo(() => {
@@ -111,7 +114,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           <CVReferences
             key="references"
             data={cvData.main.references}
-            showPrivateInfo={privacyLevel === 'full'}
+            showPrivateInfo={effectivePrivacyLevel === 'full'}
           />
         );
       default:
@@ -153,7 +156,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
       {activePages.map((pageLayout, pageIndex) => {
         const hasSidebar = pageLayout.sidebar.length > 0;
 
-        const showPersonalInfo = privacyLevel !== 'none';
+        const showPersonalInfo = effectivePrivacyLevel !== 'none';
         return (
           <CVPage
             key={pageIndex}

@@ -11,7 +11,7 @@ import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working
 // Component that uses the context
 const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
-  const { theme, showAttachments } = useCVTheme();
+  const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
   const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
@@ -39,6 +39,9 @@ const CVPageContent = () => {
       // Get the CV HTML content
       const html = cvRef.current.outerHTML;
 
+      // Effective privacy level: only allow private info if user is logged in
+      const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
+
       // Call the Next.js API route to generate PDF
       const response = await fetch('/api/generate-pdf', {
         method: 'POST',
@@ -54,6 +57,7 @@ const CVPageContent = () => {
             : `Benjamin_Grauer_CV_${theme}.pdf`,
           baseUrl: window.location.origin,
           attachments: showAttachments ? [REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH] : undefined,
+          privacyLevel: effectivePrivacyLevel,
         }),
       });
 
@@ -80,7 +84,7 @@ const CVPageContent = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [theme, cvStyles, showAttachments]);
+  }, [theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
 
   return (
     <Box

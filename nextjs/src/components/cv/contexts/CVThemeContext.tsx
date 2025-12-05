@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import { CVThemeContext } from './types';
 import type { CVTheme, PrivacyLevel } from './types';
+import { useAuth } from '@/contexts';
 
 interface CVThemeProviderProps {
   children: ReactNode;
@@ -16,12 +17,16 @@ const MIN_ZOOM = 0.25;
 const MAX_ZOOM = 2.0;
 
 export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
+  const { user } = useAuth();
   const [theme, setTheme] = useState<CVTheme>('dark');
   const [showPhoto, setShowPhoto] = useState(true);
   const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>('none');
   const [showExperience, setShowExperience] = useState(true);
   const [showAttachments, setShowAttachments] = useState(false);
   const [zoom, setZoom] = useState(0); // 0 = auto, otherwise manual zoom level
+
+  // Only logged-in users can see private info
+  const canShowPrivateInfo = !!user;
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
@@ -32,13 +37,15 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
   }, []);
 
   // Cycle through privacy levels: none -> personal -> full -> none
+  // Only works if user is logged in
   const cyclePrivacyLevel = useCallback(() => {
+    if (!user) return; // Block if not logged in
     setPrivacyLevel((prev) => {
       if (prev === 'none') return 'personal';
       if (prev === 'personal') return 'full';
       return 'none';
     });
-  }, []);
+  }, [user]);
 
   const toggleExperience = useCallback(() => {
     setShowExperience((prev) => !prev);
@@ -75,6 +82,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
         togglePhoto,
         privacyLevel,
         cyclePrivacyLevel,
+        canShowPrivateInfo,
         showExperience,
         toggleExperience,
         showAttachments,

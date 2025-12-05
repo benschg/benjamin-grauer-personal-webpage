@@ -59,6 +59,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     togglePhoto,
     privacyLevel,
     cyclePrivacyLevel,
+    canShowPrivateInfo,
     showExperience,
     toggleExperience,
     showAttachments,
@@ -331,11 +332,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
 
       {/* Floating Sidebar for Display Toggles - Desktop Only */}
       <Box className="cv-floating-sidebar cv-no-print" sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <Tooltip title={getPrivacyTooltip()} placement="left">
-          <IconButton onClick={cyclePrivacyLevel} sx={{ color: getPrivacyColor() }}>
-            {getPrivacyIcon()}
-          </IconButton>
-        </Tooltip>
+        {/* Privacy toggle - only show when logged in */}
+        {canShowPrivateInfo && (
+          <Tooltip title={getPrivacyTooltip()} placement="left">
+            <IconButton onClick={cyclePrivacyLevel} sx={{ color: getPrivacyColor() }}>
+              {getPrivacyIcon()}
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title={showPhoto ? 'Hide Photo' : 'Show Photo'} placement="left">
           <IconButton
             onClick={togglePhoto}
@@ -446,12 +450,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           />
         )}
 
-        {/* Private Info Toggle */}
-        <SpeedDialAction
-          icon={getPrivacyIcon()}
-          tooltipTitle={getPrivacyTooltip()}
-          onClick={cyclePrivacyLevel}
-        />
+        {/* Private Info Toggle - only show when logged in */}
+        {canShowPrivateInfo && (
+          <SpeedDialAction
+            icon={getPrivacyIcon()}
+            tooltipTitle={getPrivacyTooltip()}
+            onClick={cyclePrivacyLevel}
+          />
+        )}
 
         {/* Photo Toggle */}
         <SpeedDialAction

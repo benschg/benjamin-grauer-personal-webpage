@@ -12,6 +12,7 @@ export interface CVThemeContextType {
   togglePhoto: () => void;
   privacyLevel: PrivacyLevel;
   cyclePrivacyLevel: () => void;
+  canShowPrivateInfo: boolean; // true if user is logged in and can toggle privacy
   showExperience: boolean;
   toggleExperience: () => void;
   showAttachments: boolean;

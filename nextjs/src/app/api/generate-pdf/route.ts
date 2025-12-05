@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
 import { PDFDocument } from 'pdf-lib';
+import { createClient } from '@/lib/supabase/server';
 
 interface PdfGenerationRequest {
   html: string;
@@ -9,6 +10,7 @@ interface PdfGenerationRequest {
   filename?: string;
   baseUrl?: string;
   attachments?: string[]; // Array of PDF paths to append (e.g., ['/working-life/documents/Certificates.pdf'])
+  privacyLevel?: 'none' | 'personal' | 'full'; // Privacy level requested
 }
 
 // Check if running in production/Vercel environment
@@ -156,6 +158,19 @@ export async function POST(request: Request) {
 
     if (!params.html) {
       return NextResponse.json({ error: 'HTML content is required' }, { status: 400 });
+    }
+
+    // If privacy level is not 'none', verify user is authenticated
+    if (params.privacyLevel && params.privacyLevel !== 'none') {
+      const supabase = await createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        return NextResponse.json(
+          { error: 'Authentication required to include private information in PDF' },
+          { status: 401 }
+        );
+      }
     }
 
     // Get base URL from request or use provided one
