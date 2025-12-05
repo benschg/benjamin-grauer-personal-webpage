@@ -128,7 +128,6 @@ const CVToolbar = ({
     cancelEditing,
     saveEdits,
     isSaving,
-    error: versionError,
   } = useCVVersion();
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
@@ -249,34 +248,6 @@ const CVToolbar = ({
               </Box>
             </Typography>
           )}
-          {/* Show error message OR position/company context */}
-          {versionError ? (
-            <Typography
-              variant="caption"
-              sx={{
-                color: 'warning.main',
-                fontStyle: 'italic',
-                display: 'block',
-                mt: 0.25,
-              }}
-            >
-              {versionError}
-            </Typography>
-          ) : activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) ? (
-            <Typography
-              variant="caption"
-              sx={{
-                color: '#89665d',
-                fontStyle: 'italic',
-                display: 'block',
-                mt: 0.25,
-              }}
-            >
-              {activeVersion.job_context.position && activeVersion.job_context.company
-                ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
-                : activeVersion.job_context.position || activeVersion.job_context.company}
-            </Typography>
-          ) : null}
         </Box>
         <Box className="cv-toolbar-actions">
           {/* Admin controls - only show when admin is logged in */}

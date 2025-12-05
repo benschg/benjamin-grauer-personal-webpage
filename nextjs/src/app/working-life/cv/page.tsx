@@ -16,7 +16,7 @@ const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
-  const { activeContent, error: versionError } = useCVVersion();
+  const { activeContent, activeVersion, error: versionError } = useCVVersion();
   const [isDownloading, setIsDownloading] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
@@ -123,6 +123,32 @@ const CVPageContent = () => {
         onTabChange={setActiveTab}
         hasMotivationLetter={hasMotivationLetter}
       />
+      {/* Job context indicator - show below toolbar */}
+      {activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            py: 0.75,
+            bgcolor: 'rgba(137, 102, 93, 0.15)',
+            borderBottom: '1px solid rgba(137, 102, 93, 0.3)',
+          }}
+          className="cv-no-print"
+        >
+          <Box
+            component="span"
+            sx={{
+              color: '#89665d',
+              fontSize: '0.85rem',
+              fontStyle: 'italic',
+            }}
+          >
+            {activeVersion.job_context.position && activeVersion.job_context.company
+              ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
+              : activeVersion.job_context.position || activeVersion.job_context.company}
+          </Box>
+        </Box>
+      )}
       {versionError && (
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
           <Alert severity="warning" sx={{ maxWidth: 600 }}>

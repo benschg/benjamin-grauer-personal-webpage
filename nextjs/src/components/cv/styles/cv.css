@@ -1103,6 +1103,13 @@
   z-index: 99;
 }
 
+/* On mobile, move zoom bar higher to avoid overlap with Export FAB */
+@media (max-width: 899px) {
+  .cv-bottom-zoom-bar {
+    bottom: 80px;
+  }
+}
+
 .cv-bottom-zoom-bar .MuiIconButton-root {
   padding: 4px;
 }
