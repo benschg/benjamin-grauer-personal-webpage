@@ -4,34 +4,61 @@ import type { CVVersion, CreateCVVersionInput, UpdateCVVersionInput } from '@/ty
 const TABLE_NAME = 'cv_versions';
 
 export async function getCVVersion(id: string): Promise<CVVersion | null> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .select('*')
-    .eq('id', id)
-    .single();
+  try {
+    const supabase = createClient();
+    const { data, error, status, statusText } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .eq('id', id)
+      .single();
 
-  if (error) {
-    console.error('Error fetching CV version:', error);
+    if (error) {
+      // 406 means no rows found - version doesn't exist (not really an error)
+      if (status === 406) {
+        console.warn(`CV version not found: ${id}`);
+        return null;
+      }
+
+      // Log more details for debugging other errors
+      console.error('Error fetching CV version:', {
+        error,
+        status,
+        statusText,
+        id,
+        code: error.code,
+        message: error.message,
+        details: error.details,
+      });
+      return null;
+    }
+
+    return data;
+  } catch (err) {
+    // Handle network/CORS errors
+    console.error('Network error fetching CV version:', err);
     return null;
   }
-
-  return data;
 }
 
 export async function getAllCVVersions(): Promise<CVVersion[]> {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from(TABLE_NAME)
-    .select('*')
-    .order('created_at', { ascending: false });
+  try {
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from(TABLE_NAME)
+      .select('*')
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching CV versions:', error);
+    if (error) {
+      console.error('Error fetching CV versions:', error);
+      return [];
+    }
+
+    return data ?? [];
+  } catch (err) {
+    // Handle network/CORS errors
+    console.error('Network error fetching CV versions:', err);
     return [];
   }
-
-  return data ?? [];
 }
 
 export async function getDefaultCVVersion(): Promise<CVVersion | null> {
@@ -157,6 +184,7 @@ export function subscribeToCVVersions(
   callback: (versions: CVVersion[]) => void
 ): () => void {
   const supabase = createClient();
+  let hasError = false;
 
   const channel = supabase
     .channel('cv_versions_changes')
@@ -164,6 +192,9 @@ export function subscribeToCVVersions(
       'postgres_changes',
       { event: '*', schema: 'public', table: TABLE_NAME },
       async () => {
+        // Skip if we've had an error (likely auth issue)
+        if (hasError) return;
+
         // Refetch all versions on any change
         const versions = await getAllCVVersions();
         callback(versions);
@@ -172,7 +203,12 @@ export function subscribeToCVVersions(
     .subscribe();
 
   // Initial fetch
-  getAllCVVersions().then(callback);
+  getAllCVVersions()
+    .then(callback)
+    .catch(() => {
+      hasError = true;
+      callback([]); // Return empty array on error
+    });
 
   return () => {
     supabase.removeChannel(channel);

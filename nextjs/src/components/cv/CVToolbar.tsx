@@ -14,6 +14,20 @@ import {
   SpeedDialIcon,
   Snackbar,
   Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  ListItemSecondaryAction,
+  Divider,
+  Switch,
+  ToggleButtonGroup,
+  ToggleButton,
+  Fab,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -55,14 +69,20 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
   const {
     theme,
     toggleTheme,
+    setTheme,
     showPhoto,
     togglePhoto,
+    setShowPhoto,
     privacyLevel,
     cyclePrivacyLevel,
+    setPrivacyLevel,
+    canShowPrivateInfo,
     showExperience,
     toggleExperience,
+    setShowExperience,
     showAttachments,
     toggleAttachments,
+    setShowAttachments,
     zoom,
     zoomIn,
     zoomOut,
@@ -99,6 +119,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [printWarningOpen, setPrintWarningOpen] = useState(false);
+  const [exportDialogOpen, setExportDialogOpen] = useState(false);
 
   const handlePrintClick = () => {
     if (showAttachments) {
@@ -125,6 +146,24 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     setSpeedDialOpen(true);
   };
 
+  const handleExportClick = () => {
+    setExportDialogOpen(true);
+  };
+
+  const handleConfirmExport = () => {
+    setExportDialogOpen(false);
+    if (onDownloadPdf) {
+      onDownloadPdf();
+    }
+  };
+
+  // Helper to get privacy level description
+  const getPrivacyDescription = () => {
+    if (privacyLevel === 'none') return 'Hidden (contact on request)';
+    if (privacyLevel === 'personal') return 'Personal contact info visible';
+    return 'All contact info visible (including references)';
+  };
+
   return (
     <>
       {/* Top Toolbar */}
@@ -144,20 +183,37 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             Back to Working Life
           </Box>
         </Button>
-        <Typography
-          variant="h6"
-          sx={{
-            fontFamily: 'Orbitron',
-            letterSpacing: '0.1em',
-          }}
-        >
-          <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-            Curriculum Vitae
-          </Box>
-          <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-            CV
-          </Box>
-        </Typography>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: 'Orbitron',
+              letterSpacing: '0.1em',
+            }}
+          >
+            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+              Curriculum Vitae
+            </Box>
+            <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+              CV
+            </Box>
+          </Typography>
+          {activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#89665d',
+                fontStyle: 'italic',
+                display: 'block',
+                mt: 0.25,
+              }}
+            >
+              {activeVersion.job_context.position && activeVersion.job_context.company
+                ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
+                : activeVersion.job_context.position || activeVersion.job_context.company}
+            </Typography>
+          )}
+        </Box>
         <Box className="cv-toolbar-actions">
           {/* Admin controls - only show when admin is logged in */}
           {isAdmin && (
@@ -220,35 +276,6 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Tooltip>
           )}
 
-          {/* Separator */}
-          <Box
-            sx={{
-              width: '1px',
-              height: '24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.3)',
-              mx: 1,
-              display: { xs: 'none', md: 'block' },
-            }}
-          />
-
-          {onDownloadPdf && (
-            <Tooltip title={isDownloading ? 'Generating PDF...' : 'Download PDF'}>
-              <span>
-                <IconButton
-                  onClick={onDownloadPdf}
-                  disabled={isDownloading}
-                  sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}
-                >
-                  {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-          <Tooltip title="Print">
-            <IconButton onClick={handlePrintClick} sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}>
-              <PrintIcon />
-            </IconButton>
-          </Tooltip>
         </Box>
 
         {/* AI Customization Dialog */}
@@ -327,15 +354,307 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Box>
           </Alert>
         </Snackbar>
+
+        {/* Export Options Dialog */}
+        <Dialog
+          open={exportDialogOpen}
+          onClose={() => setExportDialogOpen(false)}
+          maxWidth="sm"
+          fullWidth
+          PaperProps={{
+            sx: {
+              bgcolor: '#343a40',
+              color: 'white',
+            },
+          }}
+        >
+          <DialogTitle sx={{ fontFamily: 'Orbitron', letterSpacing: '0.05em' }}>
+            Export CV as PDF
+          </DialogTitle>
+          <DialogContent>
+            <Typography variant="body2" sx={{ mb: 2, color: 'rgba(255,255,255,0.7)' }}>
+              Configure your PDF export settings:
+            </Typography>
+            <List>
+              {/* Theme Toggle */}
+              <ListItem sx={{ py: 1.5 }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {theme === 'dark' ? (
+                    <DarkModeIcon sx={{ color: 'white' }} />
+                  ) : (
+                    <LightModeIcon sx={{ color: 'white' }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary="Theme"
+                  secondary={theme === 'dark' ? 'Dark mode' : 'Light mode'}
+                  secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <ListItemSecondaryAction>
+                  <ToggleButtonGroup
+                    value={theme}
+                    exclusive
+                    onChange={(_, newTheme) => newTheme && setTheme(newTheme)}
+                    size="small"
+                    sx={{
+                      '& .MuiToggleButton-root': {
+                        color: 'rgba(255,255,255,0.5)',
+                        borderColor: 'rgba(255,255,255,0.2)',
+                        '&.Mui-selected': {
+                          color: 'white',
+                          bgcolor: 'rgba(137, 102, 93, 0.3)',
+                        },
+                      },
+                    }}
+                  >
+                    <ToggleButton value="light" aria-label="light mode">
+                      <LightModeIcon fontSize="small" />
+                    </ToggleButton>
+                    <ToggleButton value="dark" aria-label="dark mode">
+                      <DarkModeIcon fontSize="small" />
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              {/* Photo Toggle */}
+              <ListItem sx={{ py: 1.5 }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {showPhoto ? (
+                    <PersonIcon sx={{ color: 'white' }} />
+                  ) : (
+                    <PersonOffIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary="Photo"
+                  secondary={showPhoto ? 'Included in CV' : 'Hidden from CV'}
+                  secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <ListItemSecondaryAction>
+                  <Switch
+                    edge="end"
+                    checked={showPhoto}
+                    onChange={(_, checked) => setShowPhoto(checked)}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#89665d',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#89665d',
+                      },
+                    }}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              {/* Contact Details - only show if logged in */}
+              {canShowPrivateInfo ? (
+                <>
+                  <ListItem sx={{ py: 1.5 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      {privacyLevel === 'none' ? (
+                        <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                      ) : privacyLevel === 'personal' ? (
+                        <LockOpenIcon sx={{ color: 'white' }} />
+                      ) : (
+                        <SecurityIcon sx={{ color: '#89665d' }} />
+                      )}
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Contact Details"
+                      secondary={getPrivacyDescription()}
+                      secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+                    />
+                    <ListItemSecondaryAction>
+                      <ToggleButtonGroup
+                        value={privacyLevel}
+                        exclusive
+                        onChange={(_, newLevel) => newLevel && setPrivacyLevel(newLevel)}
+                        size="small"
+                        sx={{
+                          '& .MuiToggleButton-root': {
+                            color: 'rgba(255,255,255,0.5)',
+                            borderColor: 'rgba(255,255,255,0.2)',
+                            px: 1,
+                            '&.Mui-selected': {
+                              color: 'white',
+                              bgcolor: 'rgba(137, 102, 93, 0.3)',
+                            },
+                          },
+                        }}
+                      >
+                        <ToggleButton value="none" aria-label="hidden">
+                          <LockIcon fontSize="small" />
+                        </ToggleButton>
+                        <ToggleButton value="personal" aria-label="personal">
+                          <LockOpenIcon fontSize="small" />
+                        </ToggleButton>
+                        <ToggleButton value="full" aria-label="full">
+                          <SecurityIcon fontSize="small" />
+                        </ToggleButton>
+                      </ToggleButtonGroup>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                  <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+                </>
+              ) : (
+                <>
+                  <ListItem sx={{ py: 1.5, opacity: 0.5 }}>
+                    <ListItemIcon sx={{ minWidth: 40 }}>
+                      <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary="Contact Details"
+                      secondary="Login required to include contact info"
+                      secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.5)' } }}
+                    />
+                  </ListItem>
+                  <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+                </>
+              )}
+
+              {/* Experience Toggle */}
+              <ListItem sx={{ py: 1.5 }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {showExperience ? (
+                    <WorkHistoryIcon sx={{ color: 'white' }} />
+                  ) : (
+                    <WorkOffIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary="Detailed Experience"
+                  secondary={showExperience ? 'Extended job descriptions included' : 'Summary only (shorter CV)'}
+                  secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <ListItemSecondaryAction>
+                  <Switch
+                    edge="end"
+                    checked={showExperience}
+                    onChange={(_, checked) => setShowExperience(checked)}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#89665d',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#89665d',
+                      },
+                    }}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              {/* Attachments Toggle */}
+              <ListItem sx={{ py: 1.5 }}>
+                <ListItemIcon sx={{ minWidth: 40 }}>
+                  {showAttachments ? (
+                    <AttachFileIcon sx={{ color: 'white' }} />
+                  ) : (
+                    <AttachFileOffIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
+                  )}
+                </ListItemIcon>
+                <ListItemText
+                  primary="Attachments"
+                  secondary={showAttachments ? 'Certificates & References PDFs appended' : 'CV only (no attachments)'}
+                  secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+                />
+                <ListItemSecondaryAction>
+                  <Switch
+                    edge="end"
+                    checked={showAttachments}
+                    onChange={(_, checked) => setShowAttachments(checked)}
+                    sx={{
+                      '& .MuiSwitch-switchBase.Mui-checked': {
+                        color: '#89665d',
+                      },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+                        backgroundColor: '#89665d',
+                      },
+                    }}
+                  />
+                </ListItemSecondaryAction>
+              </ListItem>
+
+              {/* Direct download links for attachments */}
+              <Box sx={{ px: 2, py: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  href={CERTIFICATES_PDF_PATH}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  startIcon={<DownloadIcon />}
+                  sx={{
+                    color: 'rgba(255,255,255,0.7)',
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    fontSize: '0.75rem',
+                    '&:hover': {
+                      borderColor: 'rgba(255,255,255,0.4)',
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                    },
+                  }}
+                >
+                  Certificates
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  href={REFERENCES_PDF_PATH}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  startIcon={<DownloadIcon />}
+                  sx={{
+                    color: 'rgba(255,255,255,0.7)',
+                    borderColor: 'rgba(255,255,255,0.2)',
+                    fontSize: '0.75rem',
+                    '&:hover': {
+                      borderColor: 'rgba(255,255,255,0.4)',
+                      bgcolor: 'rgba(255,255,255,0.05)',
+                    },
+                  }}
+                >
+                  References
+                </Button>
+              </Box>
+            </List>
+          </DialogContent>
+          <DialogActions sx={{ px: 3, pb: 2 }}>
+            <Button
+              onClick={() => setExportDialogOpen(false)}
+              sx={{ color: 'rgba(255,255,255,0.7)' }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleConfirmExport}
+              variant="contained"
+              startIcon={isDownloading ? <CircularProgress size={16} color="inherit" /> : <DownloadIcon />}
+              disabled={isDownloading}
+              sx={{
+                bgcolor: '#89665d',
+                '&:hover': { bgcolor: '#6d524a' },
+              }}
+            >
+              {isDownloading ? 'Generating...' : 'Download PDF'}
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
 
       {/* Floating Sidebar for Display Toggles - Desktop Only */}
       <Box className="cv-floating-sidebar cv-no-print" sx={{ display: { xs: 'none', md: 'flex' } }}>
-        <Tooltip title={getPrivacyTooltip()} placement="left">
-          <IconButton onClick={cyclePrivacyLevel} sx={{ color: getPrivacyColor() }}>
-            {getPrivacyIcon()}
-          </IconButton>
-        </Tooltip>
+        {/* Privacy toggle - only show when logged in */}
+        {canShowPrivateInfo && (
+          <Tooltip title={getPrivacyTooltip()} placement="left">
+            <IconButton onClick={cyclePrivacyLevel} sx={{ color: getPrivacyColor() }}>
+              {getPrivacyIcon()}
+            </IconButton>
+          </Tooltip>
+        )}
         <Tooltip title={showPhoto ? 'Hide Photo' : 'Show Photo'} placement="left">
           <IconButton
             onClick={togglePhoto}
@@ -344,7 +663,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             {showPhoto ? <PersonIcon /> : <PersonOffIcon />}
           </IconButton>
         </Tooltip>
-        <Tooltip title={showExperience ? 'Hide Experience Details' : 'Show Experience Details'} placement="left">
+        <Tooltip title={showExperience ? 'Hide Detailed Experience' : 'Show Detailed Experience'} placement="left">
           <IconButton
             onClick={toggleExperience}
             sx={{ color: showExperience ? 'white' : 'rgba(255,255,255,0.4)' }}
@@ -399,17 +718,69 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         </IconButton>
       </Box>
 
-      {/* Mobile SpeedDial - All Controls */}
+      {/* Floating Export Button - Desktop (bottom right) */}
+      {onDownloadPdf && (
+        <Box
+          className="cv-no-print"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            zIndex: 9999,
+          }}
+        >
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={handleExportClick}
+            disabled={isDownloading}
+            sx={{
+              bgcolor: '#89665d',
+              '&:hover': { bgcolor: '#6d524a' },
+              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+              gap: 1,
+            }}
+          >
+            {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+            {isDownloading ? 'Generating...' : 'Export PDF'}
+          </Fab>
+        </Box>
+      )}
+
+      {/* Mobile: Export FAB + SpeedDial for other controls */}
       <Box
         className="cv-no-print"
         sx={{
-          display: { xs: 'block', md: 'none' },
+          display: { xs: 'flex', md: 'none' },
           position: 'fixed',
           bottom: '20px',
           right: '20px',
           zIndex: 9999,
+          gap: 1.5,
+          alignItems: 'flex-end',
         }}
       >
+        {/* Export FAB - Always visible on mobile */}
+        {onDownloadPdf && (
+          <Fab
+            variant="extended"
+            size="medium"
+            onClick={handleExportClick}
+            disabled={isDownloading}
+            sx={{
+              bgcolor: '#89665d',
+              color: 'white',
+              '&:hover': { bgcolor: '#6d524a' },
+              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+              gap: 0.5,
+              fontSize: '0.8rem',
+            }}
+          >
+            {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
+            {isDownloading ? 'Generating...' : 'Export PDF'}
+          </Fab>
+        )}
         <SpeedDial
           ariaLabel="CV Controls"
           direction="up"
@@ -433,25 +804,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           onClick={handlePrintClick}
         />
 
-        {/* Download PDF */}
-        {onDownloadPdf && (
+        {/* Private Info Toggle - only show when logged in */}
+        {canShowPrivateInfo && (
           <SpeedDialAction
-            icon={isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-            tooltipTitle={isDownloading ? 'Generating...' : 'Download PDF'}
-            onClick={() => {
-              if (!isDownloading) {
-                onDownloadPdf();
-              }
-            }}
+            icon={getPrivacyIcon()}
+            tooltipTitle={getPrivacyTooltip()}
+            onClick={cyclePrivacyLevel}
           />
         )}
-
-        {/* Private Info Toggle */}
-        <SpeedDialAction
-          icon={getPrivacyIcon()}
-          tooltipTitle={getPrivacyTooltip()}
-          onClick={cyclePrivacyLevel}
-        />
 
         {/* Photo Toggle */}
         <SpeedDialAction
@@ -463,7 +823,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         {/* Experience Toggle */}
         <SpeedDialAction
           icon={showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
-          tooltipTitle={showExperience ? 'Hide Experience' : 'Show Experience'}
+          tooltipTitle={showExperience ? 'Hide Detailed Experience' : 'Show Detailed Experience'}
           onClick={toggleExperience}
         />
 

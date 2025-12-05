@@ -1,19 +1,20 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material';
+import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
-import { CVThemeProvider, CVVersionProvider, useCVTheme } from '@/components/cv/contexts';
+import { CVThemeProvider, CVVersionProvider, useCVTheme, useCVVersion } from '@/components/cv/contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
 // Component that uses the context
 const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
-  const { theme, showAttachments } = useCVTheme();
+  const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
+  const { error: versionError } = useCVVersion();
   const [isDownloading, setIsDownloading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
 
   // Load CSS styles
@@ -33,11 +34,14 @@ const CVPageContent = () => {
     if (!cvRef.current || !cvStyles) return;
 
     setIsDownloading(true);
-    setError(null);
+    setPdfError(null);
 
     try {
       // Get the CV HTML content
       const html = cvRef.current.outerHTML;
+
+      // Effective privacy level: only allow private info if user is logged in
+      const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
 
       // Call the Next.js API route to generate PDF
       const response = await fetch('/api/generate-pdf', {
@@ -54,6 +58,7 @@ const CVPageContent = () => {
             : `Benjamin_Grauer_CV_${theme}.pdf`,
           baseUrl: window.location.origin,
           attachments: showAttachments ? [REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH] : undefined,
+          privacyLevel: effectivePrivacyLevel,
         }),
       });
 
@@ -76,11 +81,11 @@ const CVPageContent = () => {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to generate PDF:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate PDF');
+      setPdfError(err instanceof Error ? err.message : 'Failed to generate PDF');
     } finally {
       setIsDownloading(false);
     }
-  }, [theme, cvStyles, showAttachments]);
+  }, [theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
 
   return (
     <Box
@@ -98,24 +103,48 @@ const CVPageContent = () => {
         onDownloadPdf={handleDownloadPdf}
         isDownloading={isDownloading}
       />
+      {versionError && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+          <Alert severity="warning" sx={{ maxWidth: 600 }}>
+            {versionError}
+          </Alert>
+        </Box>
+      )}
       <CVDocument ref={cvRef} />
-      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-        <Alert severity="error" onClose={() => setError(null)}>
-          {error}
+      <Snackbar open={!!pdfError} autoHideDuration={6000} onClose={() => setPdfError(null)}>
+        <Alert severity="error" onClose={() => setPdfError(null)}>
+          {pdfError}
         </Alert>
       </Snackbar>
     </Box>
   );
 };
 
+// Loading fallback for Suspense
+const CVLoadingFallback = () => (
+  <Box
+    sx={{
+      minHeight: '100vh',
+      bgcolor: '#1a1d20',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <CircularProgress sx={{ color: '#89665d' }} />
+  </Box>
+);
+
 // Main page component with providers
 const CVPage = () => {
   return (
-    <CVThemeProvider>
-      <CVVersionProvider>
-        <CVPageContent />
-      </CVVersionProvider>
-    </CVThemeProvider>
+    <Suspense fallback={<CVLoadingFallback />}>
+      <CVThemeProvider>
+        <CVVersionProvider>
+          <CVPageContent />
+        </CVVersionProvider>
+      </CVThemeProvider>
+    </Suspense>
   );
 };
 

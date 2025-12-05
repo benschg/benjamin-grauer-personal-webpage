@@ -10,6 +10,11 @@ export interface CVSkillCategory {
   skills: string[]; // Skills prioritized for the role
 }
 
+export interface CVKeyCompetence {
+  title: string; // Short, punchy title (2-4 words)
+  description: string; // Brief explanation of the competence
+}
+
 export interface CVVersionContent {
   // Header section
   tagline: string;
@@ -22,7 +27,10 @@ export interface CVVersionContent {
   // Skills - prioritized and grouped
   skills?: CVSkillCategory[];
 
-  // Key achievements - top 3-5 most relevant
+  // Key competences - 3-5 with title and description
+  keyCompetences?: CVKeyCompetence[];
+
+  // Legacy: Key achievements as strings (deprecated, use keyCompetences)
   keyAchievements?: string[];
 
   // Education summary (optional customization)

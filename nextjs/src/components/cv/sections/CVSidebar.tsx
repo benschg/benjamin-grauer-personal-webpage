@@ -135,7 +135,7 @@ const CVSidebar = ({
       case 'volunteer':
         return data.volunteer.length > 0 ? (
           <div key="volunteer" className="cv-sidebar-section">
-            <h3 className="cv-sidebar-title">Volunteer Work</h3>
+            <h3 className="cv-sidebar-title">Volunteering</h3>
             <div className="cv-sidebar-list">
               {data.volunteer.map((vol, index) => (
                 <div key={index} className="cv-sidebar-list-item">
@@ -186,12 +186,16 @@ const CVSidebar = ({
 
   return (
     <div className="cv-sidebar">
-      {/* Photo - only on first page */}
-      {showPhoto && header.photo && (
+      {/* Photo - only on first page, show placeholder when photo is hidden */}
+      {showPhoto && header.photo ? (
         <div className="cv-sidebar-photo">
           <img src={header.photo} alt={header.name} />
         </div>
-      )}
+      ) : showContact ? (
+        <div className="cv-sidebar-photo cv-sidebar-photo-placeholder">
+          <img src="/bg.svg" alt="BG" />
+        </div>
+      ) : null}
 
       {/* Render requested sections */}
       {sections.map((sectionType) => renderSection(sectionType))}
@@ -236,7 +240,16 @@ const CVSidebar = ({
                 )}
               </>
             ) : (
-              <div className="cv-sidebar-contact-private">Contact details available on request</div>
+              <>
+                {/* Always show website even when private details are hidden */}
+                {header.website && (
+                  <div className="cv-sidebar-contact-item">
+                    <LanguageIcon sx={{ fontSize: 12, mr: 0.5 }} />
+                    {header.website}
+                  </div>
+                )}
+                <div className="cv-sidebar-contact-private">Full contact details available on request</div>
+              </>
             )}
           </div>
         </div>

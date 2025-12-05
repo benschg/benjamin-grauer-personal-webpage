@@ -7,7 +7,10 @@ import type {
   CVReferenceEntry,
   CVDomainEntry,
 } from "../types/CVTypes";
-import { timelineEvents, careerAspirations } from "@/components/working-life/content";
+import {
+  timelineEvents,
+  careerAspirations,
+} from "@/components/working-life/content";
 import { sharedProfile } from "@/data/shared-profile";
 import { cvAboutMe } from "@/data/interestsData";
 
@@ -25,15 +28,15 @@ export const cvPageLayouts: CVPageLayout[] = [
     sidebar: ["education", "courses", "portfolio", "volunteer", "aboutMe"],
     main: ["functions", "sideProjects", "domains", "references"],
   },
-  // Page 3 - First 3 experience entries
+  // Page 3 - First 2 experience entries (with title and intro)
   {
     sidebar: [],
-    main: [{ type: "experience", start: 0, end: 3 }],
+    main: [{ type: "experience", start: 0, end: 2 }],
   },
-  // Page 4 - Remaining experience entries
+  // Page 4 - Entries 3-5 (excluding oldest internship)
   {
     sidebar: [],
-    main: [{ type: "experience", start: 3, showTitle: false }],
+    main: [{ type: "experience", start: 2, end: 5, showTitle: false }],
   },
 ];
 
@@ -147,7 +150,7 @@ export const cvData: CVData = {
   // SIDEBAR (Left side - super short)
   sidebar: {
     successes: [
-      { title: "40+ Projects Delivered" },
+      { title: "40+ Products Shipped" },
       { title: "Enabled teams to focus on the value chain" },
       { title: "Consolidated 30 CLI tools into 1 unified app" },
       { title: "Bringing legacy systems to the cloud" },
@@ -231,25 +234,25 @@ export const cvData: CVData = {
 
     badges: [
       { value: "15+", label: "Years Experience" },
-      { value: "10+", label: "Teams Empowered" },
+      { value: "10+", label: "Teams Elevated" },
       { value: "100+", label: "People Hired" },
       { value: "2x", label: "ISO9001 Certified" },
     ],
 
     slogan:
-      "Transforming complex challenges into elegant solutions through collaborative leadership. Empowering engineers to ship products that matter.",
+      "Transforming complex challenges into elegant solutions through collaborative leadership. Inspiring engineers to ship products that matter.",
 
     profile: `Experienced engineering leader with 15+ years in software development,
 specializing in building and scaling high-performing teams. Proven track record in
-transforming complex technical challenges into intuitive solutions, from 3D medical
+turning complex technical challenges into intuitive solutions, from 3D medical
 simulators to drone logistics platforms. Passionate about user experience, value-stream
-aligned development, and fostering collaborative engineering cultures.`,
+aligned development, and cultivating collaborative engineering cultures.`,
 
     usp: [
       {
         title: "Servant Leadership",
         description:
-          "Empowering engineers through mentorship, clear vision, and removing obstacles. Fostering environments where people and products thrive together.",
+          "Enabling engineers through mentorship, clear vision, and removing obstacles. Fostering environments where people and products thrive together.",
       },
       {
         title: "Value-Stream Optimization",
@@ -298,7 +301,7 @@ aligned development, and fostering collaborative engineering cultures.`,
       {
         name: "Medical simulation",
         description:
-          "Building the equivalent to flight simulators for endoscopic medical procedures",
+          "40+ products shipped: flight simulator equivalents for endoscopic procedures",
       },
       {
         name: "Drone logistics",
@@ -306,7 +309,8 @@ aligned development, and fostering collaborative engineering cultures.`,
       },
       {
         name: "Advanced manufacturing",
-        description: "Carbon fiber 3D printing",
+        description:
+          "10+ clients: carbon fiber 3D printing for aerospace, medical, luxury, transport and more",
       },
       {
         name: "Compliance",

@@ -28,8 +28,11 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, privacyLevel, showExperience, zoom } = useCVTheme();
+  const { theme, showPhoto, privacyLevel, canShowPrivateInfo, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing, activeVersion } = useCVVersion();
+
+  // Enforce privacy: only show private info if user is logged in
+  const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
 
   // Convert AI-generated work experience to CV format if available
   const experienceEntries: CVExperienceEntry[] = useMemo(() => {
@@ -81,7 +84,11 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
         // Use dynamic profile from version
         return <CVProfile key="profile" profile={activeContent.profile} />;
       case 'usp':
-        // If AI generated key achievements, show those instead of static USP
+        // If AI generated key competences, show those instead of static USP
+        if (activeContent.keyCompetences && activeContent.keyCompetences.length > 0) {
+          return <CVUSP key="usp" data={activeContent.keyCompetences} />;
+        }
+        // Legacy fallback: convert old keyAchievements format
         if (activeContent.keyAchievements && activeContent.keyAchievements.length > 0) {
           const uspFromAchievements = activeContent.keyAchievements.map((achievement, idx) => ({
             title: `Achievement ${idx + 1}`,
@@ -111,7 +118,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
           <CVReferences
             key="references"
             data={cvData.main.references}
-            showPrivateInfo={privacyLevel === 'full'}
+            showPrivateInfo={effectivePrivacyLevel === 'full'}
           />
         );
       default:
@@ -153,7 +160,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
       {activePages.map((pageLayout, pageIndex) => {
         const hasSidebar = pageLayout.sidebar.length > 0;
 
-        const showPersonalInfo = privacyLevel !== 'none';
+        const showPersonalInfo = effectivePrivacyLevel !== 'none';
         return (
           <CVPage
             key={pageIndex}

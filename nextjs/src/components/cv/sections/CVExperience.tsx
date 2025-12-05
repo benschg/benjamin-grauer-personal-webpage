@@ -12,7 +12,15 @@ const CVExperience = ({ entries, start = 0, end, showTitle = true }: CVExperienc
 
   return (
     <div className="cv-section cv-experience">
-      {showTitle && <h2>Professional Experience</h2>}
+      {showTitle && (
+        <>
+          <h2>Professional Experience — Detailed</h2>
+          <p className="cv-section-intro">
+            This section expands on the career overview with in-depth descriptions of responsibilities,
+            achievements, and impact at each position.
+          </p>
+        </>
+      )}
       {slicedEntries.map((entry, index) => (
         <div key={index} className="cv-experience-entry">
           <div className="cv-experience-header">

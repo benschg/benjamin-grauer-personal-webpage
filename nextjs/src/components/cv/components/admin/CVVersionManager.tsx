@@ -15,7 +15,13 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  Divider,
+  Link,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import StarIcon from '@mui/icons-material/Star';
 import StarBorderIcon from '@mui/icons-material/StarBorder';
@@ -173,6 +179,92 @@ const CVVersionManager = () => {
         <DialogContent>
           {previewVersion && (
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Job Context Section */}
+              {previewVersion.job_context && (
+                <>
+                  <Box sx={{ bgcolor: 'action.hover', p: 2, borderRadius: 1 }}>
+                    <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                      Job Application Context
+                    </Typography>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                      {previewVersion.job_context.company && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
+                            Company:
+                          </Typography>
+                          <Typography variant="body2">{previewVersion.job_context.company}</Typography>
+                        </Box>
+                      )}
+                      {previewVersion.job_context.position && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
+                            Job Title:
+                          </Typography>
+                          <Typography variant="body2">{previewVersion.job_context.position}</Typography>
+                        </Box>
+                      )}
+                      {previewVersion.job_context.jobPostingUrl && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
+                            URL:
+                          </Typography>
+                          <Link
+                            href={previewVersion.job_context.jobPostingUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="body2"
+                            sx={{ wordBreak: 'break-all' }}
+                          >
+                            {previewVersion.job_context.jobPostingUrl}
+                          </Link>
+                        </Box>
+                      )}
+                      {previewVersion.job_context.companyWebsite && (
+                        <Box sx={{ display: 'flex', gap: 1 }}>
+                          <Typography variant="body2" color="text.secondary" sx={{ minWidth: 100 }}>
+                            Website:
+                          </Typography>
+                          <Link
+                            href={previewVersion.job_context.companyWebsite}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            variant="body2"
+                          >
+                            {previewVersion.job_context.companyWebsite}
+                          </Link>
+                        </Box>
+                      )}
+                    </Box>
+
+                    {/* Job Posting Text in Accordion */}
+                    {previewVersion.job_context.jobPosting && (
+                      <Accordion sx={{ mt: 2, bgcolor: 'background.paper' }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                          <Typography variant="body2">View Job Posting Text</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Typography
+                            variant="body2"
+                            component="pre"
+                            sx={{
+                              whiteSpace: 'pre-wrap',
+                              fontFamily: 'inherit',
+                              m: 0,
+                              maxHeight: 300,
+                              overflow: 'auto',
+                            }}
+                          >
+                            {previewVersion.job_context.jobPosting}
+                          </Typography>
+                        </AccordionDetails>
+                      </Accordion>
+                    )}
+                  </Box>
+                  <Divider />
+                </>
+              )}
+
+              {/* Generated Content */}
               <Box>
                 <Typography variant="subtitle2" color="text.secondary">
                   Tagline
