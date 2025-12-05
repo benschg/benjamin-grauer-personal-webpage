@@ -9,6 +9,7 @@ import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
 import CloseIcon from '@mui/icons-material/Close';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import RestoreIcon from '@mui/icons-material/Restore';
+import AddIcon from '@mui/icons-material/Add';
 import { IconButton, Box, CircularProgress, Popover, TextField, Button, Typography, Tooltip } from '@mui/material';
 import { cvData } from '../data/cvConfig';
 
@@ -50,6 +51,12 @@ const CVUSP = ({ data }: CVUSPProps) => {
   const handleDelete = (index: number) => {
     const keyCompetences = [...(activeContent.keyCompetences || data)];
     keyCompetences.splice(index, 1);
+    updateEditedContent({ keyCompetences });
+  };
+
+  const handleAdd = () => {
+    const keyCompetences = [...(activeContent.keyCompetences || data)];
+    keyCompetences.push({ title: 'New Competence', description: 'Description of this competence...' });
     updateEditedContent({ keyCompetences });
   };
 
@@ -216,6 +223,28 @@ const CVUSP = ({ data }: CVUSPProps) => {
             </div>
           );
         })}
+        {/* Add button in edit mode */}
+        {isEditing && (
+          <Box className="cv-no-print" sx={{ display: 'flex', justifyContent: 'center', mt: 1 }}>
+            <Tooltip title="Add new competence" arrow>
+              <IconButton
+                size="small"
+                onClick={handleAdd}
+                sx={{
+                  bgcolor: 'rgba(100, 200, 100, 0.9)',
+                  color: 'white',
+                  width: 28,
+                  height: 28,
+                  '&:hover': {
+                    bgcolor: 'rgba(50, 180, 50, 1)',
+                  },
+                }}
+              >
+                <AddIcon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          </Box>
+        )}
       </div>
       <Popover
         open={!!popoverAnchor}
