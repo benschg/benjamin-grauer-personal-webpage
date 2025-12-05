@@ -236,7 +236,16 @@ const CVSidebar = ({
                 )}
               </>
             ) : (
-              <div className="cv-sidebar-contact-private">Contact details available on request</div>
+              <>
+                {/* Always show website even when private details are hidden */}
+                {header.website && (
+                  <div className="cv-sidebar-contact-item">
+                    <LanguageIcon sx={{ fontSize: 12, mr: 0.5 }} />
+                    {header.website}
+                  </div>
+                )}
+                <div className="cv-sidebar-contact-private">Full contact details available on request</div>
+              </>
             )}
           </div>
         </div>
