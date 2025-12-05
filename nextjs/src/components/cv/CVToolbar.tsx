@@ -537,8 +537,8 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                   )}
                 </ListItemIcon>
                 <ListItemText
-                  primary="Experience Details"
-                  secondary={showExperience ? 'Full experience history included' : 'Experience pages hidden'}
+                  primary="Detailed Experience"
+                  secondary={showExperience ? 'Extended job descriptions included' : 'Summary only (shorter CV)'}
                   secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
                 />
                 <ListItemSecondaryAction>
@@ -674,7 +674,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             {showPhoto ? <PersonIcon /> : <PersonOffIcon />}
           </IconButton>
         </Tooltip>
-        <Tooltip title={showExperience ? 'Hide Experience Details' : 'Show Experience Details'} placement="left">
+        <Tooltip title={showExperience ? 'Hide Detailed Experience' : 'Show Detailed Experience'} placement="left">
           <IconButton
             onClick={toggleExperience}
             sx={{ color: showExperience ? 'white' : 'rgba(255,255,255,0.4)' }}
@@ -795,7 +795,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         {/* Experience Toggle */}
         <SpeedDialAction
           icon={showExperience ? <WorkHistoryIcon /> : <WorkOffIcon />}
-          tooltipTitle={showExperience ? 'Hide Experience' : 'Show Experience'}
+          tooltipTitle={showExperience ? 'Hide Detailed Experience' : 'Show Detailed Experience'}
           onClick={toggleExperience}
         />
 

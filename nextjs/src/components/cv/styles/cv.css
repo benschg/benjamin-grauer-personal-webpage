@@ -77,6 +77,20 @@
   border-bottom: 3px solid #ff4444 !important;
 }
 
+/* Section overflow indicator (experience, etc.) */
+.cv-section.cv-overflow {
+  border: 3px solid #ff4444 !important;
+  border-radius: 4px;
+  box-shadow: 0 0 15px rgba(255, 68, 68, 0.4), inset 0 0 10px rgba(255, 68, 68, 0.2) !important;
+  background-color: rgba(255, 68, 68, 0.05) !important;
+}
+
+/* Experience section overflow - more visible */
+.cv-experience.cv-overflow {
+  border: 3px solid #ff4444 !important;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.5), inset 0 0 15px rgba(255, 68, 68, 0.15) !important;
+}
+
 /* Page content area */
 .cv-page-content {
   flex: 1;
@@ -101,6 +115,9 @@
 /* Full-width content (no sidebar) */
 .cv-main-content.cv-full-width {
   padding: 12mm 15mm 8mm 15mm;
+  height: calc(var(--cv-page-height) - 8mm); /* page height minus footer */
+  max-height: calc(var(--cv-page-height) - 8mm);
+  overflow: hidden;
 }
 
 /* Sidebar */
@@ -781,6 +798,15 @@
 /* Section Styles */
 .cv-section {
   margin-bottom: 1rem;
+}
+
+.cv-section-intro {
+  font-size: 0.8rem;
+  color: var(--cv-text-muted);
+  font-style: italic;
+  margin: -0.5rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--cv-accent);
 }
 
 /* Header Section */

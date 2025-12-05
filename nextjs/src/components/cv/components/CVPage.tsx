@@ -23,31 +23,52 @@ const CVPage = forwardRef<HTMLDivElement, CVPageProps>(
     const hasContact = email || phone || linkedin || website;
     const contentRef = useRef<HTMLDivElement>(null);
 
-    // Check if content overflows in sidebar and main content
+    // Check if content overflows in sidebar, main content, and specific sections
     const checkOverflow = useCallback(() => {
       if (!contentRef.current) return;
 
+      const pageContent = contentRef.current;
+
       // Check sidebar overflow
-      const sidebar = contentRef.current.querySelector('.cv-sidebar');
+      const sidebar = pageContent.querySelector('.cv-sidebar');
       if (sidebar) {
         const hasOverflow = sidebar.scrollHeight > sidebar.clientHeight;
         sidebar.classList.toggle('cv-overflow', hasOverflow);
       }
 
-      // Check main content overflow
-      const mainContent = contentRef.current.querySelector('.cv-main-content');
+      // Check main content overflow (works for both regular and full-width pages)
+      const mainContent = pageContent.querySelector('.cv-main-content');
       if (mainContent) {
-        const hasOverflow = mainContent.scrollHeight > mainContent.clientHeight;
-        mainContent.classList.toggle('cv-overflow', hasOverflow);
+        const mainContentEl = mainContent as HTMLElement;
+
+        // Compare scrollHeight to clientHeight - now works for full-width pages too
+        // since we added explicit height constraints in CSS
+        const mainContentOverflows = mainContentEl.scrollHeight > mainContentEl.clientHeight + 2;
+        mainContent.classList.toggle('cv-overflow', mainContentOverflows);
+
+        // Check each section - mark as overflowing if main content is clipped
+        const sections = mainContent.querySelectorAll('.cv-section');
+
+        sections.forEach((section, index) => {
+          // Mark section as overflowing if main content is clipped and this is the last section
+          const isLastSection = index === sections.length - 1;
+          const sectionOverflows = mainContentOverflows && isLastSection;
+
+          section.classList.toggle('cv-overflow', sectionOverflows);
+        });
       }
     }, []);
 
     // Check overflow on mount and when children change
     useEffect(() => {
       checkOverflow();
-      // Also check after a short delay to account for async rendering
-      const timeout = setTimeout(checkOverflow, 100);
-      return () => clearTimeout(timeout);
+      // Also check after delays to account for async rendering and CSS transforms
+      const timeout1 = setTimeout(checkOverflow, 100);
+      const timeout2 = setTimeout(checkOverflow, 500);
+      return () => {
+        clearTimeout(timeout1);
+        clearTimeout(timeout2);
+      };
     }, [children, checkOverflow]);
 
     // Check overflow on window resize
