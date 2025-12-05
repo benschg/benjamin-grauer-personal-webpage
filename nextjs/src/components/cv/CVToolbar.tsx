@@ -68,15 +68,20 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
   const {
     theme,
     toggleTheme,
+    setTheme,
     showPhoto,
     togglePhoto,
+    setShowPhoto,
     privacyLevel,
     cyclePrivacyLevel,
+    setPrivacyLevel,
     canShowPrivateInfo,
     showExperience,
     toggleExperience,
+    setShowExperience,
     showAttachments,
     toggleAttachments,
+    setShowAttachments,
     zoom,
     zoomIn,
     zoomOut,
@@ -400,7 +405,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                   <ToggleButtonGroup
                     value={theme}
                     exclusive
-                    onChange={(_, newTheme) => newTheme && toggleTheme()}
+                    onChange={(_, newTheme) => newTheme && setTheme(newTheme)}
                     size="small"
                     sx={{
                       '& .MuiToggleButton-root': {
@@ -442,7 +447,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                   <Switch
                     edge="end"
                     checked={showPhoto}
-                    onChange={togglePhoto}
+                    onChange={(_, checked) => setShowPhoto(checked)}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
                         color: '#89665d',
@@ -478,7 +483,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                       <ToggleButtonGroup
                         value={privacyLevel}
                         exclusive
-                        onChange={cyclePrivacyLevel}
+                        onChange={(_, newLevel) => newLevel && setPrivacyLevel(newLevel)}
                         size="small"
                         sx={{
                           '& .MuiToggleButton-root': {
@@ -540,7 +545,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                   <Switch
                     edge="end"
                     checked={showExperience}
-                    onChange={toggleExperience}
+                    onChange={(_, checked) => setShowExperience(checked)}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
                         color: '#89665d',
@@ -572,7 +577,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                   <Switch
                     edge="end"
                     checked={showAttachments}
-                    onChange={toggleAttachments}
+                    onChange={(_, checked) => setShowAttachments(checked)}
                     sx={{
                       '& .MuiSwitch-switchBase.Mui-checked': {
                         color: '#89665d',
