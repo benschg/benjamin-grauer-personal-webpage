@@ -309,7 +309,8 @@ aligned development, and cultivating collaborative engineering cultures.`,
       },
       {
         name: "Advanced manufacturing",
-        description: "Carbon fiber 3D printing",
+        description:
+          "10+ clients: carbon fiber 3D printing for aerospace, medical, luxury, transport and more",
       },
       {
         name: "Compliance",

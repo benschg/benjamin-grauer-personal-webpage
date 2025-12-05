@@ -47,7 +47,7 @@ export const timelineEvents: TimelineEvent[] = [
     title: "Head of Software",
     company: "9T Labs AG",
     description:
-      "Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations. Built and mentored a team of software engineers from scratch, establishing coding standards and development practices. Drove the adoption of modern DevOps practices including CI/CD pipelines, infrastructure as code, and automated testing. Collaborated closely with mechanical engineers and material scientists to translate complex manufacturing requirements into intuitive software solutions.",
+      "Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Customized solutions for 10+ clients in aerospace, medical, luxury, and ground transport domains. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations. Built and mentored a team of software engineers from scratch, establishing coding standards and development practices. Drove the adoption of modern DevOps practices including CI/CD pipelines, infrastructure as code, and automated testing. Collaborated closely with mechanical engineers and material scientists to translate complex manufacturing requirements into intuitive software solutions.",
     shortDescription:
       "Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers from scratch, establishing coding standards and DevOps practices including CI/CD pipelines. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.",
     type: "work",
@@ -61,6 +61,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Additive Manufacturing",
     ],
     achievements: [
+      "Customized solutions for 10+ clients in aerospace, medical, luxury, and ground transport",
       "Built fibirfy Production cloud platform",
       "Developed fibirfy Design Suite for 3D manufacturing",
       "Implemented DevOps automation for multiple teams",
