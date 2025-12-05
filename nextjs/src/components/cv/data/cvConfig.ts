@@ -150,7 +150,7 @@ export const cvData: CVData = {
   // SIDEBAR (Left side - super short)
   sidebar: {
     successes: [
-      { title: "40+ Projects Delivered" },
+      { title: "40+ Products Shipped" },
       { title: "Enabled teams to focus on the value chain" },
       { title: "Consolidated 30 CLI tools into 1 unified app" },
       { title: "Bringing legacy systems to the cloud" },
@@ -301,7 +301,7 @@ aligned development, and cultivating collaborative engineering cultures.`,
       {
         name: "Medical simulation",
         description:
-          "Building the equivalent to flight simulators for endoscopic medical procedures",
+          "40+ products shipped: flight simulator equivalents for endoscopic procedures",
       },
       {
         name: "Drone logistics",

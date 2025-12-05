@@ -227,7 +227,7 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "As member of management, built up several teams across R&D department. Re-organized entire development team along value stream. Led more than 20 people and helped hire many more throughout the company. Built teams for framework developers, testers, dev-ops engineers, UI/UX professionals.",
     shortDescription:
-      "Built and led engineers teams across framework, QA, DevOps, and UI/UX, 3D artists and gameplay programmer teams.",
+      "Shipped 40+ products. Built and led engineering teams across framework, QA, DevOps, UI/UX, 3D artists, and gameplay programmers.",
     type: "work",
     skills: [
       "Engineering Management",
@@ -239,6 +239,7 @@ export const timelineEvents: TimelineEvent[] = [
       "IT Management",
     ],
     achievements: [
+      "Shipped 40+ products: standard simulators and customized industry solutions",
       "Built and led teams of 20+ engineers",
       "Established manual testing team integrated into all teams",
       "Built gameplay development team with 3D artists and researchers",
