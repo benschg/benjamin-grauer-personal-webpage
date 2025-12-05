@@ -119,13 +119,24 @@ export default function BendalfTheGray() {
                   borderRadius: '50%',
                   overflow: 'hidden',
                   boxShadow: '0 0 60px rgba(137, 102, 93, 0.5), 0 0 100px rgba(100, 149, 237, 0.3)',
+                  userSelect: 'none',
                 }}
+                onContextMenu={(e) => e.preventDefault()}
               >
+                {/* Invisible overlay to prevent easy image saving */}
+                <Box
+                  sx={{
+                    position: 'absolute',
+                    inset: 0,
+                    zIndex: 1,
+                  }}
+                />
                 <Image
-                  src="/bendalf-the-gray.jpg"
+                  src="/api/bendalf"
                   alt="Bendalf the Gray - Benjamin Grauer as a wizard"
                   fill
-                  style={{ objectFit: 'cover', transform: 'scale(1.15)' }}
+                  style={{ objectFit: 'cover', transform: 'scale(1.08)' }}
+                  draggable={false}
                   priority
                 />
               </Box>
