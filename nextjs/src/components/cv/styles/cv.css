@@ -1054,12 +1054,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   background-color: #343a40;
   border-bottom: 1px solid #89665d;
-  position: sticky;
-  top: 0;
-  z-index: 100;
 }
 
 .cv-toolbar-actions {
@@ -1067,6 +1064,7 @@
   gap: 1rem;
   align-items: center;
 }
+
 
 /* Floating Sidebar for Display Toggles */
 .cv-floating-sidebar {
@@ -1103,12 +1101,6 @@
   z-index: 99;
 }
 
-/* On mobile, move zoom bar higher to avoid overlap with Export FAB */
-@media (max-width: 899px) {
-  .cv-bottom-zoom-bar {
-    bottom: 80px;
-  }
-}
 
 .cv-bottom-zoom-bar .MuiIconButton-root {
   padding: 4px;

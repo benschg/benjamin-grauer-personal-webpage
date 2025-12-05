@@ -29,7 +29,7 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
   const { theme, showPhoto, privacyLevel, canShowPrivateInfo, showExperience, zoom } = useCVTheme();
-  const { activeContent, isEditing, activeVersion } = useCVVersion();
+  const { activeContent, isEditing } = useCVVersion();
 
   // Enforce privacy: only show private info if user is logged in
   const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
@@ -150,13 +150,6 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
       ref={ref}
       data-theme={theme}
     >
-      {/* Editing mode indicator */}
-      {isEditing && (
-        <div className="cv-editing-banner cv-no-print">
-          <span>Editing: {activeVersion?.name || 'CV Version'}</span>
-          <span>Click on text to edit. Changes are saved when you click &quot;Save&quot;.</span>
-        </div>
-      )}
       {activePages.map((pageLayout, pageIndex) => {
         const hasSidebar = pageLayout.sidebar.length > 0;
 

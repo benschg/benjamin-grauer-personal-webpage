@@ -1,6 +1,6 @@
 'use client';
 
-import { FormControl, Select, MenuItem, InputLabel, Box } from '@mui/material';
+import { Select, MenuItem } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import { useCVVersion } from '../../contexts';
 
@@ -17,33 +17,30 @@ const CVVersionSelector = () => {
   }
 
   return (
-    <Box sx={{ minWidth: 120, maxWidth: 200 }}>
-      <FormControl size="small" fullWidth>
-        <InputLabel id="cv-version-label" sx={{ color: 'white' }}>
-          Version
-        </InputLabel>
-        <Select
-          labelId="cv-version-label"
-          value={activeVersion?.id || 'default'}
-          label="Version"
-          onChange={handleChange}
-          sx={{
-            color: 'white',
-            '.MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.3)' },
-            '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'rgba(255,255,255,0.5)' },
-            '.MuiSvgIcon-root': { color: 'white' },
-          }}
-        >
-          <MenuItem value="default">Default</MenuItem>
-          {versions.map((version) => (
-            <MenuItem key={version.id} value={version.id}>
-              {version.name}
-              {version.is_default && ' ★'}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-    </Box>
+    <Select
+      value={activeVersion?.id || 'default'}
+      onChange={handleChange}
+      variant="standard"
+      disableUnderline
+      sx={{
+        color: '#89665d',
+        fontWeight: 500,
+        fontSize: '0.9rem',
+        '.MuiSelect-select': {
+          py: 0,
+          pr: 3,
+        },
+        '.MuiSvgIcon-root': { color: '#89665d' },
+      }}
+    >
+      <MenuItem value="default">Default CV</MenuItem>
+      {versions.map((version) => (
+        <MenuItem key={version.id} value={version.id}>
+          {version.name}
+          {version.is_default && ' ★'}
+        </MenuItem>
+      ))}
+    </Select>
   );
 };
 
