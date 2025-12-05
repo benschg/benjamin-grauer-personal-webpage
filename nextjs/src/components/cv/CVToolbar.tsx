@@ -55,10 +55,11 @@ import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EmailIcon from '@mui/icons-material/Email';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
-import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
+import { CVVersionSelector, CVCustomizationDialog, LLMInputDataDialog } from './components/admin';
 import type { DocumentTab } from '@/app/working-life/cv/page';
 
 interface CVToolbarProps {
@@ -133,6 +134,7 @@ const CVToolbar = ({
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [printWarningOpen, setPrintWarningOpen] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [llmInputDataOpen, setLlmInputDataOpen] = useState(false);
 
   const handlePrintClick = () => {
     if (showAttachments) {
@@ -254,6 +256,14 @@ const CVToolbar = ({
           {isAdmin && (
             <>
               <CVVersionSelector />
+              {/* Show LLM input data button when a custom version is selected */}
+              {activeVersion && activeVersion.job_context && (
+                <Tooltip title="View LLM Input Data">
+                  <IconButton onClick={() => setLlmInputDataOpen(true)} sx={{ color: 'rgba(255,255,255,0.7)', ml: 0.5 }}>
+                    <InfoOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Tooltip title="AI Customization">
                 <IconButton onClick={() => setCustomizationOpen(true)} sx={{ color: 'white', ml: 1 }}>
                   <AutoAwesomeIcon />
@@ -315,6 +325,13 @@ const CVToolbar = ({
 
         {/* AI Customization Dialog */}
         <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
+
+        {/* LLM Input Data Dialog */}
+        <LLMInputDataDialog
+          open={llmInputDataOpen}
+          onClose={() => setLlmInputDataOpen(false)}
+          version={activeVersion}
+        />
 
         {/* Print warning when attachments are enabled */}
         <Snackbar
