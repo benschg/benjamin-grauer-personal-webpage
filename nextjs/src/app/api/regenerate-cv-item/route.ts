@@ -178,8 +178,8 @@ Generate ONE alternative skill that is:
 Respond with ONLY the new skill text, no additional formatting or explanation.`;
 
     case 'keyCompetenceTitle':
-      return `You are an expert CV writer. Generate a new key competence title for a CV.${companyContext}${researchContext}
-
+      return `You are an expert CV writer. Generate a new key competence title for a CV.${companyContext}${researchContext}${jobPostingContext}
+${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated title directly addresses this request.\n` : ''}
 Current title: "${currentValue}"
 ${context.competenceDescription ? `Current description: "${context.competenceDescription}"` : ''}
 
@@ -188,13 +188,13 @@ Generate ONE alternative key competence title that is:
 - Short and punchy (2-4 words)
 - Tailored to the target role${context.companyName ? ' and company' : ''}
 - Professional and impactful
-- Different from the current title${jobPostingContext}${customInstructionsText}
+- Different from the current title
 
 Respond with ONLY the new title text, no additional formatting or explanation.`;
 
     case 'keyCompetenceDescription':
-      return `You are an expert CV writer. Generate a new key competence description for a CV.${companyContext}${researchContext}
-
+      return `You are an expert CV writer. Generate a new key competence description for a CV.${companyContext}${researchContext}${jobPostingContext}
+${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated description directly addresses this request.\n` : ''}
 ${context.competenceTitle ? `Competence title: "${context.competenceTitle}"` : ''}
 Current description: "${currentValue}"
 
@@ -202,13 +202,13 @@ Generate ONE alternative key competence description that is:
 - Maximum ${CV_CHARACTER_LIMITS.keyCompetenceDescription} characters
 - Brief and impactful explanation of the competence
 - Tailored to the target role${context.companyName ? ' and company' : ''}
-- Different from the current description but maintains the competence theme${jobPostingContext}${customInstructionsText}
+- Different from the current description but maintains the competence theme
 
 Respond with ONLY the new description text, no additional formatting or explanation.`;
 
     case 'keyCompetence':
-      return `You are an expert CV writer. Generate a new key competence (title and description) for a CV.${companyContext}${researchContext}
-
+      return `You are an expert CV writer. Generate a new key competence (title and description) for a CV.${companyContext}${researchContext}${jobPostingContext}
+${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated competence directly addresses this request.\n` : ''}
 Current title: "${context.competenceTitle || currentValue}"
 Current description: "${context.competenceDescription || ''}"
 
@@ -217,7 +217,7 @@ Generate ONE alternative key competence with both title and description that is:
 - Description: Maximum ${CV_CHARACTER_LIMITS.keyCompetenceDescription} characters, brief and impactful
 - Tailored to the target role${context.companyName ? ' and company' : ''}
 - Professional and impactful
-- Different from the current competence but maintains relevance${jobPostingContext}${customInstructionsText}
+- Different from the current competence but maintains relevance
 
 Respond with ONLY a JSON object in this exact format (no markdown, no code blocks):
 {"title": "New Title", "description": "New description text"}`;

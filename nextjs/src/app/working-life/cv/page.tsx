@@ -1,13 +1,8 @@
 'use client';
 
 import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
-import { Box, Snackbar, Alert, CircularProgress, IconButton, Tooltip, Button } from '@mui/material';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
-import EditIcon from '@mui/icons-material/Edit';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
-import { CVVersionSelector, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
+import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
@@ -23,7 +18,7 @@ const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
-  const { activeContent, activeVersion, error: versionError, isEditing, startEditing, cancelEditing, saveEdits, isSaving } = useCVVersion();
+  const { activeContent, activeVersion, error: versionError, isEditing } = useCVVersion();
   const { user } = useAuth();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
   const isAdmin = user && adminEmail && user.email === adminEmail;
@@ -179,7 +174,6 @@ const CVPageContent = () => {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         hasMotivationLetter={hasMotivationLetter}
-        toolbarVisible={toolbarVisible}
         renderToolbarBar={false}
       />
       {/* Fixed header container - slides up when scrolling */}
@@ -205,140 +199,15 @@ const CVPageContent = () => {
             activeTab={activeTab}
             onTabChange={setActiveTab}
             hasMotivationLetter={hasMotivationLetter}
-            toolbarVisible={toolbarVisible}
             renderFloatingElements={false}
           />
         </Box>
-        {/* Version selector bar - always visible for admin */}
+        {/* Admin bar - always visible for admin */}
         {isAdmin && (
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 1,
-              py: 0.25,
-              bgcolor: isEditing ? 'rgba(46, 125, 50, 0.95)' : 'rgba(26, 29, 32, 0.95)',
-            }}
-          >
-            {isEditing ? (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  width: '100%',
-                  justifyContent: 'space-between',
-                  px: 2,
-                  minWidth: 0,
-                }}
-              >
-                <Button
-                  size="small"
-                  variant="outlined"
-                  startIcon={<CancelIcon sx={{ fontSize: 14 }} />}
-                  onClick={cancelEditing}
-                  disabled={isSaving}
-                  sx={{
-                    color: 'white',
-                    borderColor: 'rgba(255,255,255,0.5)',
-                    '&:hover': { borderColor: 'white', bgcolor: 'rgba(255,255,255,0.1)' },
-                    flexShrink: 0,
-                    py: 0,
-                    px: 0.5,
-                    minHeight: 24,
-                    fontSize: '0.75rem',
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Box
-                  sx={{
-                    color: 'white',
-                    fontSize: '0.85rem',
-                    fontWeight: 500,
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                    minWidth: 0,
-                    flex: '1 1 auto',
-                    textAlign: 'center',
-                    px: 1,
-                  }}
-                >
-                  Editing: {activeVersion?.name || 'Default CV'}
-                </Box>
-                <Button
-                  size="small"
-                  variant="contained"
-                  startIcon={isSaving ? <CircularProgress size={12} color="inherit" /> : <SaveIcon sx={{ fontSize: 14 }} />}
-                  onClick={saveEdits}
-                  disabled={isSaving}
-                  sx={{
-                    bgcolor: 'white',
-                    color: '#2e7d32',
-                    '&:hover': { bgcolor: 'rgba(255,255,255,0.9)' },
-                    '&.Mui-disabled': { bgcolor: 'rgba(255,255,255,0.5)' },
-                    flexShrink: 0,
-                    py: 0,
-                    px: 0.5,
-                    minHeight: 24,
-                    fontSize: '0.75rem',
-                  }}
-                >
-                  {isSaving ? 'Saving...' : 'Save'}
-                </Button>
-              </Box>
-            ) : (
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 1,
-                  width: '100%',
-                  justifyContent: 'center',
-                  px: 2,
-                  minWidth: 0,
-                }}
-              >
-                <Box sx={{ minWidth: 0, flex: '0 1 auto', overflow: 'hidden' }}>
-                  <CVVersionSelector />
-                </Box>
-                {/* Show LLM input data button when a custom version is selected */}
-                {activeVersion?.job_context && (
-                  <Tooltip title="View LLM Input Data">
-                    <IconButton
-                      size="small"
-                      onClick={() => setLlmInputDataOpen(true)}
-                      sx={{ color: 'rgba(137, 102, 93, 0.7)', p: 0.5, flexShrink: 0 }}
-                    >
-                      <InfoOutlinedIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-                <Tooltip title="AI Customization">
-                  <IconButton
-                    size="small"
-                    onClick={() => setCustomizationOpen(true)}
-                    sx={{ color: '#89665d', p: 0.5, flexShrink: 0 }}
-                  >
-                    <AutoAwesomeIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                {activeVersion && (
-                  <Tooltip title="Edit CV inline">
-                    <IconButton
-                      size="small"
-                      onClick={startEditing}
-                      sx={{ color: '#89665d', p: 0.5, flexShrink: 0 }}
-                    >
-                      <EditIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                )}
-              </Box>
-            )}
-          </Box>
+          <CVAdminBar
+            onCustomizationOpen={() => setCustomizationOpen(true)}
+            onLlmInputDataOpen={() => setLlmInputDataOpen(true)}
+          />
         )}
       </Box>
       {/* Spacer for fixed header */}

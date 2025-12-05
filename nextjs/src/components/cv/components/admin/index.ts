@@ -1,3 +1,4 @@
+export { default as CVAdminBar } from './CVAdminBar';
 export { default as CVVersionSelector } from './CVVersionSelector';
 export { default as CVCustomizationDialog } from './CVCustomizationDialog';
 export { default as CVVersionManager } from './CVVersionManager';
