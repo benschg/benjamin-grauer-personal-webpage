@@ -342,6 +342,10 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         });
       }
 
+      // Refresh versions list so subsequent edits use updated content
+      const updatedVersions = await getAllCVVersions();
+      setVersions(updatedVersions);
+
       setIsEditing(false);
       setEditedContent(null);
     } catch (err) {

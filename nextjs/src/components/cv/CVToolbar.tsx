@@ -39,12 +39,8 @@ import PersonOffIcon from '@mui/icons-material/PersonOff';
 import LockIcon from '@mui/icons-material/Lock';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
 import SecurityIcon from '@mui/icons-material/Security';
-import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -55,11 +51,9 @@ import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EmailIcon from '@mui/icons-material/Email';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
-import { CVVersionSelector, CVCustomizationDialog, LLMInputDataDialog } from './components/admin';
 import type { DocumentTab } from '@/app/working-life/cv/page';
 
 interface CVToolbarProps {
@@ -69,6 +63,9 @@ interface CVToolbarProps {
   activeTab?: DocumentTab;
   onTabChange?: (tab: DocumentTab) => void;
   hasMotivationLetter?: boolean;
+  toolbarVisible?: boolean;
+  renderToolbarBar?: boolean;
+  renderFloatingElements?: boolean;
 }
 
 const CVToolbar = ({
@@ -78,6 +75,9 @@ const CVToolbar = ({
   activeTab = 'cv',
   onTabChange,
   hasMotivationLetter = false,
+  toolbarVisible = true,
+  renderToolbarBar = true,
+  renderFloatingElements = true,
 }: CVToolbarProps) => {
   const router = useRouter();
   const {
@@ -121,20 +121,13 @@ const CVToolbar = ({
     if (privacyLevel === 'personal') return 'white';
     return '#89665d'; // accent color for full
   };
-  const { user, isAdmin, signIn, signOut } = useAuth();
+  const { user, signIn, signOut } = useAuth();
   const {
-    activeVersion,
     isEditing,
-    startEditing,
-    cancelEditing,
-    saveEdits,
-    isSaving,
   } = useCVVersion();
-  const [customizationOpen, setCustomizationOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [printWarningOpen, setPrintWarningOpen] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
-  const [llmInputDataOpen, setLlmInputDataOpen] = useState(false);
 
   const handlePrintClick = () => {
     if (showAttachments) {
@@ -179,7 +172,8 @@ const CVToolbar = ({
     return 'All contact info visible (including references)';
   };
 
-  return (
+  // Toolbar bar content (top navigation bar)
+  const toolbarBar = (
     <>
       {/* Top Toolbar */}
       <Box className="cv-toolbar cv-no-print">
@@ -252,60 +246,6 @@ const CVToolbar = ({
           )}
         </Box>
         <Box className="cv-toolbar-actions">
-          {/* Admin controls - only show when admin is logged in */}
-          {isAdmin && (
-            <>
-              <CVVersionSelector />
-              {/* Show LLM input data button when a custom version is selected */}
-              {activeVersion && activeVersion.job_context && (
-                <Tooltip title="View LLM Input Data">
-                  <IconButton onClick={() => setLlmInputDataOpen(true)} sx={{ color: 'rgba(255,255,255,0.7)', ml: 0.5 }}>
-                    <InfoOutlinedIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-              <Tooltip title="AI Customization">
-                <IconButton onClick={() => setCustomizationOpen(true)} sx={{ color: 'white', ml: 1 }}>
-                  <AutoAwesomeIcon />
-                </IconButton>
-              </Tooltip>
-              {/* Inline editing controls */}
-              {activeVersion && !isEditing && (
-                <Tooltip title="Edit CV inline">
-                  <IconButton onClick={startEditing} sx={{ color: 'white', ml: 1 }}>
-                    <EditIcon />
-                  </IconButton>
-                </Tooltip>
-              )}
-              {isEditing && (
-                <>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    size="small"
-                    startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveIcon />}
-                    onClick={saveEdits}
-                    disabled={isSaving}
-                    sx={{ ml: 1 }}
-                  >
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    startIcon={<CancelIcon />}
-                    onClick={cancelEditing}
-                    disabled={isSaving}
-                    sx={{ ml: 1, borderColor: 'error.main', color: 'error.main' }}
-                  >
-                    Cancel
-                  </Button>
-                </>
-              )}
-            </>
-          )}
-
           {/* Auth button */}
           {user ? (
             <Tooltip title={`Sign out (${user.email})`}>
@@ -322,16 +262,6 @@ const CVToolbar = ({
           )}
 
         </Box>
-
-        {/* AI Customization Dialog */}
-        <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
-
-        {/* LLM Input Data Dialog */}
-        <LLMInputDataDialog
-          open={llmInputDataOpen}
-          onClose={() => setLlmInputDataOpen(false)}
-          version={activeVersion}
-        />
 
         {/* Print warning when attachments are enabled */}
         <Snackbar
@@ -699,9 +629,19 @@ const CVToolbar = ({
           </DialogActions>
         </Dialog>
       </Box>
+    </>
+  );
 
+  // Floating elements content (positioned independently of header transform)
+  const floatingElements = (
+    <>
       {/* Floating Sidebar for Display Toggles - Desktop Only */}
-      <Box className="cv-floating-sidebar cv-no-print" sx={{ display: { xs: 'none', md: 'flex' } }}>
+      <Box
+        className="cv-floating-sidebar cv-no-print"
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+        }}
+      >
         {/* Privacy toggle - only show when logged in */}
         {canShowPrivateInfo && (
           <Tooltip title={getPrivacyTooltip()} placement="left">
@@ -749,8 +689,11 @@ const CVToolbar = ({
         </Tooltip>
       </Box>
 
-      {/* Bottom Zoom Bar - Always Visible */}
-      <Box className="cv-bottom-zoom-bar cv-no-print">
+      {/* Bottom Zoom Bar - Desktop Only (centered) */}
+      <Box
+        className="cv-bottom-zoom-bar cv-no-print"
+        sx={{ display: { xs: 'none', md: 'flex' } }}
+      >
         <IconButton onClick={zoomOut} size="small" sx={{ color: 'white' }}>
           <RemoveIcon fontSize="small" />
         </IconButton>
@@ -774,15 +717,16 @@ const CVToolbar = ({
       </Box>
 
       {/* Floating Export Button - Desktop (bottom right) */}
-      {onDownloadPdf && (
+      {!isEditing && onDownloadPdf && (
         <Box
           className="cv-no-print"
           sx={{
-            display: { xs: 'none', md: 'block' },
+            display: { xs: 'none', md: 'flex' },
             position: 'fixed',
             bottom: '20px',
             right: '20px',
             zIndex: 9999,
+            gap: 1.5,
           }}
         >
           <Fab
@@ -803,7 +747,7 @@ const CVToolbar = ({
         </Box>
       )}
 
-      {/* Mobile: Export FAB + SpeedDial for other controls */}
+      {/* Mobile: Zoom bar + Export FAB + SpeedDial in same container */}
       <Box
         className="cv-no-print"
         sx={{
@@ -812,12 +756,46 @@ const CVToolbar = ({
           bottom: '20px',
           right: '20px',
           zIndex: 9999,
-          gap: 1.5,
+          gap: 1,
           alignItems: 'flex-end',
         }}
       >
-        {/* Export FAB - Always visible on mobile */}
-        {onDownloadPdf && (
+        {/* Zoom controls */}
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 0.25,
+            padding: '0.25rem 0.5rem',
+            backgroundColor: 'rgba(52, 58, 64, 0.9)',
+            border: '1px solid rgba(137, 102, 93, 0.5)',
+            borderRadius: '20px',
+            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <IconButton onClick={zoomOut} size="small" sx={{ color: 'white', p: 0.5 }}>
+            <RemoveIcon fontSize="small" />
+          </IconButton>
+          <Tooltip title={zoom === 0 ? 'Auto' : 'Reset to Auto'} placement="top">
+            <Button
+              onClick={resetZoom}
+              size="small"
+              sx={{
+                color: zoom === 0 ? 'rgba(255,255,255,0.5)' : 'white',
+                minWidth: '40px',
+                fontSize: '0.7rem',
+                padding: '2px 4px',
+              }}
+            >
+              {zoom === 0 ? 'Auto' : `${Math.round(zoom * 100)}%`}
+            </Button>
+          </Tooltip>
+          <IconButton onClick={zoomIn} size="small" sx={{ color: 'white', p: 0.5 }}>
+            <AddIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        {/* Show Export FAB only when not editing */}
+        {!isEditing && onDownloadPdf && (
           <Fab
             variant="extended"
             size="medium"
@@ -897,6 +875,14 @@ const CVToolbar = ({
         />
       </SpeedDial>
       </Box>
+    </>
+  );
+
+  // Render based on props
+  return (
+    <>
+      {renderToolbarBar && toolbarBar}
+      {renderFloatingElements && floatingElements}
     </>
   );
 };
