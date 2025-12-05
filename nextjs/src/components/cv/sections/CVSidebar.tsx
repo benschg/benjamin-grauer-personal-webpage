@@ -186,12 +186,16 @@ const CVSidebar = ({
 
   return (
     <div className="cv-sidebar">
-      {/* Photo - only on first page */}
-      {showPhoto && header.photo && (
+      {/* Photo - only on first page, show placeholder when photo is hidden */}
+      {showPhoto && header.photo ? (
         <div className="cv-sidebar-photo">
           <img src={header.photo} alt={header.name} />
         </div>
-      )}
+      ) : showContact ? (
+        <div className="cv-sidebar-photo cv-sidebar-photo-placeholder">
+          <img src="/bg.svg" alt="BG" />
+        </div>
+      ) : null}
 
       {/* Render requested sections */}
       {sections.map((sectionType) => renderSection(sectionType))}

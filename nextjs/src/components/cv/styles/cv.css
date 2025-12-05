@@ -144,6 +144,12 @@
   object-position: top;
 }
 
+.cv-sidebar-photo-placeholder img {
+  object-fit: contain;
+  object-position: center;
+  background-color: transparent;
+}
+
 .cv-sidebar-section {
   margin-bottom: 0.5rem;
 }

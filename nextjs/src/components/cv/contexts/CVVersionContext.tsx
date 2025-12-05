@@ -88,6 +88,7 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const [regeneratingItems, setRegeneratingItems] = useState<Set<string>>(new Set());
 
   // Load version from URL param (public access, no auth required)
+  // Only runs once on mount to check for version in URL
   useEffect(() => {
     const versionId = searchParams.get('version');
     if (versionId && !urlVersionProcessed.current) {
@@ -102,8 +103,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
             // Version not found - clear the URL param and use default
             console.warn(`CV version ${versionId} not found, using default`);
             setError(`Version not found. Showing default CV.`);
-            // Clear invalid version from URL
-            const params = new URLSearchParams(searchParams.toString());
+            // Clear invalid version from URL using window.location to avoid re-render loop
+            const currentUrl = new URL(window.location.href);
+            const params = currentUrl.searchParams;
             params.delete('version');
             const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
             router.replace(newUrl, { scroll: false });
@@ -115,7 +117,8 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
           setLoading(false);
         });
     }
-  }, [searchParams, pathname, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount - searchParams is read but shouldn't trigger re-runs
 
   // Subscribe to Supabase versions (for authenticated users)
   // Track if we've set a default version to avoid re-running
@@ -123,7 +126,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
 
   useEffect(() => {
     // Skip subscription if we're using a URL-specified version
-    const versionId = searchParams.get('version');
+    // Read from window.location to avoid dependency on searchParams
+    const currentUrl = new URL(window.location.href);
+    const versionId = currentUrl.searchParams.get('version');
     if (versionId) {
       return;
     }
@@ -149,7 +154,8 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       console.warn('Supabase not configured, using static CV content');
       setLoading(false);
     }
-  }, [searchParams]); // Removed selectedVersionId to prevent infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount - subscribes once and manages its own updates
 
   // Sync selected version to URL (for sharing)
   // Only sync when user explicitly selects a version (not when loading from URL)

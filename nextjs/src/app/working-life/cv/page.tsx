@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState, useCallback, useEffect } from 'react';
-import { Box, Snackbar, Alert } from '@mui/material';
+import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
@@ -120,14 +120,31 @@ const CVPageContent = () => {
   );
 };
 
+// Loading fallback for Suspense
+const CVLoadingFallback = () => (
+  <Box
+    sx={{
+      minHeight: '100vh',
+      bgcolor: '#1a1d20',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    }}
+  >
+    <CircularProgress sx={{ color: '#89665d' }} />
+  </Box>
+);
+
 // Main page component with providers
 const CVPage = () => {
   return (
-    <CVThemeProvider>
-      <CVVersionProvider>
-        <CVPageContent />
-      </CVVersionProvider>
-    </CVThemeProvider>
+    <Suspense fallback={<CVLoadingFallback />}>
+      <CVThemeProvider>
+        <CVVersionProvider>
+          <CVPageContent />
+        </CVVersionProvider>
+      </CVThemeProvider>
+    </Suspense>
   );
 };
 

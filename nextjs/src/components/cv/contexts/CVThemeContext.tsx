@@ -69,7 +69,9 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
       return;
     }
 
-    const params = new URLSearchParams(searchParams.toString());
+    // Read current URL to preserve other params (like version)
+    const currentUrl = new URL(window.location.href);
+    const params = currentUrl.searchParams;
 
     // Update each param based on current state (null = use default, omit from URL)
     if (theme === 'dark') params.delete('theme');
@@ -89,7 +91,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
 
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
     router.replace(newUrl, { scroll: false });
-  }, [theme, showPhoto, privacyLevel, showExperience, showAttachments, pathname, router, searchParams]);
+  }, [theme, showPhoto, privacyLevel, showExperience, showAttachments, pathname, router]);
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
