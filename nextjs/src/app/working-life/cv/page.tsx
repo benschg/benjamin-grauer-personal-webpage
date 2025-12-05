@@ -112,7 +112,7 @@ const CVPageContent = () => {
         margin: 0,
         padding: 0,
         width: '100%',
-        overflow: 'hidden',
+        overflowX: 'hidden',
       }}
     >
       <CVToolbar

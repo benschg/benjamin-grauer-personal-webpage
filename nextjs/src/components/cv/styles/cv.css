@@ -1553,6 +1553,18 @@
   overflow: visible;
 }
 
+/* Make CV header sticky in edit mode */
+.cv-editing-mode .cv-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--cv-bg-page);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-bottom: 1px solid var(--cv-accent);
+}
+
 /* ============================================ */
 /* MOTIVATION LETTER STYLES                     */
 /* ============================================ */

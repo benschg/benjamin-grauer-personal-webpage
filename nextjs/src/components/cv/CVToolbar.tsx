@@ -269,39 +269,13 @@ const CVToolbar = ({
                   <AutoAwesomeIcon />
                 </IconButton>
               </Tooltip>
-              {/* Inline editing controls */}
+              {/* Edit button - starts editing mode (Save/Cancel buttons are in the sticky bar below) */}
               {activeVersion && !isEditing && (
                 <Tooltip title="Edit CV inline">
                   <IconButton onClick={startEditing} sx={{ color: 'white', ml: 1 }}>
                     <EditIcon />
                   </IconButton>
                 </Tooltip>
-              )}
-              {isEditing && (
-                <>
-                  <Button
-                    variant="contained"
-                    color="success"
-                    size="small"
-                    startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveIcon />}
-                    onClick={saveEdits}
-                    disabled={isSaving}
-                    sx={{ ml: 1 }}
-                  >
-                    {isSaving ? 'Saving...' : 'Save'}
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="error"
-                    size="small"
-                    startIcon={<CancelIcon />}
-                    onClick={cancelEditing}
-                    disabled={isSaving}
-                    sx={{ ml: 1, borderColor: 'error.main', color: 'error.main' }}
-                  >
-                    Cancel
-                  </Button>
-                </>
               )}
             </>
           )}
@@ -773,35 +747,70 @@ const CVToolbar = ({
         </IconButton>
       </Box>
 
-      {/* Floating Export Button - Desktop (bottom right) */}
-      {onDownloadPdf && (
-        <Box
-          className="cv-no-print"
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            zIndex: 9999,
-          }}
-        >
-          <Fab
-            variant="extended"
-            color="primary"
-            onClick={handleExportClick}
-            disabled={isDownloading}
-            sx={{
-              bgcolor: '#89665d',
-              '&:hover': { bgcolor: '#6d524a' },
-              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
-              gap: 1,
-            }}
-          >
-            {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-            {isDownloading ? 'Generating...' : 'Export PDF'}
-          </Fab>
-        </Box>
-      )}
+      {/* Floating Export/Edit Buttons - Desktop (bottom right) */}
+      <Box
+        className="cv-no-print"
+        sx={{
+          display: { xs: 'none', md: 'flex' },
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 9999,
+          gap: 1.5,
+        }}
+      >
+        {isEditing ? (
+          <>
+            <Fab
+              variant="extended"
+              onClick={cancelEditing}
+              disabled={isSaving}
+              sx={{
+                bgcolor: '#d32f2f',
+                color: 'white',
+                '&:hover': { bgcolor: '#b71c1c' },
+                gap: 1,
+              }}
+            >
+              <CancelIcon />
+              Cancel
+            </Fab>
+            <Fab
+              variant="extended"
+              onClick={saveEdits}
+              disabled={isSaving}
+              sx={{
+                bgcolor: '#2e7d32',
+                color: 'white',
+                '&:hover': { bgcolor: '#1b5e20' },
+                '&.Mui-disabled': { bgcolor: 'rgba(46, 125, 50, 0.5)' },
+                gap: 1,
+              }}
+            >
+              {isSaving ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
+              {isSaving ? 'Saving...' : 'Save'}
+            </Fab>
+          </>
+        ) : (
+          onDownloadPdf && (
+            <Fab
+              variant="extended"
+              color="primary"
+              onClick={handleExportClick}
+              disabled={isDownloading}
+              sx={{
+                bgcolor: '#89665d',
+                '&:hover': { bgcolor: '#6d524a' },
+                '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+                gap: 1,
+              }}
+            >
+              {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+              {isDownloading ? 'Generating...' : 'Export PDF'}
+            </Fab>
+          )
+        )}
+      </Box>
 
       {/* Mobile: Export FAB + SpeedDial for other controls */}
       <Box
@@ -816,25 +825,63 @@ const CVToolbar = ({
           alignItems: 'flex-end',
         }}
       >
-        {/* Export FAB - Always visible on mobile */}
-        {onDownloadPdf && (
-          <Fab
-            variant="extended"
-            size="medium"
-            onClick={handleExportClick}
-            disabled={isDownloading}
-            sx={{
-              bgcolor: '#89665d',
-              color: 'white',
-              '&:hover': { bgcolor: '#6d524a' },
-              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
-              gap: 0.5,
-              fontSize: '0.8rem',
-            }}
-          >
-            {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
-            {isDownloading ? 'Generating...' : 'Export PDF'}
-          </Fab>
+        {/* Edit mode: Show Save/Cancel buttons, otherwise show Export FAB */}
+        {isEditing ? (
+          <>
+            <Fab
+              variant="extended"
+              size="medium"
+              onClick={cancelEditing}
+              disabled={isSaving}
+              sx={{
+                bgcolor: '#d32f2f',
+                color: 'white',
+                '&:hover': { bgcolor: '#b71c1c' },
+                gap: 0.5,
+                fontSize: '0.8rem',
+              }}
+            >
+              <CancelIcon fontSize="small" />
+              Cancel
+            </Fab>
+            <Fab
+              variant="extended"
+              size="medium"
+              onClick={saveEdits}
+              disabled={isSaving}
+              sx={{
+                bgcolor: '#2e7d32',
+                color: 'white',
+                '&:hover': { bgcolor: '#1b5e20' },
+                '&.Mui-disabled': { bgcolor: 'rgba(46, 125, 50, 0.5)' },
+                gap: 0.5,
+                fontSize: '0.8rem',
+              }}
+            >
+              {isSaving ? <CircularProgress size={18} color="inherit" /> : <SaveIcon fontSize="small" />}
+              {isSaving ? 'Saving...' : 'Save'}
+            </Fab>
+          </>
+        ) : (
+          onDownloadPdf && (
+            <Fab
+              variant="extended"
+              size="medium"
+              onClick={handleExportClick}
+              disabled={isDownloading}
+              sx={{
+                bgcolor: '#89665d',
+                color: 'white',
+                '&:hover': { bgcolor: '#6d524a' },
+                '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+                gap: 0.5,
+                fontSize: '0.8rem',
+              }}
+            >
+              {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
+              {isDownloading ? 'Generating...' : 'Export PDF'}
+            </Fab>
+          )
         )}
         <SpeedDial
           ariaLabel="CV Controls"
