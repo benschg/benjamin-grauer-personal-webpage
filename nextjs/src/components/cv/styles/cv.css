@@ -1545,3 +1545,159 @@
 .cv-editing-mode .cv-sidebar {
   overflow: visible;
 }
+
+/* ============================================ */
+/* MOTIVATION LETTER STYLES                     */
+/* ============================================ */
+
+.motivation-letter-page {
+  padding: 0;
+  overflow: hidden;
+}
+
+.motivation-letter-container {
+  padding: 20mm 25mm 15mm 25mm;
+  height: calc(297mm - 8mm); /* Full page minus footer */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.motivation-letter-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0; /* Allow flex child to shrink below content size */
+}
+
+/* Overflow indicator for motivation letter */
+.motivation-letter-container.cv-overflow {
+  border: 3px solid #ff4444 !important;
+  box-shadow: 0 0 20px rgba(255, 68, 68, 0.5), inset 0 0 15px rgba(255, 68, 68, 0.15) !important;
+}
+
+.motivation-letter-header {
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid var(--cv-accent);
+  flex-shrink: 0;
+}
+
+.motivation-letter-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.motivation-letter-candidate-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--cv-accent);
+  margin: 0;
+}
+
+.motivation-letter-contact {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.15rem;
+  font-size: 0.75rem;
+  color: var(--cv-text-muted);
+}
+
+.motivation-letter-context {
+  font-size: 0.8rem;
+  color: var(--cv-text-muted);
+  margin-top: 0.25rem;
+  font-style: italic;
+}
+
+.motivation-letter-date {
+  font-size: 0.8rem;
+  color: var(--cv-text-muted);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.motivation-letter-subject {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--cv-text-primary);
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.motivation-letter-greeting {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--cv-text-primary);
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.motivation-letter-body {
+  flex: 1;
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: var(--cv-text-secondary);
+  overflow: hidden;
+}
+
+.motivation-letter-body p {
+  text-align: justify;
+  margin: 0 0 0.7rem 0;
+}
+
+.motivation-letter-body p:last-child {
+  margin-bottom: 0;
+}
+
+.motivation-letter-signoff {
+  margin-top: 1rem;
+  flex-shrink: 0;
+}
+
+.motivation-letter-signoff-text {
+  font-size: 0.85rem;
+  color: var(--cv-text-primary);
+  margin-bottom: 0.4rem;
+}
+
+.motivation-letter-signature {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cv-accent);
+}
+
+/* Footer for motivation letter (same as CV) */
+.motivation-letter-page .cv-footer {
+  height: 8mm;
+  padding: 0 25mm;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-top: 1px solid rgba(137, 102, 93, 0.3);
+  font-size: 0.7rem;
+  color: var(--cv-text-muted);
+  font-family: 'Quicksand', sans-serif;
+  flex-shrink: 0;
+}
+
+/* Print styles for motivation letter */
+@media print {
+  .motivation-letter-page {
+    page-break-after: always;
+  }
+
+  .motivation-letter-container {
+    padding: 20mm 25mm 15mm 25mm !important;
+  }
+
+  .motivation-letter-page .cv-footer {
+    padding: 0 25mm !important;
+  }
+}

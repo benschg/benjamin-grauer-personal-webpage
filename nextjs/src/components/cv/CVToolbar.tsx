@@ -53,18 +53,31 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EmailIcon from '@mui/icons-material/Email';
 import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
 import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
+import type { DocumentTab } from '@/app/working-life/cv/page';
 
 interface CVToolbarProps {
   onPrint: () => void;
   onDownloadPdf?: () => void;
   isDownloading?: boolean;
+  activeTab?: DocumentTab;
+  onTabChange?: (tab: DocumentTab) => void;
+  hasMotivationLetter?: boolean;
 }
 
-const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) => {
+const CVToolbar = ({
+  onPrint,
+  onDownloadPdf,
+  isDownloading,
+  activeTab = 'cv',
+  onTabChange,
+  hasMotivationLetter = false,
+}: CVToolbarProps) => {
   const router = useRouter();
   const {
     theme,
@@ -184,21 +197,58 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             Back to Working Life
           </Box>
         </Button>
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontFamily: 'Orbitron',
-              letterSpacing: '0.1em',
-            }}
-          >
-            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-              Curriculum Vitae
-            </Box>
-            <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-              CV
-            </Box>
-          </Typography>
+        <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Document tabs - show when motivation letter is available */}
+          {hasMotivationLetter && onTabChange ? (
+            <ToggleButtonGroup
+              value={activeTab}
+              exclusive
+              onChange={(_, newTab) => newTab && onTabChange(newTab)}
+              size="small"
+              sx={{
+                mb: 0.5,
+                '& .MuiToggleButton-root': {
+                  color: 'rgba(255,255,255,0.6)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  py: 0.5,
+                  px: { xs: 1, sm: 2 },
+                  fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                  '&.Mui-selected': {
+                    color: 'white',
+                    bgcolor: 'rgba(137, 102, 93, 0.4)',
+                    borderColor: '#89665d',
+                  },
+                  '&:hover': {
+                    bgcolor: 'rgba(137, 102, 93, 0.2)',
+                  },
+                },
+              }}
+            >
+              <ToggleButton value="cv" aria-label="CV">
+                <DescriptionIcon sx={{ fontSize: '1rem', mr: { xs: 0, sm: 0.5 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>CV</Box>
+              </ToggleButton>
+              <ToggleButton value="motivation-letter" aria-label="Motivation Letter">
+                <EmailIcon sx={{ fontSize: '1rem', mr: { xs: 0, sm: 0.5 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Letter</Box>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          ) : (
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: 'Orbitron',
+                letterSpacing: '0.1em',
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                Curriculum Vitae
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                CV
+              </Box>
+            </Typography>
+          )}
           {/* Show error message OR position/company context */}
           {versionError ? (
             <Typography

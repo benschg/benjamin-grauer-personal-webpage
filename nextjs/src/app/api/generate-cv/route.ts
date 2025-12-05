@@ -230,7 +230,7 @@ Write a professional, personalized motivation letter (cover letter) that complem
 2. Highlight the most relevant experiences and skills for this position
 3. Show genuine enthusiasm for the company and role
 4. Connect the candidate's career aspirations to the opportunity
-5. Be concise but impactful (300-400 words total for the body)
+5. Be CONCISE - the entire letter (opening + body + closing) should be 200-250 words maximum to fit on one A4 page
 6. Use a professional but warm tone matching the company culture
 7. Avoid generic phrases - be specific and authentic
 8. AVOID REPETITION: Use different phrasing than the CV tagline and profile. Don't copy sentences from the CV - rephrase and expand on ideas with fresh wording. Vary vocabulary throughout the letter (don't repeat the same adjectives or phrases).
@@ -238,9 +238,9 @@ Write a professional, personalized motivation letter (cover letter) that complem
 Structure:
 - SUBJECT: A compelling email subject line (e.g., "Application: [Role] - [Candidate's key differentiator]")
 - GREETING: Professional greeting (use hiring manager's name if known, otherwise "Dear Hiring Team,")
-- OPENING: Hook the reader - mention the role and your key value proposition (2-3 sentences)
-- BODY: Connect your experience to their needs. Use specific examples. Show you understand their challenges and can contribute to their success (2-3 paragraphs)
-- CLOSING: Express enthusiasm, mention next steps, thank them (2-3 sentences)
+- OPENING: Hook the reader - mention the role and your key value proposition (1-2 sentences)
+- BODY: Connect your experience to their needs. Use specific examples. Show you understand their challenges and can contribute to their success (2 short paragraphs)
+- CLOSING: Express enthusiasm, mention next steps, thank them (1-2 sentences)
 - SIGNOFF: Professional closing (e.g., "Best regards," or "Sincerely,")
 
 Respond with valid JSON only:

@@ -4,18 +4,26 @@ import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
 import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
+import MotivationLetterDocument from '@/components/cv/MotivationLetterDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
 import { CVThemeProvider, CVVersionProvider, useCVTheme, useCVVersion } from '@/components/cv/contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
+export type DocumentTab = 'cv' | 'motivation-letter';
+
 // Component that uses the context
 const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
+  const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
-  const { error: versionError } = useCVVersion();
+  const { activeContent, error: versionError } = useCVVersion();
   const [isDownloading, setIsDownloading] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
+  const [activeTab, setActiveTab] = useState<DocumentTab>('cv');
+
+  // Check if motivation letter is available
+  const hasMotivationLetter = !!activeContent.motivationLetter;
 
   // Load CSS styles
   useEffect(() => {
@@ -25,23 +33,36 @@ const CVPageContent = () => {
       .catch((err) => console.error('Failed to load CV styles:', err));
   }, []);
 
+  // Reset to CV tab if motivation letter becomes unavailable
+  useEffect(() => {
+    if (!hasMotivationLetter && activeTab === 'motivation-letter') {
+      setActiveTab('cv');
+    }
+  }, [hasMotivationLetter, activeTab]);
+
   const handlePrint = useReactToPrint({
-    contentRef: cvRef,
-    documentTitle: 'Benjamin_Grauer_CV',
+    contentRef: activeTab === 'cv' ? cvRef : motivationLetterRef,
+    documentTitle: activeTab === 'cv' ? 'Benjamin_Grauer_CV' : 'Benjamin_Grauer_Motivation_Letter',
   });
 
   const handleDownloadPdf = useCallback(async () => {
-    if (!cvRef.current || !cvStyles) return;
+    const currentRef = activeTab === 'cv' ? cvRef.current : motivationLetterRef.current;
+    if (!currentRef || !cvStyles) return;
 
     setIsDownloading(true);
     setPdfError(null);
 
     try {
-      // Get the CV HTML content
-      const html = cvRef.current.outerHTML;
+      // Get the document HTML content
+      const html = currentRef.outerHTML;
 
       // Effective privacy level: only allow private info if user is logged in
       const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
+
+      // Determine filename based on active tab
+      const baseFilename = activeTab === 'cv'
+        ? (showAttachments ? `Benjamin_Grauer_CV_with_attachments_${theme}` : `Benjamin_Grauer_CV_${theme}`)
+        : `Benjamin_Grauer_Motivation_Letter_${theme}`;
 
       // Call the Next.js API route to generate PDF
       const response = await fetch('/api/generate-pdf', {
@@ -53,11 +74,9 @@ const CVPageContent = () => {
           html,
           css: cvStyles,
           theme,
-          filename: showAttachments
-            ? `Benjamin_Grauer_CV_with_attachments_${theme}.pdf`
-            : `Benjamin_Grauer_CV_${theme}.pdf`,
+          filename: `${baseFilename}.pdf`,
           baseUrl: window.location.origin,
-          attachments: showAttachments ? [REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH] : undefined,
+          attachments: activeTab === 'cv' && showAttachments ? [REFERENCES_PDF_PATH, CERTIFICATES_PDF_PATH] : undefined,
           privacyLevel: effectivePrivacyLevel,
         }),
       });
@@ -72,9 +91,7 @@ const CVPageContent = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = showAttachments
-        ? `Benjamin_Grauer_CV_with_attachments_${theme}.pdf`
-        : `Benjamin_Grauer_CV_${theme}.pdf`;
+      link.download = `${baseFilename}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -85,7 +102,7 @@ const CVPageContent = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
+  }, [activeTab, theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
 
   return (
     <Box
@@ -102,6 +119,9 @@ const CVPageContent = () => {
         onPrint={handlePrint}
         onDownloadPdf={handleDownloadPdf}
         isDownloading={isDownloading}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        hasMotivationLetter={hasMotivationLetter}
       />
       {versionError && (
         <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
@@ -110,7 +130,11 @@ const CVPageContent = () => {
           </Alert>
         </Box>
       )}
-      <CVDocument ref={cvRef} />
+      {activeTab === 'cv' ? (
+        <CVDocument ref={cvRef} />
+      ) : (
+        <MotivationLetterDocument ref={motivationLetterRef} />
+      )}
       <Snackbar open={!!pdfError} autoHideDuration={6000} onClose={() => setPdfError(null)}>
         <Alert severity="error" onClose={() => setPdfError(null)}>
           {pdfError}
