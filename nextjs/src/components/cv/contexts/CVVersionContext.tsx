@@ -1,7 +1,8 @@
 'use client';
 
-import { createContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import type { CVVersion, CVVersionContent } from '@/types/database.types';
 import {
   subscribeToCVVersions,
@@ -9,6 +10,7 @@ import {
   updateCVVersion,
   deleteCVVersion,
   setAsDefault,
+  getCVVersion,
 } from '@/services/cv/cvVersion.service';
 import { cvData } from '../data/cvConfig';
 import { sharedProfile } from '@/data/shared-profile';
@@ -65,10 +67,19 @@ interface CVVersionProviderProps {
 }
 
 export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const [versions, setVersions] = useState<CVVersion[]>([]);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
+  const [urlVersion, setUrlVersion] = useState<CVVersion | null>(null); // Version loaded from URL param
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Track if we've already processed the URL version param
+  const urlVersionProcessed = useRef(false);
+  // Track if this is the initial mount to avoid URL update on first render
+  const isInitialMount = useRef(true);
 
   // Inline editing state
   const [isEditing, setIsEditing] = useState(false);
@@ -76,8 +87,35 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [regeneratingItems, setRegeneratingItems] = useState<Set<string>>(new Set());
 
-  // Subscribe to Supabase versions
+  // Load version from URL param (public access, no auth required)
   useEffect(() => {
+    const versionId = searchParams.get('version');
+    if (versionId && !urlVersionProcessed.current) {
+      urlVersionProcessed.current = true;
+      setLoading(true);
+      getCVVersion(versionId)
+        .then((version) => {
+          if (version) {
+            setUrlVersion(version);
+            setSelectedVersionId(version.id);
+          }
+          setLoading(false);
+        })
+        .catch(() => {
+          console.warn('Failed to load version from URL');
+          setLoading(false);
+        });
+    }
+  }, [searchParams]);
+
+  // Subscribe to Supabase versions (for authenticated users)
+  useEffect(() => {
+    // Skip subscription if we're using a URL-specified version
+    const versionId = searchParams.get('version');
+    if (versionId) {
+      return;
+    }
+
     try {
       const unsubscribe = subscribeToCVVersions((fetchedVersions) => {
         setVersions(fetchedVersions);
@@ -98,12 +136,50 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       console.warn('Supabase not configured, using static CV content');
       setLoading(false);
     }
-  }, [selectedVersionId]);
+  }, [selectedVersionId, searchParams]);
 
-  // Get active version
-  const activeVersion = selectedVersionId
-    ? versions.find((v) => v.id === selectedVersionId) || null
-    : null;
+  // Sync selected version to URL (for sharing)
+  // Only sync when user explicitly selects a version (not when loading from URL)
+  const lastSyncedVersionId = useRef<string | null>(null);
+
+  useEffect(() => {
+    // Skip on initial mount - URL already has the correct values
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
+    // Skip if we loaded this version from URL (urlVersion is set)
+    // This prevents the loop when loading a shared URL
+    if (urlVersion && selectedVersionId === urlVersion.id) {
+      return;
+    }
+
+    // Skip if we already synced this version to avoid duplicate updates
+    if (lastSyncedVersionId.current === selectedVersionId) {
+      return;
+    }
+    lastSyncedVersionId.current = selectedVersionId;
+
+    const params = new URLSearchParams(searchParams.toString());
+
+    // Update version param based on current selection
+    if (selectedVersionId) {
+      params.set('version', selectedVersionId);
+    } else {
+      params.delete('version');
+    }
+
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [selectedVersionId, pathname, router, searchParams, urlVersion]);
+
+  // Get active version (URL version takes precedence, then selected from list)
+  const activeVersion = urlVersion
+    ? urlVersion
+    : selectedVersionId
+      ? versions.find((v) => v.id === selectedVersionId) || null
+      : null;
 
   // Get active content (from version or default)
   const activeContent: CVVersionContent = activeVersion?.content || getDefaultContent();

@@ -182,20 +182,37 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             Back to Working Life
           </Box>
         </Button>
-        <Typography
-          variant="h6"
-          sx={{
-            fontFamily: 'Orbitron',
-            letterSpacing: '0.1em',
-          }}
-        >
-          <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-            Curriculum Vitae
-          </Box>
-          <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-            CV
-          </Box>
-        </Typography>
+        <Box sx={{ textAlign: 'center' }}>
+          <Typography
+            variant="h6"
+            sx={{
+              fontFamily: 'Orbitron',
+              letterSpacing: '0.1em',
+            }}
+          >
+            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+              Curriculum Vitae
+            </Box>
+            <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+              CV
+            </Box>
+          </Typography>
+          {activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) && (
+            <Typography
+              variant="caption"
+              sx={{
+                color: '#89665d',
+                fontStyle: 'italic',
+                display: 'block',
+                mt: 0.25,
+              }}
+            >
+              {activeVersion.job_context.position && activeVersion.job_context.company
+                ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
+                : activeVersion.job_context.position || activeVersion.job_context.company}
+            </Typography>
+          )}
+        </Box>
         <Box className="cv-toolbar-actions">
           {/* Admin controls - only show when admin is logged in */}
           {isAdmin && (
