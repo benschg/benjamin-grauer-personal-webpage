@@ -28,15 +28,15 @@ export const cvPageLayouts: CVPageLayout[] = [
     sidebar: ["education", "courses", "portfolio", "volunteer", "aboutMe"],
     main: ["functions", "sideProjects", "domains", "references"],
   },
-  // Page 3 - First 3 experience entries
+  // Page 3 - First 2 experience entries (with title and intro)
   {
     sidebar: [],
-    main: [{ type: "experience", start: 0, end: 3 }],
+    main: [{ type: "experience", start: 0, end: 2 }],
   },
-  // Page 4 - Remaining experience entries
+  // Page 4 - Entries 3-5 (excluding oldest internship)
   {
     sidebar: [],
-    main: [{ type: "experience", start: 3, showTitle: false }],
+    main: [{ type: "experience", start: 2, end: 5, showTitle: false }],
   },
 ];
 
