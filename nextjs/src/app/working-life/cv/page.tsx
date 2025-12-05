@@ -226,10 +226,11 @@ const CVPageContent = () => {
                 sx={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 2,
+                  gap: 1,
                   width: '100%',
-                  justifyContent: 'center',
+                  justifyContent: 'space-between',
                   px: 2,
+                  minWidth: 0,
                 }}
               >
                 <Button
@@ -260,8 +261,9 @@ const CVPageContent = () => {
                     textOverflow: 'ellipsis',
                     whiteSpace: 'nowrap',
                     minWidth: 0,
-                    flex: 1,
+                    flex: '1 1 auto',
                     textAlign: 'center',
+                    px: 1,
                   }}
                 >
                   Editing: {activeVersion?.name || 'Default CV'}
@@ -288,15 +290,27 @@ const CVPageContent = () => {
                 </Button>
               </Box>
             ) : (
-              <>
-                <CVVersionSelector />
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  width: '100%',
+                  justifyContent: 'center',
+                  px: 2,
+                  minWidth: 0,
+                }}
+              >
+                <Box sx={{ minWidth: 0, flex: '0 1 auto', overflow: 'hidden' }}>
+                  <CVVersionSelector />
+                </Box>
                 {/* Show LLM input data button when a custom version is selected */}
                 {activeVersion?.job_context && (
                   <Tooltip title="View LLM Input Data">
                     <IconButton
                       size="small"
                       onClick={() => setLlmInputDataOpen(true)}
-                      sx={{ color: 'rgba(137, 102, 93, 0.7)', p: 0.5 }}
+                      sx={{ color: 'rgba(137, 102, 93, 0.7)', p: 0.5, flexShrink: 0 }}
                     >
                       <InfoOutlinedIcon fontSize="small" />
                     </IconButton>
@@ -306,7 +320,7 @@ const CVPageContent = () => {
                   <IconButton
                     size="small"
                     onClick={() => setCustomizationOpen(true)}
-                    sx={{ color: '#89665d', p: 0.5 }}
+                    sx={{ color: '#89665d', p: 0.5, flexShrink: 0 }}
                   >
                     <AutoAwesomeIcon fontSize="small" />
                   </IconButton>
@@ -316,13 +330,13 @@ const CVPageContent = () => {
                     <IconButton
                       size="small"
                       onClick={startEditing}
-                      sx={{ color: '#89665d', p: 0.5 }}
+                      sx={{ color: '#89665d', p: 0.5, flexShrink: 0 }}
                     >
                       <EditIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
                 )}
-              </>
+              </Box>
             )}
           </Box>
         )}

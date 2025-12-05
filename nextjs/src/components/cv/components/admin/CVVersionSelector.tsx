@@ -26,9 +26,14 @@ const CVVersionSelector = () => {
         color: '#89665d',
         fontWeight: 500,
         fontSize: '0.9rem',
+        minWidth: 0,
+        maxWidth: '100%',
         '.MuiSelect-select': {
           py: 0,
           pr: 3,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          whiteSpace: 'nowrap',
         },
         '.MuiSvgIcon-root': { color: '#89665d' },
       }}
