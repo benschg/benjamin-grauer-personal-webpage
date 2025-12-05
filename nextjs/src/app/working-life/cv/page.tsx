@@ -5,15 +5,16 @@ import { Box, Snackbar, Alert } from '@mui/material';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
-import { CVThemeProvider, CVVersionProvider, useCVTheme } from '@/components/cv/contexts';
+import { CVThemeProvider, CVVersionProvider, useCVTheme, useCVVersion } from '@/components/cv/contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
 // Component that uses the context
 const CVPageContent = () => {
   const cvRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
+  const { error: versionError } = useCVVersion();
   const [isDownloading, setIsDownloading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [pdfError, setPdfError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
 
   // Load CSS styles
@@ -33,7 +34,7 @@ const CVPageContent = () => {
     if (!cvRef.current || !cvStyles) return;
 
     setIsDownloading(true);
-    setError(null);
+    setPdfError(null);
 
     try {
       // Get the CV HTML content
@@ -80,7 +81,7 @@ const CVPageContent = () => {
       URL.revokeObjectURL(url);
     } catch (err) {
       console.error('Failed to generate PDF:', err);
-      setError(err instanceof Error ? err.message : 'Failed to generate PDF');
+      setPdfError(err instanceof Error ? err.message : 'Failed to generate PDF');
     } finally {
       setIsDownloading(false);
     }
@@ -102,10 +103,17 @@ const CVPageContent = () => {
         onDownloadPdf={handleDownloadPdf}
         isDownloading={isDownloading}
       />
+      {versionError && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+          <Alert severity="warning" sx={{ maxWidth: 600 }}>
+            {versionError}
+          </Alert>
+        </Box>
+      )}
       <CVDocument ref={cvRef} />
-      <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setError(null)}>
-        <Alert severity="error" onClose={() => setError(null)}>
-          {error}
+      <Snackbar open={!!pdfError} autoHideDuration={6000} onClose={() => setPdfError(null)}>
+        <Alert severity="error" onClose={() => setPdfError(null)}>
+          {pdfError}
         </Alert>
       </Snackbar>
     </Box>

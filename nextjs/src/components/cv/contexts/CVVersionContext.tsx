@@ -98,6 +98,15 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
           if (version) {
             setUrlVersion(version);
             setSelectedVersionId(version.id);
+          } else {
+            // Version not found - clear the URL param and use default
+            console.warn(`CV version ${versionId} not found, using default`);
+            setError(`Version not found. Showing default CV.`);
+            // Clear invalid version from URL
+            const params = new URLSearchParams(searchParams.toString());
+            params.delete('version');
+            const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+            router.replace(newUrl, { scroll: false });
           }
           setLoading(false);
         })
@@ -106,9 +115,12 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
           setLoading(false);
         });
     }
-  }, [searchParams]);
+  }, [searchParams, pathname, router]);
 
   // Subscribe to Supabase versions (for authenticated users)
+  // Track if we've set a default version to avoid re-running
+  const hasAutoSelectedDefault = useRef(false);
+
   useEffect(() => {
     // Skip subscription if we're using a URL-specified version
     const versionId = searchParams.get('version');
@@ -121,8 +133,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         setVersions(fetchedVersions);
         setLoading(false);
 
-        // Auto-select default version if none selected
-        if (!selectedVersionId) {
+        // Auto-select default version only once on initial load
+        if (!hasAutoSelectedDefault.current && fetchedVersions.length > 0) {
+          hasAutoSelectedDefault.current = true;
           const defaultVersion = fetchedVersions.find((v) => v.is_default);
           if (defaultVersion) {
             setSelectedVersionId(defaultVersion.id);
@@ -136,22 +149,24 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       console.warn('Supabase not configured, using static CV content');
       setLoading(false);
     }
-  }, [selectedVersionId, searchParams]);
+  }, [searchParams]); // Removed selectedVersionId to prevent infinite loop
 
   // Sync selected version to URL (for sharing)
   // Only sync when user explicitly selects a version (not when loading from URL)
-  const lastSyncedVersionId = useRef<string | null>(null);
+  const lastSyncedVersionId = useRef<string | null | undefined>(undefined);
+  const urlVersionId = urlVersion?.id ?? null;
 
   useEffect(() => {
     // Skip on initial mount - URL already has the correct values
     if (isInitialMount.current) {
       isInitialMount.current = false;
+      lastSyncedVersionId.current = selectedVersionId;
       return;
     }
 
     // Skip if we loaded this version from URL (urlVersion is set)
     // This prevents the loop when loading a shared URL
-    if (urlVersion && selectedVersionId === urlVersion.id) {
+    if (urlVersionId && selectedVersionId === urlVersionId) {
       return;
     }
 
@@ -161,7 +176,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
     }
     lastSyncedVersionId.current = selectedVersionId;
 
-    const params = new URLSearchParams(searchParams.toString());
+    // Read current URL to preserve other params (like privacy)
+    const currentUrl = new URL(window.location.href);
+    const params = currentUrl.searchParams;
 
     // Update version param based on current selection
     if (selectedVersionId) {
@@ -172,7 +189,7 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
 
     const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
     router.replace(newUrl, { scroll: false });
-  }, [selectedVersionId, pathname, router, searchParams, urlVersion]);
+  }, [selectedVersionId, pathname, router, urlVersionId]);
 
   // Get active version (URL version takes precedence, then selected from list)
   const activeVersion = urlVersion
