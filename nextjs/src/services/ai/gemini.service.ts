@@ -124,7 +124,7 @@ export const isGeminiConfigured = (): boolean => {
 
 // Regenerate a single CV item
 export interface RegenerateCVItemParams {
-  itemType: 'tagline' | 'profile' | 'slogan' | 'workExperienceBullet' | 'skill' | 'keyAchievement';
+  itemType: 'tagline' | 'profile' | 'slogan' | 'workExperienceBullet' | 'skill' | 'keyAchievement' | 'keyCompetenceTitle' | 'keyCompetenceDescription' | 'keyCompetence';
   currentValue: string;
   context: {
     companyName?: string;
@@ -136,6 +136,9 @@ export interface RegenerateCVItemParams {
     workExperienceCompany?: string;
     // For skills
     skillCategory?: string;
+    // For key competences
+    competenceTitle?: string;
+    competenceDescription?: string;
   };
   customInstructions?: string;
   modelId?: GeminiModelId;

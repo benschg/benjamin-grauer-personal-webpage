@@ -17,7 +17,7 @@ const CVVersionSelector = () => {
   }
 
   return (
-    <Box sx={{ minWidth: 150 }}>
+    <Box sx={{ minWidth: 120, maxWidth: 200 }}>
       <FormControl size="small" fullWidth>
         <InputLabel id="cv-version-label" sx={{ color: 'white' }}>
           Version

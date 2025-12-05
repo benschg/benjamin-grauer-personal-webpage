@@ -11,6 +11,7 @@ import {
   deleteCVVersion,
   setAsDefault,
   getCVVersion,
+  getAllCVVersions,
 } from '@/services/cv/cvVersion.service';
 import { cvData } from '../data/cvConfig';
 import { sharedProfile } from '@/data/shared-profile';
@@ -87,6 +88,12 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const [isSaving, setIsSaving] = useState(false);
   const [regeneratingItems, setRegeneratingItems] = useState<Set<string>>(new Set());
 
+  // Keep a ref to editedContent for use in callbacks to avoid stale closures
+  const editedContentRef = useRef<CVVersionContent | null>(null);
+  useEffect(() => {
+    editedContentRef.current = editedContent;
+  }, [editedContent]);
+
   // Load version from URL param (public access, no auth required)
   // Only runs once on mount to check for version in URL
   useEffect(() => {
@@ -125,13 +132,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const hasAutoSelectedDefault = useRef(false);
 
   useEffect(() => {
-    // Skip subscription if we're using a URL-specified version
-    // Read from window.location to avoid dependency on searchParams
+    // Check if we have a URL-specified version (for auto-select logic only)
     const currentUrl = new URL(window.location.href);
-    const versionId = currentUrl.searchParams.get('version');
-    if (versionId) {
-      return;
-    }
+    const hasUrlVersion = !!currentUrl.searchParams.get('version');
 
     try {
       const unsubscribe = subscribeToCVVersions((fetchedVersions) => {
@@ -139,7 +142,8 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         setLoading(false);
 
         // Auto-select default version only once on initial load
-        if (!hasAutoSelectedDefault.current && fetchedVersions.length > 0) {
+        // Skip auto-select if we loaded a version from URL
+        if (!hasAutoSelectedDefault.current && !hasUrlVersion && fetchedVersions.length > 0) {
           hasAutoSelectedDefault.current = true;
           const defaultVersion = fetchedVersions.find((v) => v.is_default);
           if (defaultVersion) {
@@ -154,7 +158,7 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       console.warn('Supabase not configured, using static CV content');
       setLoading(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, []); // Only run on mount - subscribes once and manages its own updates
 
   // Sync selected version to URL (for sharing)
@@ -210,6 +214,9 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   const isUsingCustomVersion = !!activeVersion;
 
   const selectVersion = useCallback((id: string | null) => {
+    // Clear URL version when user explicitly selects a different version
+    // This allows switching away from a version loaded via shared link
+    setUrlVersion(null);
     setSelectedVersionId(id);
   }, []);
 
@@ -223,6 +230,11 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         setError(null);
         const id = await createCVVersion({ name, content, job_context: jobContext });
         if (!id) throw new Error('Failed to create version');
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
+
         setSelectedVersionId(id);
         return id;
       } catch (err) {
@@ -239,6 +251,10 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       try {
         setError(null);
         await updateCVVersion(id, updates);
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to update version';
         setError(message);
@@ -253,6 +269,11 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       try {
         setError(null);
         await deleteCVVersion(id);
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
+
         if (selectedVersionId === id) {
           setSelectedVersionId(null);
         }
@@ -269,6 +290,10 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
     try {
       setError(null);
       await setAsDefault(id);
+
+      // Manually refresh versions list in case real-time subscription is delayed
+      const updatedVersions = await getAllCVVersions();
+      setVersions(updatedVersions);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to set default version';
       setError(message);
@@ -294,12 +319,29 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
   }, []);
 
   const saveEdits = useCallback(async (): Promise<void> => {
-    if (!activeVersion || !editedContent) return;
+    // Use ref to get the current edited content to avoid stale closure issues
+    const currentEditedContent = editedContentRef.current;
+    if (!activeVersion || !currentEditedContent) return;
 
     try {
       setIsSaving(true);
       setError(null);
-      await updateCVVersion(activeVersion.id, { content: editedContent });
+      // Merge editedContent with original version content to preserve all fields
+      const mergedContent = {
+        ...activeVersion.content,
+        ...currentEditedContent,
+      };
+      await updateCVVersion(activeVersion.id, { content: mergedContent });
+
+      // If we're editing a URL-loaded version, update the urlVersion state
+      // so the UI reflects the saved changes without needing a page reload
+      if (urlVersion && urlVersion.id === activeVersion.id) {
+        setUrlVersion({
+          ...urlVersion,
+          content: mergedContent,
+        });
+      }
+
       setIsEditing(false);
       setEditedContent(null);
     } catch (err) {
@@ -309,7 +351,7 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
     } finally {
       setIsSaving(false);
     }
-  }, [activeVersion, editedContent]);
+  }, [activeVersion, urlVersion]);
 
   const setRegeneratingItem = useCallback((itemId: string, isRegenerating: boolean) => {
     setRegeneratingItems((prev) => {

@@ -4,6 +4,7 @@ import { useCVVersion } from '../contexts';
 import { regenerateCVItem } from '@/services/ai/gemini.service';
 import EditableText from '../components/EditableText';
 import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
+import { cvData } from '../data/cvConfig';
 
 interface CVProfileProps {
   profile: string;
@@ -12,6 +13,8 @@ interface CVProfileProps {
 const CVProfile = ({ profile }: CVProfileProps) => {
   const { isEditing, updateEditedContent, activeVersion, regeneratingItems, setRegeneratingItem } =
     useCVVersion();
+
+  const defaultProfile = cvData.main.profile;
 
   const handleProfileChange = (newValue: string) => {
     updateEditedContent({ profile: newValue });
@@ -44,6 +47,12 @@ const CVProfile = ({ profile }: CVProfileProps) => {
 
   const canRegenerate = isEditing && activeVersion?.job_context?.companyResearch;
 
+  const handleReset = () => {
+    updateEditedContent({ profile: defaultProfile });
+  };
+
+  const isModified = profile !== defaultProfile;
+
   return (
     <div className="cv-section cv-profile">
       <h2>Profile</h2>
@@ -57,6 +66,8 @@ const CVProfile = ({ profile }: CVProfileProps) => {
         onRegenerate={canRegenerate ? handleRegenerate : undefined}
         isRegenerating={regeneratingItems.has('profile')}
         showCharacterCount={isEditing}
+        onReset={handleReset}
+        isModified={isModified}
       />
     </div>
   );

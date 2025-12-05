@@ -25,10 +25,12 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
-import type { CVVersionContent } from '@/services/cv/cvVersion.types';
+import type { CVVersionContent, MotivationLetter } from '@/services/cv/cvVersion.types';
 import type { CompanyResearch, RegenerateCVItemParams } from '@/services/ai/gemini.service';
 import { regenerateCVItem } from '@/services/ai/gemini.service';
 import type { JobInputData } from './JobPostingInput';
+import MotivationLetterPreview from './MotivationLetterPreview';
+import { sharedProfile } from '@/data/shared-profile';
 
 interface GeneratedContentPreviewProps {
   originalContent: CVVersionContent;
@@ -625,6 +627,19 @@ const GeneratedContentPreview = ({
           label="Education"
           original={originalContent.education || ''}
           field="education"
+        />
+      )}
+
+      <Divider />
+
+      {/* Motivation Letter Section */}
+      {editedContent.motivationLetter && (
+        <MotivationLetterPreview
+          letter={editedContent.motivationLetter}
+          candidateName={sharedProfile.name}
+          onUpdate={(letter: MotivationLetter) =>
+            setEditedContent({ ...editedContent, motivationLetter: letter })
+          }
         />
       )}
 

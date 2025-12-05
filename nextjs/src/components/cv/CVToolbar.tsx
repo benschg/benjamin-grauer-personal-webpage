@@ -53,18 +53,32 @@ import RemoveIcon from '@mui/icons-material/Remove';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import DescriptionIcon from '@mui/icons-material/Description';
+import EmailIcon from '@mui/icons-material/Email';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
-import { CVVersionSelector, CVCustomizationDialog } from './components/admin';
+import { CVVersionSelector, CVCustomizationDialog, LLMInputDataDialog } from './components/admin';
+import type { DocumentTab } from '@/app/working-life/cv/page';
 
 interface CVToolbarProps {
   onPrint: () => void;
   onDownloadPdf?: () => void;
   isDownloading?: boolean;
+  activeTab?: DocumentTab;
+  onTabChange?: (tab: DocumentTab) => void;
+  hasMotivationLetter?: boolean;
 }
 
-const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) => {
+const CVToolbar = ({
+  onPrint,
+  onDownloadPdf,
+  isDownloading,
+  activeTab = 'cv',
+  onTabChange,
+  hasMotivationLetter = false,
+}: CVToolbarProps) => {
   const router = useRouter();
   const {
     theme,
@@ -120,6 +134,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [printWarningOpen, setPrintWarningOpen] = useState(false);
   const [exportDialogOpen, setExportDialogOpen] = useState(false);
+  const [llmInputDataOpen, setLlmInputDataOpen] = useState(false);
 
   const handlePrintClick = () => {
     if (showAttachments) {
@@ -183,34 +198,56 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             Back to Working Life
           </Box>
         </Button>
-        <Box sx={{ textAlign: 'center' }}>
-          <Typography
-            variant="h6"
-            sx={{
-              fontFamily: 'Orbitron',
-              letterSpacing: '0.1em',
-            }}
-          >
-            <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
-              Curriculum Vitae
-            </Box>
-            <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
-              CV
-            </Box>
-          </Typography>
-          {activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) && (
-            <Typography
-              variant="caption"
+        <Box sx={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+          {/* Document tabs - show when motivation letter is available */}
+          {hasMotivationLetter && onTabChange ? (
+            <ToggleButtonGroup
+              value={activeTab}
+              exclusive
+              onChange={(_, newTab) => newTab && onTabChange(newTab)}
+              size="small"
               sx={{
-                color: '#89665d',
-                fontStyle: 'italic',
-                display: 'block',
-                mt: 0.25,
+                mb: 0.5,
+                '& .MuiToggleButton-root': {
+                  color: 'rgba(255,255,255,0.6)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  py: 0.5,
+                  px: { xs: 1, sm: 2 },
+                  fontSize: { xs: '0.7rem', sm: '0.8rem' },
+                  '&.Mui-selected': {
+                    color: 'white',
+                    bgcolor: 'rgba(137, 102, 93, 0.4)',
+                    borderColor: '#89665d',
+                  },
+                  '&:hover': {
+                    bgcolor: 'rgba(137, 102, 93, 0.2)',
+                  },
+                },
               }}
             >
-              {activeVersion.job_context.position && activeVersion.job_context.company
-                ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
-                : activeVersion.job_context.position || activeVersion.job_context.company}
+              <ToggleButton value="cv" aria-label="CV">
+                <DescriptionIcon sx={{ fontSize: '1rem', mr: { xs: 0, sm: 0.5 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>CV</Box>
+              </ToggleButton>
+              <ToggleButton value="motivation-letter" aria-label="Motivation Letter">
+                <EmailIcon sx={{ fontSize: '1rem', mr: { xs: 0, sm: 0.5 } }} />
+                <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>Letter</Box>
+              </ToggleButton>
+            </ToggleButtonGroup>
+          ) : (
+            <Typography
+              variant="h6"
+              sx={{
+                fontFamily: 'Orbitron',
+                letterSpacing: '0.1em',
+              }}
+            >
+              <Box component="span" sx={{ display: { xs: 'none', md: 'inline' } }}>
+                Curriculum Vitae
+              </Box>
+              <Box component="span" sx={{ display: { xs: 'inline', md: 'none' } }}>
+                CV
+              </Box>
             </Typography>
           )}
         </Box>
@@ -219,6 +256,14 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           {isAdmin && (
             <>
               <CVVersionSelector />
+              {/* Show LLM input data button when a custom version is selected */}
+              {activeVersion && activeVersion.job_context && (
+                <Tooltip title="View LLM Input Data">
+                  <IconButton onClick={() => setLlmInputDataOpen(true)} sx={{ color: 'rgba(255,255,255,0.7)', ml: 0.5 }}>
+                    <InfoOutlinedIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
               <Tooltip title="AI Customization">
                 <IconButton onClick={() => setCustomizationOpen(true)} sx={{ color: 'white', ml: 1 }}>
                   <AutoAwesomeIcon />
@@ -280,6 +325,13 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
 
         {/* AI Customization Dialog */}
         <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
+
+        {/* LLM Input Data Dialog */}
+        <LLMInputDataDialog
+          open={llmInputDataOpen}
+          onClose={() => setLlmInputDataOpen(false)}
+          version={activeVersion}
+        />
 
         {/* Print warning when attachments are enabled */}
         <Snackbar
@@ -361,6 +413,9 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           onClose={() => setExportDialogOpen(false)}
           maxWidth="sm"
           fullWidth
+          sx={{
+            zIndex: 10000, // Above the FABs (9999) and SpeedDial
+          }}
           PaperProps={{
             sx: {
               bgcolor: '#343a40',
@@ -377,7 +432,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Typography>
             <List>
               {/* Theme Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 10, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {theme === 'dark' ? (
                     <DarkModeIcon sx={{ color: 'white' }} />
@@ -419,7 +474,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
               {/* Photo Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showPhoto ? (
                     <PersonIcon sx={{ color: 'white' }} />
@@ -453,7 +508,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               {/* Contact Details - only show if logged in */}
               {canShowPrivateInfo ? (
                 <>
-                  <ListItem sx={{ py: 1.5 }}>
+                  <ListItem sx={{ py: 1.5, pr: { xs: 13, sm: 2 } }}>
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       {privacyLevel === 'none' ? (
                         <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
@@ -502,7 +557,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                 </>
               ) : (
                 <>
-                  <ListItem sx={{ py: 1.5, opacity: 0.5 }}>
+                  <ListItem sx={{ py: 1.5, opacity: 0.5, pr: { xs: 2, sm: 2 } }}>
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
                     </ListItemIcon>
@@ -517,7 +572,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               )}
 
               {/* Experience Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showExperience ? (
                     <WorkHistoryIcon sx={{ color: 'white' }} />
@@ -549,7 +604,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
               {/* Attachments Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showAttachments ? (
                     <AttachFileIcon sx={{ color: 'white' }} />

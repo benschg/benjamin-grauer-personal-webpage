@@ -1,8 +1,10 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { TextField, ClickAwayListener, Box, IconButton, CircularProgress, Popover, Button } from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
+import RestoreIcon from '@mui/icons-material/Restore';
+import { Tooltip } from '@mui/material';
 
 interface EditableTextProps {
   value: string;
@@ -16,6 +18,8 @@ interface EditableTextProps {
   onRegenerate?: (customInstructions?: string) => void;
   isRegenerating?: boolean;
   showCharacterCount?: boolean;
+  onReset?: () => void;
+  isModified?: boolean;
 }
 
 const EditableText = ({
@@ -30,29 +34,23 @@ const EditableText = ({
   onRegenerate,
   isRegenerating = false,
   showCharacterCount = false,
+  onReset,
+  isModified = false,
 }: EditableTextProps) => {
-  const [localValue, setLocalValue] = useState(value);
+  // Use fully controlled component - value comes from props, onChange updates parent
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [customInstructions, setCustomInstructions] = useState('');
 
-  // Sync local value with prop
-  useEffect(() => {
-    setLocalValue(value);
-  }, [value]);
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newValue = e.target.value;
     if (maxLength && newValue.length > maxLength) return;
-    setLocalValue(newValue);
+    onChange(newValue);
   };
 
   const handleBlur = () => {
     setIsFocused(false);
-    if (localValue !== value) {
-      onChange(localValue);
-    }
   };
 
   const handleFocus = () => {
@@ -124,7 +122,7 @@ const EditableText = ({
           },
         }}
       >
-        {onRegenerate && (
+        {(onRegenerate || (onReset && isModified)) && (
           <>
             <Box
               sx={{
@@ -132,30 +130,52 @@ const EditableText = ({
                 top: -32,
                 right: 0,
                 zIndex: 1,
+                display: 'flex',
+                gap: 0.5,
               }}
             >
-              <IconButton
-                size="small"
-                onClick={handleRegenerateClick}
-                disabled={isRegenerating}
-                title="Regenerate with AI (with optional prompt)"
-                sx={{
-                  bgcolor: 'primary.main',
-                  color: 'white',
-                  '&:hover': {
-                    bgcolor: 'primary.dark',
-                  },
-                  '&:disabled': {
-                    bgcolor: 'grey.400',
-                  },
-                }}
-              >
-                {isRegenerating ? (
-                  <CircularProgress size={16} sx={{ color: 'white' }} />
-                ) : (
-                  <AutorenewIcon fontSize="small" />
-                )}
-              </IconButton>
+              {onRegenerate && (
+                <Tooltip title="Regenerate with AI" arrow>
+                  <IconButton
+                    size="small"
+                    onClick={handleRegenerateClick}
+                    disabled={isRegenerating}
+                    sx={{
+                      bgcolor: 'primary.main',
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: 'primary.dark',
+                      },
+                      '&:disabled': {
+                        bgcolor: 'grey.400',
+                      },
+                    }}
+                  >
+                    {isRegenerating ? (
+                      <CircularProgress size={16} sx={{ color: 'white' }} />
+                    ) : (
+                      <AutorenewIcon fontSize="small" />
+                    )}
+                  </IconButton>
+                </Tooltip>
+              )}
+              {onReset && isModified && (
+                <Tooltip title="Reset to default" arrow>
+                  <IconButton
+                    size="small"
+                    onClick={onReset}
+                    sx={{
+                      bgcolor: 'rgba(255, 180, 100, 0.9)',
+                      color: 'white',
+                      '&:hover': {
+                        bgcolor: 'rgba(255, 150, 50, 1)',
+                      },
+                    }}
+                  >
+                    <RestoreIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              )}
             </Box>
             <Popover
               open={popoverOpen}
@@ -201,7 +221,7 @@ const EditableText = ({
         )}
         <TextField
           inputRef={inputRef}
-          value={localValue}
+          value={value}
           onChange={handleChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
@@ -213,9 +233,9 @@ const EditableText = ({
           placeholder={placeholder}
           helperText={
             showCharacterCount
-              ? `${localValue.length} characters`
+              ? `${value.length} characters`
               : maxLength
-                ? `${localValue.length}/${maxLength}`
+                ? `${value.length}/${maxLength}`
                 : undefined
           }
           FormHelperTextProps={{

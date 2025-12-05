@@ -15,6 +15,15 @@ export interface CVKeyCompetence {
   description: string; // Brief explanation of the competence
 }
 
+export interface MotivationLetter {
+  subject: string; // Email subject line
+  greeting: string; // e.g., "Dear Hiring Manager,"
+  opening: string; // Opening paragraph
+  body: string; // Main body (2-3 paragraphs)
+  closing: string; // Closing paragraph
+  signoff: string; // e.g., "Best regards,"
+}
+
 export interface CVVersionContent {
   // Header section
   tagline: string;
@@ -35,6 +44,9 @@ export interface CVVersionContent {
 
   // Education summary (optional customization)
   education?: string;
+
+  // Motivation letter for the job application
+  motivationLetter?: MotivationLetter;
 }
 
 export interface CVDataSourceSelection {

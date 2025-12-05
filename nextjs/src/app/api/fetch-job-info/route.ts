@@ -10,6 +10,7 @@ interface JobInfoResponse {
   company: string;
   jobTitle: string;
   companyWebsite?: string;
+  jobPostingText?: string;
 }
 
 const EXTRACT_JOB_INFO_PROMPT = `You are a job posting analyzer. Extract the company name and job title from the following job posting content.
@@ -31,6 +32,78 @@ Respond ONLY with valid JSON, no additional text:
   "companyWebsite": "https://company.com or null if unknown"
 }`;
 
+// Helper to convert HTML to readable text while preserving structure
+function htmlToText(html: string): string {
+  let text = html;
+
+  // Remove script, style, and other non-content tags
+  text = text.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  text = text.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  text = text.replace(/<noscript[^>]*>[\s\S]*?<\/noscript>/gi, '');
+  text = text.replace(/<head[^>]*>[\s\S]*?<\/head>/gi, '');
+  text = text.replace(/<nav[^>]*>[\s\S]*?<\/nav>/gi, '');
+  text = text.replace(/<footer[^>]*>[\s\S]*?<\/footer>/gi, '');
+  text = text.replace(/<header[^>]*>[\s\S]*?<\/header>/gi, '');
+  text = text.replace(/<!--[\s\S]*?-->/g, '');
+
+  // Convert headers to text with line break after
+  text = text.replace(/<h[1-6][^>]*>([\s\S]*?)<\/h[1-6]>/gi, '\n$1\n');
+
+  // Convert paragraphs to single line break
+  text = text.replace(/<\/p>/gi, '\n');
+  text = text.replace(/<p[^>]*>/gi, '');
+
+  // Convert divs - only add break after closing
+  text = text.replace(/<\/div>/gi, '\n');
+  text = text.replace(/<div[^>]*>/gi, '');
+
+  // Convert line breaks
+  text = text.replace(/<br\s*\/?>/gi, '\n');
+
+  // Convert list items to bullet points
+  text = text.replace(/<li[^>]*>/gi, '• ');
+  text = text.replace(/<\/li>/gi, '\n');
+  text = text.replace(/<\/?[uo]l[^>]*>/gi, '');
+
+  // Convert bold/strong to **text**
+  text = text.replace(/<(strong|b)[^>]*>([\s\S]*?)<\/(strong|b)>/gi, '**$2**');
+
+  // Convert italic/em to *text*
+  text = text.replace(/<(em|i)[^>]*>([\s\S]*?)<\/(em|i)>/gi, '*$2*');
+
+  // Remove remaining HTML tags
+  text = text.replace(/<[^>]+>/g, ' ');
+
+  // Decode HTML entities
+  text = text.replace(/&nbsp;/g, ' ');
+  text = text.replace(/&amp;/g, '&');
+  text = text.replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>');
+  text = text.replace(/&quot;/g, '"');
+  text = text.replace(/&#39;/g, "'");
+  text = text.replace(/&rsquo;/g, "'");
+  text = text.replace(/&lsquo;/g, "'");
+  text = text.replace(/&rdquo;/g, '"');
+  text = text.replace(/&ldquo;/g, '"');
+  text = text.replace(/&ndash;/g, '–');
+  text = text.replace(/&mdash;/g, '—');
+  text = text.replace(/&bull;/g, '•');
+  text = text.replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)));
+
+  // Clean up whitespace
+  text = text.replace(/[ \t]+/g, ' '); // Collapse horizontal whitespace to single space
+  text = text.replace(/ \n/g, '\n'); // Remove trailing spaces before newlines
+  text = text.replace(/\n /g, '\n'); // Remove leading spaces after newlines
+  text = text.replace(/\n{2,}/g, '\n'); // Collapse multiple newlines to single
+
+  // Clean up lines - remove empty lines and trim each line
+  const lines = text.split('\n')
+    .map(line => line.trim())
+    .filter(line => line.length > 0);
+
+  return lines.join('\n');
+}
+
 // Helper to fetch web page content
 async function fetchWebPage(url: string): Promise<string> {
   try {
@@ -47,19 +120,8 @@ async function fetchWebPage(url: string): Promise<string> {
 
     const html = await response.text();
 
-    // Basic HTML to text conversion
-    const textContent = html
-      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '')
-      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/&nbsp;/g, ' ')
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#39;/g, "'")
-      .replace(/\s+/g, ' ')
-      .trim();
+    // Convert HTML to readable text with preserved formatting
+    const textContent = htmlToText(html);
 
     // Limit content length for the extraction call (shorter than full CV generation)
     const maxLength = 8000;
@@ -124,7 +186,11 @@ export async function POST(request: Request) {
     const responseText = result.response.text();
     const jobInfo = parseJsonResponse<JobInfoResponse>(responseText);
 
-    return NextResponse.json(jobInfo);
+    // Include the raw page content for the job posting text field
+    return NextResponse.json({
+      ...jobInfo,
+      jobPostingText: pageContent,
+    });
   } catch (error) {
     console.error('Error fetching job info:', error);
 

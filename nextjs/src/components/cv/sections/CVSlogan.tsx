@@ -4,6 +4,7 @@ import { useCVVersion } from '../contexts';
 import { regenerateCVItem } from '@/services/ai/gemini.service';
 import EditableText from '../components/EditableText';
 import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
+import { cvData } from '../data/cvConfig';
 
 interface CVSloganProps {
   slogan: string;
@@ -12,6 +13,8 @@ interface CVSloganProps {
 const CVSlogan = ({ slogan }: CVSloganProps) => {
   const { isEditing, updateEditedContent, activeVersion, regeneratingItems, setRegeneratingItem } =
     useCVVersion();
+
+  const defaultSlogan = cvData.main.slogan;
 
   const handleSloganChange = (newValue: string) => {
     updateEditedContent({ slogan: newValue });
@@ -44,18 +47,27 @@ const CVSlogan = ({ slogan }: CVSloganProps) => {
 
   const canRegenerate = isEditing && activeVersion?.job_context?.companyResearch;
 
+  const handleReset = () => {
+    updateEditedContent({ slogan: defaultSlogan });
+  };
+
+  const isModified = slogan !== defaultSlogan;
+
   return (
     <div className="cv-section cv-slogan">
       <EditableText
         value={slogan}
         onChange={handleSloganChange}
         isEditing={isEditing}
+        multiline
         variant="p"
         className="cv-slogan-text"
         maxLength={CV_CHARACTER_LIMITS.slogan}
         placeholder="Your slogan..."
         onRegenerate={canRegenerate ? handleRegenerate : undefined}
         isRegenerating={regeneratingItems.has('slogan')}
+        onReset={handleReset}
+        isModified={isModified}
       />
     </div>
   );
