@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { CVThemeContext } from './types';
@@ -44,120 +44,104 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
   // Initialize state from URL params
   const [theme, setTheme] = useState<CVTheme>(() => parseThemeParam(searchParams.get('theme')));
   const [showPhoto, setShowPhoto] = useState(() => parseBoolParam(searchParams.get('photo'), true));
-  const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>(() => parsePrivacyParam(searchParams.get('privacy')));
-  const [showExperience, setShowExperience] = useState(() => parseBoolParam(searchParams.get('experience'), true));
-  const [showAttachments, setShowAttachments] = useState(() => parseBoolParam(searchParams.get('attachments'), false));
+  const [privacyLevel, setPrivacyLevel] = useState<PrivacyLevel>(() =>
+    parsePrivacyParam(searchParams.get('privacy'))
+  );
+  const [showExperience, setShowExperience] = useState(() =>
+    parseBoolParam(searchParams.get('experience'), true)
+  );
+  const [showAttachments, setShowAttachments] = useState(() =>
+    parseBoolParam(searchParams.get('attachments'), false)
+  );
   const [zoom, setZoom] = useState(0); // 0 = auto, otherwise manual zoom level
+
+  // Track if this is the initial mount to avoid URL update on first render
+  const isInitialMount = useRef(true);
 
   // Only logged-in users can see private info
   const canShowPrivateInfo = !!user;
 
-  // Update URL when state changes
-  const updateUrl = useCallback(
-    (updates: Record<string, string | null>) => {
-      const params = new URLSearchParams(searchParams.toString());
+  // Sync state to URL via useEffect (avoids setState during render)
+  useEffect(() => {
+    // Skip on initial mount - URL already has the correct values
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
 
-      Object.entries(updates).forEach(([key, value]) => {
-        if (value === null) {
-          params.delete(key);
-        } else {
-          params.set(key, value);
-        }
-      });
+    const params = new URLSearchParams(searchParams.toString());
 
-      const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
-      router.replace(newUrl, { scroll: false });
-    },
-    [searchParams, pathname, router]
-  );
+    // Update each param based on current state (null = use default, omit from URL)
+    if (theme === 'dark') params.delete('theme');
+    else params.set('theme', theme);
+
+    if (showPhoto) params.delete('photo');
+    else params.set('photo', '0');
+
+    if (privacyLevel === 'none') params.delete('privacy');
+    else params.set('privacy', privacyLevel);
+
+    if (showExperience) params.delete('experience');
+    else params.set('experience', '0');
+
+    if (!showAttachments) params.delete('attachments');
+    else params.set('attachments', '1');
+
+    const newUrl = params.toString() ? `${pathname}?${params.toString()}` : pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [theme, showPhoto, privacyLevel, showExperience, showAttachments, pathname, router, searchParams]);
 
   const toggleTheme = useCallback(() => {
-    setTheme((prev) => {
-      const newTheme = prev === 'dark' ? 'light' : 'dark';
-      updateUrl({ theme: newTheme === 'dark' ? null : newTheme }); // dark is default, so omit from URL
-      return newTheme;
-    });
-  }, [updateUrl]);
+    setTheme((prev) => (prev === 'dark' ? 'light' : 'dark'));
+  }, []);
 
   const togglePhoto = useCallback(() => {
-    setShowPhoto((prev) => {
-      const newValue = !prev;
-      updateUrl({ photo: newValue ? null : '0' }); // true is default, so omit from URL
-      return newValue;
-    });
-  }, [updateUrl]);
+    setShowPhoto((prev) => !prev);
+  }, []);
 
   // Cycle through privacy levels: none -> personal -> full -> none
   // Only works if user is logged in
   const cyclePrivacyLevel = useCallback(() => {
     if (!user) return; // Block if not logged in
     setPrivacyLevel((prev) => {
-      let newLevel: PrivacyLevel;
-      if (prev === 'none') newLevel = 'personal';
-      else if (prev === 'personal') newLevel = 'full';
-      else newLevel = 'none';
-      updateUrl({ privacy: newLevel === 'none' ? null : newLevel }); // none is default, so omit from URL
-      return newLevel;
+      if (prev === 'none') return 'personal';
+      if (prev === 'personal') return 'full';
+      return 'none';
     });
-  }, [user, updateUrl]);
+  }, [user]);
 
   const toggleExperience = useCallback(() => {
-    setShowExperience((prev) => {
-      const newValue = !prev;
-      updateUrl({ experience: newValue ? null : '0' }); // true is default, so omit from URL
-      return newValue;
-    });
-  }, [updateUrl]);
+    setShowExperience((prev) => !prev);
+  }, []);
 
   const toggleAttachments = useCallback(() => {
-    setShowAttachments((prev) => {
-      const newValue = !prev;
-      updateUrl({ attachments: newValue ? '1' : null }); // false is default, so omit from URL
-      return newValue;
-    });
-  }, [updateUrl]);
+    setShowAttachments((prev) => !prev);
+  }, []);
 
   // Direct setters for use in export dialog
-  const handleSetTheme = useCallback(
-    (newTheme: CVTheme) => {
-      setTheme(newTheme);
-      updateUrl({ theme: newTheme === 'dark' ? null : newTheme });
-    },
-    [updateUrl]
-  );
+  const handleSetTheme = useCallback((newTheme: CVTheme) => {
+    setTheme(newTheme);
+  }, []);
 
-  const handleSetShowPhoto = useCallback(
-    (show: boolean) => {
-      setShowPhoto(show);
-      updateUrl({ photo: show ? null : '0' });
-    },
-    [updateUrl]
-  );
+  const handleSetShowPhoto = useCallback((show: boolean) => {
+    setShowPhoto(show);
+  }, []);
 
   const handleSetPrivacyLevel = useCallback(
     (level: PrivacyLevel) => {
       if (!user) return; // Block if not logged in
       setPrivacyLevel(level);
-      updateUrl({ privacy: level === 'none' ? null : level });
     },
-    [user, updateUrl]
+    [user]
   );
 
-  const handleSetShowExperience = useCallback(
-    (show: boolean) => {
-      setShowExperience(show);
-      updateUrl({ experience: show ? null : '0' });
-    },
-    [updateUrl]
-  );
+  const handleSetShowExperience = useCallback((show: boolean) => {
+    setShowExperience(show);
+  }, []);
 
-  const handleSetShowAttachments = useCallback(
-    (show: boolean) => {
-      setShowAttachments(show);
-      updateUrl({ attachments: show ? '1' : null });
-    },
-    [updateUrl]
-  );
+  const handleSetShowAttachments = useCallback((show: boolean) => {
+    setShowAttachments(show);
+  }, []);
 
   const zoomIn = useCallback(() => {
     setZoom((prev) => {
