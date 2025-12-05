@@ -37,13 +37,19 @@ interface SkillCategory {
   skills: string[];
 }
 
+interface KeyCompetence {
+  title: string;
+  description: string;
+}
+
 interface GeneratedCVContent {
   tagline: string;
   profile: string;
   slogan?: string;
   workExperience?: WorkExperienceEntry[];
   skills?: SkillCategory[];
-  keyAchievements?: string[];
+  keyCompetences?: KeyCompetence[];
+  keyAchievements?: string[]; // Legacy, kept for backwards compatibility
   education?: string;
 }
 
@@ -150,10 +156,13 @@ Section Requirements:
    - Include 4-8 skills per category
    - Create 3-5 skill categories
 
-6. KEY ACHIEVEMENTS: Select 3-5 top achievements from the profile that are most relevant to the target role:
-   - Make them specific and quantifiable
-   - Focus on impact and results
-   - Align with what the company values
+6. KEY COMPETENCES: Create 3-5 key competences that highlight unique value for the target role:
+   - Each competence needs a SHORT, PUNCHY TITLE (2-4 words max, like "Servant Leadership", "Value-Stream Optimization", "Technical Vision")
+   - Each competence needs a DESCRIPTION (1-2 sentences explaining this competence)
+   - DO NOT just enumerate achievements - create meaningful competence areas
+   - Titles should be professional, memorable, and differentiate the candidate
+   - Descriptions should explain how this competence benefits the company
+   - Align with what the company values and the role requirements
 
 7. EDUCATION: Brief summary of education credentials (1-2 sentences)
 
@@ -176,7 +185,12 @@ Respond with valid JSON only:
       "skills": ["Skill 1", "Skill 2", "Skill 3"]
     }
   ],
-  "keyAchievements": ["Achievement 1", "Achievement 2", "Achievement 3"],
+  "keyCompetences": [
+    {
+      "title": "Short Punchy Title",
+      "description": "Brief description explaining this competence and its value."
+    }
+  ],
   "education": "Education summary"
 }
 

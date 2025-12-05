@@ -139,6 +139,28 @@ const GeneratedContentPreview = ({
     setEditedContent({ ...editedContent, skills });
   };
 
+  // Key Competences helpers (new format with title/description)
+  const updateKeyCompetence = (index: number, field: 'title' | 'description', value: string) => {
+    const keyCompetences = [...(editedContent.keyCompetences || [])];
+    keyCompetences[index] = { ...keyCompetences[index], [field]: value };
+    setEditedContent({ ...editedContent, keyCompetences });
+  };
+
+  const addKeyCompetence = () => {
+    setEditedContent({
+      ...editedContent,
+      keyCompetences: [...(editedContent.keyCompetences || []), { title: '', description: '' }],
+    });
+  };
+
+  const removeKeyCompetence = (index: number) => {
+    setEditedContent({
+      ...editedContent,
+      keyCompetences: (editedContent.keyCompetences || []).filter((_, i) => i !== index),
+    });
+  };
+
+  // Legacy: Key Achievements helpers (deprecated, kept for backwards compatibility)
   const updateKeyAchievement = (index: number, value: string) => {
     const keyAchievements = [...(editedContent.keyAchievements || [])];
     keyAchievements[index] = value;
@@ -454,11 +476,71 @@ const GeneratedContentPreview = ({
         </Box>
       )}
 
-      {/* Key Achievements Section */}
-      {editedContent.keyAchievements && editedContent.keyAchievements.length > 0 && (
+      {/* Key Competences Section (new format with title/description) */}
+      {editedContent.keyCompetences && editedContent.keyCompetences.length > 0 && (
         <Box>
           <Typography variant="h6" gutterBottom>
-            Key Achievements
+            Key Competences
+          </Typography>
+          <List dense>
+            {editedContent.keyCompetences.map((competence, index) => (
+              <ListItem
+                key={index}
+                sx={{ flexDirection: 'column', alignItems: 'stretch' }}
+                secondaryAction={
+                  isEditing && (
+                    <IconButton edge="end" size="small" onClick={() => removeKeyCompetence(index)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  )
+                }
+              >
+                {isEditing ? (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, width: '100%', pr: 5 }}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      label="Title (2-4 words)"
+                      placeholder="e.g., Servant Leadership"
+                      value={competence.title}
+                      onChange={(e) => updateKeyCompetence(index, 'title', e.target.value)}
+                    />
+                    <TextField
+                      fullWidth
+                      multiline
+                      size="small"
+                      label="Description"
+                      placeholder="Brief explanation of this competence..."
+                      value={competence.description}
+                      onChange={(e) => updateKeyCompetence(index, 'description', e.target.value)}
+                    />
+                  </Box>
+                ) : (
+                  <Box>
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      {competence.title}
+                    </Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      {competence.description}
+                    </Typography>
+                  </Box>
+                )}
+              </ListItem>
+            ))}
+          </List>
+          {isEditing && (
+            <Button size="small" startIcon={<AddIcon />} onClick={addKeyCompetence}>
+              Add Competence
+            </Button>
+          )}
+        </Box>
+      )}
+
+      {/* Legacy Key Achievements Section (deprecated, shown for backwards compatibility) */}
+      {editedContent.keyAchievements && editedContent.keyAchievements.length > 0 && !editedContent.keyCompetences?.length && (
+        <Box>
+          <Typography variant="h6" gutterBottom>
+            Key Achievements (Legacy)
           </Typography>
           <List dense>
             {editedContent.keyAchievements.map((achievement, index) => {

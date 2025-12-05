@@ -84,7 +84,11 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
         // Use dynamic profile from version
         return <CVProfile key="profile" profile={activeContent.profile} />;
       case 'usp':
-        // If AI generated key achievements, show those instead of static USP
+        // If AI generated key competences, show those instead of static USP
+        if (activeContent.keyCompetences && activeContent.keyCompetences.length > 0) {
+          return <CVUSP key="usp" data={activeContent.keyCompetences} />;
+        }
+        // Legacy fallback: convert old keyAchievements format
         if (activeContent.keyAchievements && activeContent.keyAchievements.length > 0) {
           const uspFromAchievements = activeContent.keyAchievements.map((achievement, idx) => ({
             title: `Achievement ${idx + 1}`,
