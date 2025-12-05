@@ -27,7 +27,7 @@ interface CompanyResearch {
 }
 
 interface RegenerateItemRequest {
-  itemType: 'tagline' | 'profile' | 'slogan' | 'workExperienceBullet' | 'skill' | 'keyAchievement';
+  itemType: 'tagline' | 'profile' | 'slogan' | 'workExperienceBullet' | 'skill' | 'keyAchievement' | 'keyCompetenceTitle' | 'keyCompetenceDescription' | 'keyCompetence';
   currentValue: string;
   context: {
     companyName?: string;
@@ -39,6 +39,9 @@ interface RegenerateItemRequest {
     workExperienceCompany?: string;
     // For skills
     skillCategory?: string;
+    // For key competences
+    competenceTitle?: string;
+    competenceDescription?: string;
   };
   customInstructions?: string;
   modelId?: string;
@@ -173,6 +176,51 @@ Generate ONE alternative skill that is:
 - Different from the current skill${jobPostingContext}${customInstructionsText}
 
 Respond with ONLY the new skill text, no additional formatting or explanation.`;
+
+    case 'keyCompetenceTitle':
+      return `You are an expert CV writer. Generate a new key competence title for a CV.${companyContext}${researchContext}
+
+Current title: "${currentValue}"
+${context.competenceDescription ? `Current description: "${context.competenceDescription}"` : ''}
+
+Generate ONE alternative key competence title that is:
+- Maximum ${CV_CHARACTER_LIMITS.keyCompetenceTitle} characters
+- Short and punchy (2-4 words)
+- Tailored to the target role${context.companyName ? ' and company' : ''}
+- Professional and impactful
+- Different from the current title${jobPostingContext}${customInstructionsText}
+
+Respond with ONLY the new title text, no additional formatting or explanation.`;
+
+    case 'keyCompetenceDescription':
+      return `You are an expert CV writer. Generate a new key competence description for a CV.${companyContext}${researchContext}
+
+${context.competenceTitle ? `Competence title: "${context.competenceTitle}"` : ''}
+Current description: "${currentValue}"
+
+Generate ONE alternative key competence description that is:
+- Maximum ${CV_CHARACTER_LIMITS.keyCompetenceDescription} characters
+- Brief and impactful explanation of the competence
+- Tailored to the target role${context.companyName ? ' and company' : ''}
+- Different from the current description but maintains the competence theme${jobPostingContext}${customInstructionsText}
+
+Respond with ONLY the new description text, no additional formatting or explanation.`;
+
+    case 'keyCompetence':
+      return `You are an expert CV writer. Generate a new key competence (title and description) for a CV.${companyContext}${researchContext}
+
+Current title: "${context.competenceTitle || currentValue}"
+Current description: "${context.competenceDescription || ''}"
+
+Generate ONE alternative key competence with both title and description that is:
+- Title: Maximum ${CV_CHARACTER_LIMITS.keyCompetenceTitle} characters, short and punchy (2-4 words)
+- Description: Maximum ${CV_CHARACTER_LIMITS.keyCompetenceDescription} characters, brief and impactful
+- Tailored to the target role${context.companyName ? ' and company' : ''}
+- Professional and impactful
+- Different from the current competence but maintains relevance${jobPostingContext}${customInstructionsText}
+
+Respond with ONLY a JSON object in this exact format (no markdown, no code blocks):
+{"title": "New Title", "description": "New description text"}`;
 
     default:
       throw new Error(`Unsupported item type: ${itemType}`);

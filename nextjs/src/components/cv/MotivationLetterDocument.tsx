@@ -4,6 +4,7 @@ import { forwardRef, useRef, useEffect, useCallback } from 'react';
 import { useCVTheme, useCVVersion } from './contexts';
 import { sharedProfile } from '@/data/shared-profile';
 import type { MotivationLetter } from '@/types/database.types';
+import EditableText from './components/EditableText';
 import './styles/cv.css';
 
 interface MotivationLetterDocumentProps {
@@ -13,10 +14,41 @@ interface MotivationLetterDocumentProps {
 const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocumentProps>(
   ({ letter: letterProp }, ref) => {
     const { theme, zoom, privacyLevel, canShowPrivateInfo } = useCVTheme();
-    const { activeContent } = useCVVersion();
+    const { activeContent, activeVersion, isEditing, updateEditedContent } = useCVVersion();
     const containerRef = useRef<HTMLDivElement>(null);
 
     const letter = letterProp || activeContent.motivationLetter;
+
+    // Get the original letter from the version for reset comparison
+    const originalLetter = activeVersion?.content?.motivationLetter;
+
+    // Helper to update a specific letter field
+    const handleLetterFieldChange = (field: keyof MotivationLetter, value: string) => {
+      if (!letter) return;
+      updateEditedContent({
+        motivationLetter: {
+          ...letter,
+          [field]: value,
+        },
+      });
+    };
+
+    // Helper to reset a specific field to original
+    const handleResetField = (field: keyof MotivationLetter) => {
+      if (!letter || !originalLetter) return;
+      updateEditedContent({
+        motivationLetter: {
+          ...letter,
+          [field]: originalLetter[field],
+        },
+      });
+    };
+
+    // Check if a field is modified from original
+    const isFieldModified = (field: keyof MotivationLetter): boolean => {
+      if (!letter || !originalLetter) return false;
+      return letter[field] !== originalLetter[field];
+    };
 
     // Check if content overflows and add red border indicator to the overflowing element
     const checkOverflow = useCallback(() => {
@@ -58,12 +90,6 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
     const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
     const showPersonalInfo = effectivePrivacyLevel !== 'none';
 
-    // Format body paragraphs - split on double newlines
-    const bodyParagraphs = letter.body
-      .split(/\n\n+/)
-      .map((p) => p.trim())
-      .filter((p) => p.length > 0);
-
     const currentDate = new Date().toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -102,23 +128,84 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
               <div className="motivation-letter-date">{currentDate}</div>
 
               {/* Subject line */}
-              <div className="motivation-letter-subject">{letter.subject}</div>
+              <div className="motivation-letter-subject">
+                <EditableText
+                  value={letter.subject}
+                  onChange={(value) => handleLetterFieldChange('subject', value)}
+                  isEditing={isEditing}
+                  variant="span"
+                  placeholder="Subject line..."
+                  onReset={() => handleResetField('subject')}
+                  isModified={isFieldModified('subject')}
+                />
+              </div>
 
               {/* Greeting */}
-              <div className="motivation-letter-greeting">{letter.greeting}</div>
+              <div className="motivation-letter-greeting">
+                <EditableText
+                  value={letter.greeting}
+                  onChange={(value) => handleLetterFieldChange('greeting', value)}
+                  isEditing={isEditing}
+                  variant="span"
+                  placeholder="Dear..."
+                  onReset={() => handleResetField('greeting')}
+                  isModified={isFieldModified('greeting')}
+                />
+              </div>
 
               {/* Body */}
               <div className="motivation-letter-body">
-                <p>{letter.opening}</p>
-                {bodyParagraphs.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ))}
-                <p>{letter.closing}</p>
+                <div className="motivation-letter-opening">
+                  <EditableText
+                    value={letter.opening}
+                    onChange={(value) => handleLetterFieldChange('opening', value)}
+                    isEditing={isEditing}
+                    multiline
+                    variant="p"
+                    placeholder="Opening paragraph..."
+                    onReset={() => handleResetField('opening')}
+                    isModified={isFieldModified('opening')}
+                  />
+                </div>
+                <div className="motivation-letter-main-body">
+                  <EditableText
+                    value={letter.body}
+                    onChange={(value) => handleLetterFieldChange('body', value)}
+                    isEditing={isEditing}
+                    multiline
+                    variant="p"
+                    placeholder="Main body paragraphs..."
+                    onReset={() => handleResetField('body')}
+                    isModified={isFieldModified('body')}
+                  />
+                </div>
+                <div className="motivation-letter-closing-para">
+                  <EditableText
+                    value={letter.closing}
+                    onChange={(value) => handleLetterFieldChange('closing', value)}
+                    isEditing={isEditing}
+                    multiline
+                    variant="p"
+                    placeholder="Closing paragraph..."
+                    onReset={() => handleResetField('closing')}
+                    isModified={isFieldModified('closing')}
+                  />
+                </div>
               </div>
 
               {/* Sign-off */}
               <div className="motivation-letter-signoff">
-                <div className="motivation-letter-signoff-text">{letter.signoff}</div>
+                <div className="motivation-letter-signoff-text">
+                  <EditableText
+                    value={letter.signoff}
+                    onChange={(value) => handleLetterFieldChange('signoff', value)}
+                    isEditing={isEditing}
+                    variant="span"
+                    placeholder="Best regards,"
+                    onReset={() => handleResetField('signoff')}
+                    isModified={isFieldModified('signoff')}
+                  />
+                </div>
                 <div className="motivation-letter-signature">{sharedProfile.name}</div>
               </div>
             </div>
