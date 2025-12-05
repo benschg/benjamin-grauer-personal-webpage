@@ -27,6 +27,7 @@ import {
   Switch,
   ToggleButtonGroup,
   ToggleButton,
+  Fab,
 } from '@mui/material';
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -275,35 +276,6 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Tooltip>
           )}
 
-          {/* Separator */}
-          <Box
-            sx={{
-              width: '1px',
-              height: '24px',
-              backgroundColor: 'rgba(255, 255, 255, 0.3)',
-              mx: 1,
-              display: { xs: 'none', md: 'block' },
-            }}
-          />
-
-          {onDownloadPdf && (
-            <Tooltip title={isDownloading ? 'Generating PDF...' : 'Export PDF'}>
-              <span>
-                <IconButton
-                  onClick={handleExportClick}
-                  disabled={isDownloading}
-                  sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}
-                >
-                  {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-                </IconButton>
-              </span>
-            </Tooltip>
-          )}
-          <Tooltip title="Print">
-            <IconButton onClick={handlePrintClick} sx={{ color: 'white', display: { xs: 'none', md: 'inline-flex' } }}>
-              <PrintIcon />
-            </IconButton>
-          </Tooltip>
         </Box>
 
         {/* AI Customization Dialog */}
@@ -746,17 +718,69 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
         </IconButton>
       </Box>
 
-      {/* Mobile SpeedDial - All Controls */}
+      {/* Floating Export Button - Desktop (bottom right) */}
+      {onDownloadPdf && (
+        <Box
+          className="cv-no-print"
+          sx={{
+            display: { xs: 'none', md: 'block' },
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            zIndex: 9999,
+          }}
+        >
+          <Fab
+            variant="extended"
+            color="primary"
+            onClick={handleExportClick}
+            disabled={isDownloading}
+            sx={{
+              bgcolor: '#89665d',
+              '&:hover': { bgcolor: '#6d524a' },
+              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+              gap: 1,
+            }}
+          >
+            {isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
+            {isDownloading ? 'Generating...' : 'Export PDF'}
+          </Fab>
+        </Box>
+      )}
+
+      {/* Mobile: Export FAB + SpeedDial for other controls */}
       <Box
         className="cv-no-print"
         sx={{
-          display: { xs: 'block', md: 'none' },
+          display: { xs: 'flex', md: 'none' },
           position: 'fixed',
           bottom: '20px',
           right: '20px',
           zIndex: 9999,
+          gap: 1.5,
+          alignItems: 'flex-end',
         }}
       >
+        {/* Export FAB - Always visible on mobile */}
+        {onDownloadPdf && (
+          <Fab
+            variant="extended"
+            size="medium"
+            onClick={handleExportClick}
+            disabled={isDownloading}
+            sx={{
+              bgcolor: '#89665d',
+              color: 'white',
+              '&:hover': { bgcolor: '#6d524a' },
+              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+              gap: 0.5,
+              fontSize: '0.8rem',
+            }}
+          >
+            {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
+            {isDownloading ? 'Generating...' : 'Export PDF'}
+          </Fab>
+        )}
         <SpeedDial
           ariaLabel="CV Controls"
           direction="up"
@@ -779,19 +803,6 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
           tooltipTitle="Print"
           onClick={handlePrintClick}
         />
-
-        {/* Download PDF */}
-        {onDownloadPdf && (
-          <SpeedDialAction
-            icon={isDownloading ? <CircularProgress size={20} color="inherit" /> : <DownloadIcon />}
-            tooltipTitle={isDownloading ? 'Generating...' : 'Export PDF'}
-            onClick={() => {
-              if (!isDownloading) {
-                handleExportClick();
-              }
-            }}
-          />
-        )}
 
         {/* Private Info Toggle - only show when logged in */}
         {canShowPrivateInfo && (
