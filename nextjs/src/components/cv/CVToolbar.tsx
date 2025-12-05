@@ -115,6 +115,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
     cancelEditing,
     saveEdits,
     isSaving,
+    error: versionError,
   } = useCVVersion();
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
@@ -198,7 +199,20 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               CV
             </Box>
           </Typography>
-          {activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) && (
+          {/* Show error message OR position/company context */}
+          {versionError ? (
+            <Typography
+              variant="caption"
+              sx={{
+                color: 'warning.main',
+                fontStyle: 'italic',
+                display: 'block',
+                mt: 0.25,
+              }}
+            >
+              {versionError}
+            </Typography>
+          ) : activeVersion?.job_context && (activeVersion.job_context.company || activeVersion.job_context.position) ? (
             <Typography
               variant="caption"
               sx={{
@@ -212,7 +226,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                 ? `${activeVersion.job_context.position} at ${activeVersion.job_context.company}`
                 : activeVersion.job_context.position || activeVersion.job_context.company}
             </Typography>
-          )}
+          ) : null}
         </Box>
         <Box className="cv-toolbar-actions">
           {/* Admin controls - only show when admin is logged in */}
@@ -377,7 +391,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
             </Typography>
             <List>
               {/* Theme Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 10, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {theme === 'dark' ? (
                     <DarkModeIcon sx={{ color: 'white' }} />
@@ -419,7 +433,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
               {/* Photo Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showPhoto ? (
                     <PersonIcon sx={{ color: 'white' }} />
@@ -453,7 +467,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               {/* Contact Details - only show if logged in */}
               {canShowPrivateInfo ? (
                 <>
-                  <ListItem sx={{ py: 1.5 }}>
+                  <ListItem sx={{ py: 1.5, pr: { xs: 13, sm: 2 } }}>
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       {privacyLevel === 'none' ? (
                         <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
@@ -502,7 +516,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
                 </>
               ) : (
                 <>
-                  <ListItem sx={{ py: 1.5, opacity: 0.5 }}>
+                  <ListItem sx={{ py: 1.5, opacity: 0.5, pr: { xs: 2, sm: 2 } }}>
                     <ListItemIcon sx={{ minWidth: 40 }}>
                       <LockIcon sx={{ color: 'rgba(255,255,255,0.4)' }} />
                     </ListItemIcon>
@@ -517,7 +531,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               )}
 
               {/* Experience Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showExperience ? (
                     <WorkHistoryIcon sx={{ color: 'white' }} />
@@ -549,7 +563,7 @@ const CVToolbar = ({ onPrint, onDownloadPdf, isDownloading }: CVToolbarProps) =>
               <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
 
               {/* Attachments Toggle */}
-              <ListItem sx={{ py: 1.5 }}>
+              <ListItem sx={{ py: 1.5, pr: { xs: 8, sm: 2 } }}>
                 <ListItemIcon sx={{ minWidth: 40 }}>
                   {showAttachments ? (
                     <AttachFileIcon sx={{ color: 'white' }} />
