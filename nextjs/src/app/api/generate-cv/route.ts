@@ -150,7 +150,7 @@ Section Requirements:
 
 1. TAGLINE: Maximum 100 characters, punchy and memorable
 
-2. PROFILE: 150-250 words, compelling narrative that positions the candidate as ideal for this role
+2. PROFILE: 100-170 words, compelling narrative that positions the candidate as ideal for this role (keep it concise and impactful)
 
 3. SLOGAN: Maximum 50 characters (optional, can be empty string)
 
@@ -167,7 +167,7 @@ Section Requirements:
    - Include 4-8 skills per category
    - Create 3-5 skill categories
 
-6. KEY COMPETENCES: Create 3-5 key competences that highlight unique value for the target role:
+6. KEY COMPETENCES: Create exactly 3 key competences that highlight unique value for the target role:
    - Each competence needs a SHORT, PUNCHY TITLE (2-4 words max, like "Servant Leadership", "Value-Stream Optimization", "Technical Vision")
    - Each competence needs a DESCRIPTION (1-2 sentences explaining this competence)
    - DO NOT just enumerate achievements - create meaningful competence areas

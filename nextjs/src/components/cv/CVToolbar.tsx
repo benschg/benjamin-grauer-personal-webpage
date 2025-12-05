@@ -413,6 +413,9 @@ const CVToolbar = ({
           onClose={() => setExportDialogOpen(false)}
           maxWidth="sm"
           fullWidth
+          sx={{
+            zIndex: 10000, // Above the FABs (9999) and SpeedDial
+          }}
           PaperProps={{
             sx: {
               bgcolor: '#343a40',

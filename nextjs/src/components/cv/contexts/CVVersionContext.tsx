@@ -11,6 +11,7 @@ import {
   deleteCVVersion,
   setAsDefault,
   getCVVersion,
+  getAllCVVersions,
 } from '@/services/cv/cvVersion.service';
 import { cvData } from '../data/cvConfig';
 import { sharedProfile } from '@/data/shared-profile';
@@ -229,6 +230,11 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
         setError(null);
         const id = await createCVVersion({ name, content, job_context: jobContext });
         if (!id) throw new Error('Failed to create version');
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
+
         setSelectedVersionId(id);
         return id;
       } catch (err) {
@@ -245,6 +251,10 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       try {
         setError(null);
         await updateCVVersion(id, updates);
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
       } catch (err) {
         const message = err instanceof Error ? err.message : 'Failed to update version';
         setError(message);
@@ -259,6 +269,11 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
       try {
         setError(null);
         await deleteCVVersion(id);
+
+        // Manually refresh versions list in case real-time subscription is delayed
+        const updatedVersions = await getAllCVVersions();
+        setVersions(updatedVersions);
+
         if (selectedVersionId === id) {
           setSelectedVersionId(null);
         }
@@ -275,6 +290,10 @@ export const CVVersionProvider = ({ children }: CVVersionProviderProps) => {
     try {
       setError(null);
       await setAsDefault(id);
+
+      // Manually refresh versions list in case real-time subscription is delayed
+      const updatedVersions = await getAllCVVersions();
+      setVersions(updatedVersions);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to set default version';
       setError(message);
