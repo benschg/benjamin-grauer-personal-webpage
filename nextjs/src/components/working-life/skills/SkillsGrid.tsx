@@ -15,22 +15,22 @@ const SkillsGrid = () => {
       <Grid size={{ xs: 12, md: 12 }}>
         <EnhancedDomainExpertiseCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedSoftSkillsCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedCliftonStrengthsCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedFrameworksAndTechnologiesCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedToolsAndPlatformsCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedProgrammingLanguagesCard />
       </Grid>
-      <Grid size={{ xs: 12, md: 12 }}>
+      <Grid size={{ xs: 12, lg: 6 }}>
         <EnhancedLanguagesCard />
       </Grid>
     </Grid>
