@@ -74,7 +74,7 @@ const ExportOptionsDialog = ({ open, onClose, onConfirm, isDownloading, headerHe
         </Box>
 
         {/* Content */}
-        <Box sx={{ flex: 1, overflow: 'auto', p: 2 }}>
+        <Box sx={{ flex: 1, overflow: 'auto', p: 2, pr: 3 }}>
           <ExportOptionsContent showDescription={false} />
         </Box>
 
