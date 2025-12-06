@@ -9,6 +9,7 @@ const AUTH_REDIRECT_KEY = 'auth_redirect_path';
 interface AuthState {
   user: User | null;
   isAdmin: boolean;
+  isWhitelisted: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -24,12 +25,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({
     user: null,
     isAdmin: false,
+    isWhitelisted: false,
     loading: true,
     error: null,
   });
 
   const supabase = createClient();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const whitelistedEmails = process.env.NEXT_PUBLIC_WHITELISTED_EMAILS?.split(',').map(e => e.trim().toLowerCase()) ?? [];
+
+  const checkWhitelisted = (email: string | undefined): boolean => {
+    if (!email) return false;
+    const lowerEmail = email.toLowerCase();
+    // Admin is always whitelisted
+    if (lowerEmail === adminEmail?.toLowerCase()) return true;
+    return whitelistedEmails.includes(lowerEmail);
+  };
 
   useEffect(() => {
     // Get initial session
@@ -45,6 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setState({
         user,
         isAdmin: user?.email === adminEmail,
+        isWhitelisted: checkWhitelisted(user?.email),
         loading: false,
         error: null,
       });
@@ -59,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setState({
           user,
           isAdmin: user?.email === adminEmail,
+          isWhitelisted: checkWhitelisted(user?.email),
           loading: false,
           error: null,
         });

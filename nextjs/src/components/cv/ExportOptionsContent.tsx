@@ -13,6 +13,7 @@ import {
   Switch,
   ToggleButtonGroup,
   ToggleButton,
+  Tooltip,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
@@ -43,6 +44,7 @@ const ExportOptionsContent = ({ showDescription = true }: ExportOptionsContentPr
     privacyLevel,
     setPrivacyLevel,
     canShowPrivateInfo,
+    canShowReferenceInfo,
     showExperience,
     setShowExperience,
     showAttachments,
@@ -183,9 +185,26 @@ const ExportOptionsContent = ({ showDescription = true }: ExportOptionsContentPr
                   <ToggleButton value="personal" aria-label="personal">
                     <LockOpenIcon fontSize="small" />
                   </ToggleButton>
-                  <ToggleButton value="full" aria-label="full">
-                    <SecurityIcon fontSize="small" />
-                  </ToggleButton>
+                  <Tooltip
+                    title={canShowReferenceInfo ? 'Show reference contacts' : 'You are not allowed to view reference contacts'}
+                    placement="top"
+                  >
+                    <span>
+                      <ToggleButton
+                        value="full"
+                        aria-label="full"
+                        disabled={!canShowReferenceInfo}
+                        sx={{
+                          '&.Mui-disabled': {
+                            color: 'rgba(255,255,255,0.2)',
+                            borderColor: 'rgba(255,255,255,0.1)',
+                          },
+                        }}
+                      >
+                        <SecurityIcon fontSize="small" />
+                      </ToggleButton>
+                    </span>
+                  </Tooltip>
                 </ToggleButtonGroup>
               </Box>
             </Box>

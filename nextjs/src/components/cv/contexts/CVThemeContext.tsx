@@ -5,7 +5,7 @@ import type { ReactNode } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { CVThemeContext } from './types';
 import type { CVTheme, PrivacyLevel } from './types';
-import { useAuth } from '@/contexts';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface CVThemeProviderProps {
   children: ReactNode;
@@ -36,7 +36,7 @@ const parseThemeParam = (value: string | null): CVTheme => {
 };
 
 export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
-  const { user } = useAuth();
+  const { user, isWhitelisted } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -60,6 +60,8 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
 
   // Only logged-in users can see private info
   const canShowPrivateInfo = !!user;
+  // Only whitelisted users can see reference contact details
+  const canShowReferenceInfo = isWhitelisted;
 
   // Sync state to URL via useEffect (avoids setState during render)
   useEffect(() => {
@@ -103,14 +105,15 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
 
   // Cycle through privacy levels: none -> personal -> full -> none
   // Only works if user is logged in
+  // Skip 'full' if not whitelisted
   const cyclePrivacyLevel = useCallback(() => {
     if (!user) return; // Block if not logged in
     setPrivacyLevel((prev) => {
       if (prev === 'none') return 'personal';
-      if (prev === 'personal') return 'full';
+      if (prev === 'personal') return isWhitelisted ? 'full' : 'none';
       return 'none';
     });
-  }, [user]);
+  }, [user, isWhitelisted]);
 
   const toggleExperience = useCallback(() => {
     setShowExperience((prev) => !prev);
@@ -132,9 +135,10 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
   const handleSetPrivacyLevel = useCallback(
     (level: PrivacyLevel) => {
       if (!user) return; // Block if not logged in
+      if (level === 'full' && !isWhitelisted) return; // Block 'full' if not whitelisted
       setPrivacyLevel(level);
     },
-    [user]
+    [user, isWhitelisted]
   );
 
   const handleSetShowExperience = useCallback((show: boolean) => {
@@ -176,6 +180,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
         cyclePrivacyLevel,
         setPrivacyLevel: handleSetPrivacyLevel,
         canShowPrivateInfo,
+        canShowReferenceInfo,
         showExperience,
         toggleExperience,
         setShowExperience: handleSetShowExperience,

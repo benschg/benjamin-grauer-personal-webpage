@@ -16,6 +16,7 @@ export interface CVThemeContextType {
   cyclePrivacyLevel: () => void;
   setPrivacyLevel: (level: PrivacyLevel) => void;
   canShowPrivateInfo: boolean; // true if user is logged in and can toggle privacy
+  canShowReferenceInfo: boolean; // true if user is whitelisted and can see reference contacts
   showExperience: boolean;
   toggleExperience: () => void;
   setShowExperience: (show: boolean) => void;
