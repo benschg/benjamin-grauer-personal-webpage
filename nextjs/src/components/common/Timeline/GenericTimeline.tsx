@@ -9,10 +9,9 @@ import {
   Chip,
   Stack,
   Collapse,
-  FormControl,
-  Select,
-  MenuItem,
   CardMedia,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 import {
   Timeline,
@@ -21,7 +20,6 @@ import {
   TimelineConnector,
   TimelineContent,
   TimelineDot,
-  TimelineOppositeContent,
 } from '@mui/lab';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
@@ -91,10 +89,9 @@ const GenericTimeline = ({
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, x: -30, scale: 0.95 },
+    hidden: { opacity: 0, scale: 0.95 },
     visible: {
       opacity: 1,
-      x: 0,
       scale: 1,
       transition: {
         duration: 0.6,
@@ -116,62 +113,64 @@ const GenericTimeline = ({
         {title}
       </Typography>
 
-      <Box sx={{ mb: 4, maxWidth: 300 }}>
-        <Typography
-          variant="h6"
+      <Box sx={{ mb: 4 }}>
+        <ToggleButtonGroup
+          value={selectedFilter}
+          exclusive
+          onChange={(_, newValue) => {
+            if (newValue !== null) {
+              setSelectedFilter(newValue);
+            }
+          }}
           sx={{
-            fontSize: '1rem',
-            fontWeight: 600,
-            mb: 2,
-            color: 'text.secondary',
+            flexWrap: 'wrap',
+            gap: 1,
+            '& .MuiToggleButtonGroup-grouped': {
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '20px !important',
+              px: 2,
+              py: 0.5,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              '&.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                borderColor: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              },
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            },
           }}
         >
-          Filter by Category:
-        </Typography>
-        <FormControl fullWidth size="small">
-          <Select
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-            sx={{
-              backgroundColor: 'background.paper',
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'divider',
-              },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'primary.main',
-              },
-            }}
-          >
-            {filterOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label} ({option.count})
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          {filterOptions.map((option) => (
+            <ToggleButton key={option.value} value={option.value}>
+              {option.label} ({option.count})
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
       </Box>
 
       <div>
         <Timeline
-          position="alternate"
+          position="right"
           sx={{
-            '@media (max-width: 600px)': {
-              padding: 0,
-              '& .MuiTimelineItem-root': {
-                minHeight: 'auto',
-                flexDirection: 'row !important',
-                '&::before': {
-                  flex: 0,
-                  padding: 0,
-                },
+            padding: 0,
+            '& .MuiTimelineItem-root': {
+              minHeight: 'auto',
+              '&::before': {
+                flex: 0,
+                padding: 0,
               },
-              '& .MuiTimelineOppositeContent-root': {
-                display: 'none',
-              },
-              '& .MuiTimelineContent-root': {
-                paddingLeft: 2,
-                paddingRight: 0,
-              },
+            },
+            '& .MuiTimelineContent-root': {
+              paddingLeft: 2,
+              paddingRight: 0,
             },
           }}
         >
@@ -179,11 +178,6 @@ const GenericTimeline = ({
             const isExpanded = expandedItems.has(event.id);
             return (
               <TimelineItem key={event.id}>
-                <TimelineOppositeContent
-                  sx={{
-                    display: { xs: 'none', sm: 'block' },
-                  }}
-                />
                 <TimelineSeparator>
                   <TimelineDot color={getColor(event.type)} sx={{ cursor: 'pointer' }}>
                     {getIcon(event.type)}
@@ -196,7 +190,7 @@ const GenericTimeline = ({
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    whileHover={{ scale: 1.02, x: 5 }}
+                    whileHover={{ scale: 1.02 }}
                   >
                     <Paper
                       elevation={2}
@@ -322,7 +316,7 @@ const GenericTimeline = ({
                                 sx={{
                                   height: 120,
                                   objectFit: 'contain',
-                                  objectPosition: index % 2 === 0 ? 'left' : 'right',
+                                  objectPosition: 'left',
                                   borderRadius: 1,
                                   backgroundColor: 'transparent',
                                 }}
