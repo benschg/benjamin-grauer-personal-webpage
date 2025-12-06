@@ -28,7 +28,7 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 };
 
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
-  const { theme, showPhoto, privacyLevel, canShowPrivateInfo, showExperience, zoom } = useCVTheme();
+  const { theme, showPhoto, privacyLevel, canShowPrivateInfo, canShowReferenceInfo, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing } = useCVVersion();
 
   // Enforce privacy: only show private info if user is logged in
@@ -114,11 +114,12 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
       case 'domains':
         return <CVDomains key="domains" data={cvData.main.domains} />;
       case 'references':
+        // Only show reference contact details if user is whitelisted AND privacy is 'full'
         return (
           <CVReferences
             key="references"
             data={cvData.main.references}
-            showPrivateInfo={effectivePrivacyLevel === 'full'}
+            showPrivateInfo={effectivePrivacyLevel === 'full' && canShowReferenceInfo}
           />
         );
       default:

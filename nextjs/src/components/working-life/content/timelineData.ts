@@ -13,6 +13,41 @@ export interface TimelineEvent {
 
 export const timelineEvents: TimelineEvent[] = [
   {
+    id: "2025-mosaic-studio",
+    year: "2025",
+    title: "AI Mosaic Studio",
+    company: "Personal Project",
+    description:
+      "AI-powered mosaic creation tool for generating artistic mosaic images from photos. Web-based application that transforms regular photos into beautiful mosaic artworks using artificial intelligence.",
+    type: "project",
+    skills: ["AI/ML", "Web Technologies", "Image Processing", "React"],
+    achievements: [
+      "AI-powered image processing",
+      "Intuitive web interface",
+      "Real-time mosaic generation",
+    ],
+    image: "/portfolio/projects/mosaic-studio.png",
+  },
+  {
+    id: "2025-docugap",
+    year: "2025",
+    title: "Docugap - AI Document Comparison Platform",
+    company: "RegAffinity GmbH",
+    description:
+      "Full-stack development of an AI-powered document comparison platform. Built the entire frontend and backend infrastructure enabling smart change detection, dual viewing modes (side-by-side and redline), and export capabilities. The platform helps professionals save hours by automating document comparison tasks.",
+    shortDescription:
+      "Built full-stack infrastructure for AI document comparison platform with smart change detection and dual viewing modes.",
+    type: "project",
+    skills: ["Next.js", "TRPC", "TypeScript", "Full-Stack Development", "API Design"],
+    achievements: [
+      "Developed complete frontend and backend architecture",
+      "Implemented dual viewing modes (side-by-side and redline)",
+      "Built export and delegation workflow features",
+      "Integrated with AI processing pipeline",
+    ],
+    image: "/working-life/docugap-app-screenshot.png",
+  },
+  {
     id: "2023-verity",
     year: "2023-2025",
     title: "Head of Applications and Frameworks",
@@ -39,7 +74,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Redefined UX standards with engaging 3D visualizations improving the ease of use of the system",
       "Transformed stack of 30 CLI and mixed technology tools into one intuitive single page web application",
     ],
-    image: "/working-life/verity-1024x496.webp",
+    image: "/working-life/verity-drone.png",
   },
   {
     id: "2021-9tlabs",
@@ -68,7 +103,29 @@ export const timelineEvents: TimelineEvent[] = [
       "Managed IT infrastructure and SAAS integrations",
       "Coached young developers in software engineering best practices",
     ],
-    image: "/working-life/9TLabs_logo-white2x.png",
+    image: "/working-life/9tlabs-products.png",
+  },
+  {
+    id: "2020-3d-animations",
+    year: "2020-2025",
+    title: "3D Animations YouTube Channel",
+    company: "Personal Project",
+    description:
+      "YouTube channel showcasing experimental 3D animations and simulations created with Blender. Features fluid simulations, particle systems, and experimental visual effects.",
+    type: "project",
+    skills: [
+      "Blender",
+      "3D Animation",
+      "Fluid Simulation",
+      "Particle Systems",
+      "Visual Effects",
+    ],
+    achievements: [
+      "Multiple fluid simulation projects",
+      "Abstract and experimental animations",
+      "Technical skill demonstrations",
+    ],
+    image: "/portfolio/projects/3d-animations.png",
   },
   {
     id: "2019-shiftup",
@@ -89,6 +146,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Business agility knowledge",
       "Innovation leadership skills",
     ],
+    image: "/working-life/3s-book-illustrations-10stages-diagram-English.webp",
   },
   {
     id: "2017-head-data",
@@ -117,6 +175,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Enabled remote management of global simulator fleet",
       "All standard products now communicate with cloud",
     ],
+    image: "/working-life/VirtaMed-Connect-Icon_medium1024.webp",
   },
   {
     id: "2017-ireb",
@@ -136,6 +195,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Requirements engineering expertise",
       "Systematic specification approach",
     ],
+    image: "/working-life/IREB-1.png",
   },
   {
     id: "2016-father",
@@ -275,6 +335,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Crafted first UI using Qt and later WPF",
       "Defined coding guidelines for C++, C#, and Python",
     ],
+    image: "/portfolio/projects/virtamed-simulator.webp",
   },
   {
     id: "2007-masters-thesis",
@@ -339,22 +400,25 @@ export const timelineEvents: TimelineEvent[] = [
   },
   {
     id: "2004-orxonox",
-    year: "2004",
-    title: 'Inventor/Lead of Open Source Project "Orxonox"',
+    year: "2004-2012",
+    title: "Orxonox - Open Source 3D Game",
     company: "ETH Zürich",
     description:
-      "Developed learning platform for electrical engineers. Founded and led open-source 3D game engine development.",
+      "Co-founded and led development of an open-source 3D space shooter game. Started as a university project, evolved into a full-featured game engine. Led a team of 30+ contributors over multiple years, implementing core engine systems and gameplay mechanics.",
     type: "project",
     skills: [
-      "Open Source Development",
-      "3D Engine Development",
-      "Educational Platforms",
-      "Project Leadership",
+      "C++",
+      "OpenGL",
+      "Lua",
+      "Ogre3D",
+      "Bullet Physics",
+      "Open Source Leadership",
     ],
     achievements: [
-      "Created educational platform",
-      "Led open-source community",
-      "Innovative learning tools",
+      "Led team of 30+ contributors",
+      "Won ETH Game Programming Lab award",
+      "50,000+ lines of code",
+      "Custom game engine with multiplayer",
     ],
     image: "/working-life/orxonoxfighter-inside-small.jpg",
   },

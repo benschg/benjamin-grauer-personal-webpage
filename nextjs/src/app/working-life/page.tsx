@@ -2,7 +2,7 @@
 
 import { Container, Box } from '@mui/material';
 import { motion } from 'framer-motion';
-import { Header, Footer } from '@/components/common';
+import { Header, Footer, TableOfContents } from '@/components/common';
 import {
   ProfessionalHero,
   DocumentsSection,
@@ -16,6 +16,18 @@ import {
 } from '@/components/working-life';
 
 export default function WorkingLife() {
+  const tocItems = [
+    { id: 'hero', title: 'About Me', level: 1 },
+    { id: 'documents', title: 'Documents', level: 1 },
+    { id: 'impact', title: 'My Impact', level: 1 },
+    { id: 'skills', title: 'Skills & Expertise', level: 1 },
+    { id: 'portfolio-reference', title: 'See My Work', level: 1 },
+    { id: 'timeline', title: 'Career Timeline', level: 1 },
+    { id: 'recommendations', title: 'Recommendations', level: 1 },
+    { id: 'aspirations', title: 'Career Aspirations', level: 1 },
+    { id: 'personal-life-reference', title: 'Beyond Work', level: 1 },
+  ];
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -40,6 +52,7 @@ export default function WorkingLife() {
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <Header />
+      <TableOfContents items={tocItems} />
       <Box component="main" sx={{ flexGrow: 1 }}>
         <Box
           sx={{
@@ -80,6 +93,7 @@ export default function WorkingLife() {
           }}
         >
           <motion.div
+            id="hero"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}

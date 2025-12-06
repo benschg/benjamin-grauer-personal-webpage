@@ -85,6 +85,7 @@ const CVToolbar = ({
     cyclePrivacyLevel,
     setPrivacyLevel,
     canShowPrivateInfo,
+    canShowReferenceInfo,
     showExperience,
     toggleExperience,
     setShowExperience,
@@ -106,7 +107,9 @@ const CVToolbar = ({
 
   const getPrivacyTooltip = () => {
     if (privacyLevel === 'none') return 'Show Personal Contact Info';
-    if (privacyLevel === 'personal') return 'Show All (incl. Reference Contacts)';
+    if (privacyLevel === 'personal') {
+      return canShowReferenceInfo ? 'Show All (incl. Reference Contacts)' : 'Hide Private Info';
+    }
     return 'Hide Private Info';
   };
 

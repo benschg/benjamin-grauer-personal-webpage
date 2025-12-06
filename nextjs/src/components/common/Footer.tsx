@@ -1,6 +1,7 @@
 'use client';
 
-import { Box, Container, Grid, Typography, Divider } from '@mui/material';
+import { Box, Container, Grid, Typography, Divider, Link as MuiLink } from '@mui/material';
+import Link from 'next/link';
 import { SocialLinksGroup, socialLinks, fitnessLinks } from '../social';
 import { sharedProfile } from '../../data/shared-profile';
 
@@ -88,6 +89,21 @@ const Footer = () => {
           >
             © 2025 Benjamin Grauer. All rights reserved.
           </Typography>
+          <MuiLink
+            component={Link}
+            href="/privacy-policy"
+            sx={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: '0.8rem',
+              textDecoration: 'none',
+              '&:hover': {
+                color: 'white',
+                textDecoration: 'underline',
+              },
+            }}
+          >
+            Privacy Policy
+          </MuiLink>
         </Box>
       </Container>
     </Box>

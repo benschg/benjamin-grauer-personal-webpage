@@ -9,10 +9,9 @@ import {
   Chip,
   Stack,
   Collapse,
-  FormControl,
-  Select,
-  MenuItem,
   CardMedia,
+  ToggleButton,
+  ToggleButtonGroup,
 } from '@mui/material';
 import {
   Timeline,
@@ -21,7 +20,6 @@ import {
   TimelineConnector,
   TimelineContent,
   TimelineDot,
-  TimelineOppositeContent,
 } from '@mui/lab';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
@@ -91,10 +89,9 @@ const GenericTimeline = ({
   };
 
   const cardVariants = {
-    hidden: { opacity: 0, x: -30, scale: 0.95 },
+    hidden: { opacity: 0, scale: 0.95 },
     visible: {
       opacity: 1,
-      x: 0,
       scale: 1,
       transition: {
         duration: 0.6,
@@ -116,62 +113,64 @@ const GenericTimeline = ({
         {title}
       </Typography>
 
-      <Box sx={{ mb: 4, maxWidth: 300 }}>
-        <Typography
-          variant="h6"
+      <Box sx={{ mb: 4 }}>
+        <ToggleButtonGroup
+          value={selectedFilter}
+          exclusive
+          onChange={(_, newValue) => {
+            if (newValue !== null) {
+              setSelectedFilter(newValue);
+            }
+          }}
           sx={{
-            fontSize: '1rem',
-            fontWeight: 600,
-            mb: 2,
-            color: 'text.secondary',
+            flexWrap: 'wrap',
+            gap: 1,
+            '& .MuiToggleButtonGroup-grouped': {
+              border: '1px solid',
+              borderColor: 'divider',
+              borderRadius: '20px !important',
+              px: 2,
+              py: 0.5,
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 500,
+              '&.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                borderColor: 'primary.main',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                },
+              },
+              '&:hover': {
+                backgroundColor: 'action.hover',
+              },
+            },
           }}
         >
-          Filter by Category:
-        </Typography>
-        <FormControl fullWidth size="small">
-          <Select
-            value={selectedFilter}
-            onChange={(e) => setSelectedFilter(e.target.value)}
-            sx={{
-              backgroundColor: 'background.paper',
-              '& .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'divider',
-              },
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'primary.main',
-              },
-            }}
-          >
-            {filterOptions.map((option) => (
-              <MenuItem key={option.value} value={option.value}>
-                {option.label} ({option.count})
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+          {filterOptions.map((option) => (
+            <ToggleButton key={option.value} value={option.value}>
+              {option.label} ({option.count})
+            </ToggleButton>
+          ))}
+        </ToggleButtonGroup>
       </Box>
 
       <div>
         <Timeline
-          position="alternate"
+          position="right"
           sx={{
-            '@media (max-width: 600px)': {
-              padding: 0,
-              '& .MuiTimelineItem-root': {
-                minHeight: 'auto',
-                flexDirection: 'row !important',
-                '&::before': {
-                  flex: 0,
-                  padding: 0,
-                },
+            padding: 0,
+            '& .MuiTimelineItem-root': {
+              minHeight: 'auto',
+              '&::before': {
+                flex: 0,
+                padding: 0,
               },
-              '& .MuiTimelineOppositeContent-root': {
-                display: 'none',
-              },
-              '& .MuiTimelineContent-root': {
-                paddingLeft: 2,
-                paddingRight: 0,
-              },
+            },
+            '& .MuiTimelineContent-root': {
+              paddingLeft: 2,
+              paddingRight: 0,
             },
           }}
         >
@@ -179,11 +178,6 @@ const GenericTimeline = ({
             const isExpanded = expandedItems.has(event.id);
             return (
               <TimelineItem key={event.id}>
-                <TimelineOppositeContent
-                  sx={{
-                    display: { xs: 'none', sm: 'block' },
-                  }}
-                />
                 <TimelineSeparator>
                   <TimelineDot color={getColor(event.type)} sx={{ cursor: 'pointer' }}>
                     {getIcon(event.type)}
@@ -196,7 +190,7 @@ const GenericTimeline = ({
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, amount: 0.3 }}
-                    whileHover={{ scale: 1.02, x: 5 }}
+                    whileHover={{ scale: 1.02 }}
                   >
                     <Paper
                       elevation={2}
@@ -217,112 +211,136 @@ const GenericTimeline = ({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'flex-start',
+                          gap: 2,
+                          flexDirection: { xs: 'column', sm: 'row' },
                         }}
                       >
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontSize: '0.9rem',
-                              fontWeight: 600,
-                              color: 'primary.main',
-                            }}
-                          >
-                            {event.year}
-                          </Typography>
-                          <Typography
-                            variant="h5"
-                            sx={{
-                              fontSize: '1.1rem',
-                              fontWeight: 700,
-                              mb: 0.5,
-                              color: 'text.primary',
-                            }}
-                          >
-                            {event.title}
-                          </Typography>
-                          {showCompany && event.company && (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexGrow: 1,
+                            minWidth: 0,
+                            gap: 2,
+                            width: '100%',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                          }}
+                        >
+                          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                             <Typography
-                              variant="subtitle1"
+                              variant="h6"
                               sx={{
                                 fontSize: '0.9rem',
                                 fontWeight: 600,
-                                mb: 1,
-                                color: 'text.secondary',
-                              }}
-                            >
-                              {event.company}
-                            </Typography>
-                          )}
-                          {event.location && (
-                            <Typography
-                              variant="subtitle1"
-                              sx={{
-                                fontSize: '0.9rem',
-                                fontWeight: 600,
-                                mb: 1,
-                                color: 'text.secondary',
-                              }}
-                            >
-                              {event.location}
-                            </Typography>
-                          )}
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              color: 'text.secondary',
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {event.description}
-                          </Typography>
-
-                          {showDistance && event.distance && (
-                            <Typography
-                              variant="body2"
-                              sx={{
                                 color: 'primary.main',
-                                fontWeight: 600,
-                                mt: 1,
                               }}
                             >
-                              Distance: {event.distance}
+                              {event.year}
                             </Typography>
-                          )}
-                          {showTime && event.time && (
+                            <Typography
+                              variant="h5"
+                              sx={{
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                                mb: 0.5,
+                                color: 'text.primary',
+                              }}
+                            >
+                              {event.title}
+                            </Typography>
+                            {showCompany && event.company && (
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontSize: '0.9rem',
+                                  fontWeight: 600,
+                                  mb: 1,
+                                  color: 'text.secondary',
+                                }}
+                              >
+                                {event.company}
+                              </Typography>
+                            )}
+                            {event.location && (
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontSize: '0.9rem',
+                                  fontWeight: 600,
+                                  mb: 1,
+                                  color: 'text.secondary',
+                                }}
+                              >
+                                {event.location}
+                              </Typography>
+                            )}
                             <Typography
                               variant="body2"
                               sx={{
-                                color: 'primary.main',
-                                fontWeight: 600,
-                                mt: 0.5,
+                                color: 'text.secondary',
+                                lineHeight: 1.5,
                               }}
                             >
-                              Time: {event.time}
+                              {event.description}
                             </Typography>
-                          )}
-                          {showAchievement && event.achievement && (
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color: 'success.main',
-                                fontWeight: 600,
-                                mt: 1,
-                                fontStyle: 'italic',
-                              }}
-                            >
-                              {event.achievement}
-                            </Typography>
-                          )}
 
+                            {showDistance && event.distance && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'primary.main',
+                                  fontWeight: 600,
+                                  mt: 1,
+                                }}
+                              >
+                                Distance: {event.distance}
+                              </Typography>
+                            )}
+                            {showTime && event.time && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'primary.main',
+                                  fontWeight: 600,
+                                  mt: 0.5,
+                                }}
+                              >
+                                Time: {event.time}
+                              </Typography>
+                            )}
+                            {showAchievement && event.achievement && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'success.main',
+                                  fontWeight: 600,
+                                  mt: 1,
+                                  fontStyle: 'italic',
+                                }}
+                              >
+                                {event.achievement}
+                              </Typography>
+                            )}
+                          </Box>
                           {event.image && (
-                            <Box sx={{ mt: 2 }}>
+                            <Box
+                              sx={{
+                                flexShrink: 0,
+                                width: { xs: '100%', sm: 140, md: 180 },
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: { xs: 'flex-start', sm: 'center' },
+                                order: { xs: 1, sm: 0 },
+                                mt: { xs: 2, sm: 0 },
+                              }}
+                            >
                               <CardMedia
                                 component="img"
                                 sx={{
-                                  height: 120,
+                                  width: { xs: 'auto', sm: '100%' },
+                                  maxWidth: { xs: 220, sm: '100%' },
+                                  height: 'auto',
+                                  maxHeight: 140,
                                   objectFit: 'contain',
-                                  objectPosition: index % 2 === 0 ? 'left' : 'right',
                                   borderRadius: 1,
                                   backgroundColor: 'transparent',
                                 }}
@@ -332,7 +350,9 @@ const GenericTimeline = ({
                             </Box>
                           )}
                         </Box>
-                        <Box sx={{ ml: 1 }}>{isExpanded ? <ExpandLess /> : <ExpandMore />}</Box>
+                        <Box sx={{ flexShrink: 0, alignSelf: { xs: 'flex-end', sm: 'flex-start' } }}>
+                          {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                        </Box>
                       </Box>
 
                       <Collapse in={isExpanded} timeout="auto" unmountOnExit>
