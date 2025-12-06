@@ -3,6 +3,7 @@ import { Orbitron, Quicksand } from 'next/font/google';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { ThemeProvider } from '@/theme';
 import { AuthProvider } from '@/contexts';
+import { ClientProviders } from '@/components/common';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
@@ -34,7 +35,9 @@ export default function RootLayout({
       <body className={`${orbitron.variable} ${quicksand.variable}`}>
         <AppRouterCacheProvider>
           <ThemeProvider>
-            <AuthProvider>{children}</AuthProvider>
+            <AuthProvider>
+              <ClientProviders>{children}</ClientProviders>
+            </AuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
         <Analytics />
