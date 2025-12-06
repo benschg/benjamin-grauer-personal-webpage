@@ -195,6 +195,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Requirements engineering expertise",
       "Systematic specification approach",
     ],
+    image: "/IREB-1.png",
   },
   {
     id: "2016-father",
