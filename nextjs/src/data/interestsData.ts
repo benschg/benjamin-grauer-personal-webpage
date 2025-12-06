@@ -38,7 +38,7 @@ export const interests: Interest[] = [
     description:
       'Being a devoted husband and father is my top priority. Family time creates the foundation for everything else in life.',
     icon: FamilyRestroom,
-    image: '/personal-life/interest-family.webp',
+    image: '/personal-life/interest-family.jpg',
   },
   {
     id: 'winter-swimming',
@@ -54,9 +54,7 @@ export const interests: Interest[] = [
     description:
       'Triathlon is a vent for me. Doing a tough training in the morning is probably the best way to start my day.',
     icon: DirectionsRun,
-    image: '/personal-life/interest-triathlon.webp',
-    quote:
-      'Triathlon is a vent for me. Doing a tough training in the morning is probably the best way to start my day.',
+    image: '/personal-life/sports-inferno-triathlon.webp',
   },
   {
     id: '3d-design',

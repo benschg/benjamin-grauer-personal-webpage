@@ -20,7 +20,7 @@ const PersonalHero = () => {
           left: 0,
           right: 0,
           bottom: 0,
-          backgroundImage: `url('/personal-life/hero-background.webp')`,
+          backgroundImage: `url('/personal-life/hero-background-ai.png')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           opacity: 0.2,
@@ -114,6 +114,19 @@ const PersonalHero = () => {
           </Grid>
         </Grid>
       </Container>
+      <Typography
+        variant="caption"
+        sx={{
+          position: 'absolute',
+          bottom: 4,
+          right: 8,
+          fontSize: '0.6rem',
+          opacity: 0.5,
+          zIndex: 1,
+        }}
+      >
+        Background image AI-enhanced
+      </Typography>
     </Box>
   );
 };

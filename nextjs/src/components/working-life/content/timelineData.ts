@@ -45,7 +45,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Built export and delegation workflow features",
       "Integrated with AI processing pipeline",
     ],
-    image: "/docugap-app-screenshot.png",
+    image: "/working-life/docugap-app-screenshot.png",
   },
   {
     id: "2023-verity",
@@ -74,7 +74,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Redefined UX standards with engaging 3D visualizations improving the ease of use of the system",
       "Transformed stack of 30 CLI and mixed technology tools into one intuitive single page web application",
     ],
-    image: "/verity-drone.png",
+    image: "/working-life/verity-drone.png",
   },
   {
     id: "2021-9tlabs",
@@ -103,7 +103,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Managed IT infrastructure and SAAS integrations",
       "Coached young developers in software engineering best practices",
     ],
-    image: "/9tlabs-products.png",
+    image: "/working-life/9tlabs-products.png",
   },
   {
     id: "2020-3d-animations",
@@ -146,7 +146,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Business agility knowledge",
       "Innovation leadership skills",
     ],
-    image: "/3s-book-illustrations-10stages-diagram-English.webp",
+    image: "/working-life/3s-book-illustrations-10stages-diagram-English.webp",
   },
   {
     id: "2017-head-data",
@@ -175,7 +175,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Enabled remote management of global simulator fleet",
       "All standard products now communicate with cloud",
     ],
-    image: "/VirtaMed-Connect-Icon_medium1024.webp",
+    image: "/working-life/VirtaMed-Connect-Icon_medium1024.webp",
   },
   {
     id: "2017-ireb",
@@ -195,7 +195,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Requirements engineering expertise",
       "Systematic specification approach",
     ],
-    image: "/IREB-1.png",
+    image: "/working-life/IREB-1.png",
   },
   {
     id: "2016-father",

@@ -271,7 +271,7 @@ export const portfolioProjects: Project[] = [
       'Integration with AI processing pipeline',
       'Professional export and delegation features',
     ],
-    teamSize: 3,
+    teamSize: 4,
     impact: 'Enables professionals to save hours by automating document comparison workflows',
     featured: true,
   },
