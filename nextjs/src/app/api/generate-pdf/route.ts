@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
 import { PDFDocument } from 'pdf-lib';
 import { createClient } from '@/lib/supabase/server';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  getRateLimitHeaders,
+  PDF_RATE_LIMIT,
+} from '@/lib/rate-limiter';
 
 interface PdfGenerationRequest {
   html: string;
@@ -153,6 +159,24 @@ function fixSvgIcons(html: string, theme: 'dark' | 'light'): string {
 }
 
 export async function POST(request: Request) {
+  // Check rate limit first
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = checkRateLimit(clientId, PDF_RATE_LIMIT);
+  const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
+
+  if (!rateLimitResult.allowed) {
+    const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
+    return NextResponse.json(
+      {
+        error: `Rate limit exceeded. You can generate ${PDF_RATE_LIMIT.maxRequests} PDFs per hour. Please try again in ${resetMinutes} minute${resetMinutes !== 1 ? 's' : ''}.`,
+      },
+      {
+        status: 429,
+        headers: rateLimitHeaders,
+      }
+    );
+  }
+
   try {
     const params: PdfGenerationRequest = await request.json();
 
@@ -425,6 +449,7 @@ export async function POST(request: Request) {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${params.filename || 'Benjamin_Grauer_CV.pdf'}"`,
+        ...rateLimitHeaders,
       },
     });
   } catch (error) {
