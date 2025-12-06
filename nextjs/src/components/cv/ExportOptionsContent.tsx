@@ -15,6 +15,7 @@ import {
   ToggleButton,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import PersonIcon from '@mui/icons-material/Person';
@@ -74,7 +75,7 @@ const ExportOptionsContent = ({ showDescription = true }: ExportOptionsContentPr
           </ListItemIcon>
           <ListItemText
             primary="Theme"
-            secondary={theme === 'dark' ? 'Dark mode' : 'Light mode'}
+            secondary={theme === 'dark' ? 'Dark mode' : 'Light mode (print)'}
             secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
           />
           <ListItemSecondaryAction sx={{ right: 0 }}>
@@ -249,8 +250,8 @@ const ExportOptionsContent = ({ showDescription = true }: ExportOptionsContentPr
           </ListItemIcon>
           <ListItemText
             primary="Attachments"
-            secondary={showAttachments ? 'Certificates & References PDFs appended' : 'CV only (no attachments)'}
-            secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)' } }}
+            secondary={showAttachments ? 'References & Certificates\nPDFs appended' : 'CV only (no attachments)'}
+            secondaryTypographyProps={{ sx: { color: 'rgba(255,255,255,0.7)', whiteSpace: 'pre-line' } }}
           />
           <ListItemSecondaryAction sx={{ right: 0 }}>
             <Switch
@@ -269,46 +270,110 @@ const ExportOptionsContent = ({ showDescription = true }: ExportOptionsContentPr
           </ListItemSecondaryAction>
         </ListItem>
 
-        {/* Direct download links for attachments */}
-        <Box sx={{ py: 1.5, display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-          <Button
-            size="small"
-            variant="outlined"
-            href={CERTIFICATES_PDF_PATH}
-            target="_blank"
-            rel="noopener noreferrer"
-            startIcon={<DownloadIcon />}
-            sx={{
-              color: 'rgba(255,255,255,0.7)',
-              borderColor: 'rgba(255,255,255,0.2)',
-              fontSize: '0.75rem',
-              '&:hover': {
-                borderColor: 'rgba(255,255,255,0.4)',
-                bgcolor: 'rgba(255,255,255,0.05)',
-              },
-            }}
-          >
-            Certificates
-          </Button>
-          <Button
-            size="small"
-            variant="outlined"
-            href={REFERENCES_PDF_PATH}
-            target="_blank"
-            rel="noopener noreferrer"
-            startIcon={<DownloadIcon />}
-            sx={{
-              color: 'rgba(255,255,255,0.7)',
-              borderColor: 'rgba(255,255,255,0.2)',
-              fontSize: '0.75rem',
-              '&:hover': {
-                borderColor: 'rgba(255,255,255,0.4)',
-                bgcolor: 'rgba(255,255,255,0.05)',
-              },
-            }}
-          >
-            References
-          </Button>
+        {/* Attached Documents section */}
+        <Box sx={{ py: 1.5, display: 'flex', flexDirection: 'column', gap: 1.5 }}>
+          <Box>
+            <Typography variant="body2" sx={{ fontWeight: 500, mb: 0.5 }}>
+              Attached Documents
+            </Typography>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mb: 1.5 }}>
+              These documents will be appended to the PDF when downloading.
+            </Typography>
+          </Box>
+          {/* References */}
+          <Box>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', mb: 0.5, display: 'block' }}>
+              References
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                size="small"
+                variant="outlined"
+                href={REFERENCES_PDF_PATH}
+                target="_blank"
+                rel="noopener noreferrer"
+                startIcon={<OpenInNewIcon />}
+                sx={{
+                  flex: 1,
+                  color: 'rgba(255,255,255,0.7)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  fontSize: '0.75rem',
+                  '&:hover': {
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    bgcolor: 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
+                View
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                href={REFERENCES_PDF_PATH}
+                download="Benjamin_Grauer_References.pdf"
+                startIcon={<DownloadIcon />}
+                sx={{
+                  flex: 1,
+                  color: 'rgba(255,255,255,0.7)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  fontSize: '0.75rem',
+                  '&:hover': {
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    bgcolor: 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
+                Download
+              </Button>
+            </Box>
+          </Box>
+          {/* Certificates */}
+          <Box>
+            <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', mb: 0.5, display: 'block' }}>
+              Certificates
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              <Button
+                size="small"
+                variant="outlined"
+                href={CERTIFICATES_PDF_PATH}
+                target="_blank"
+                rel="noopener noreferrer"
+                startIcon={<OpenInNewIcon />}
+                sx={{
+                  flex: 1,
+                  color: 'rgba(255,255,255,0.7)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  fontSize: '0.75rem',
+                  '&:hover': {
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    bgcolor: 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
+                View
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                href={CERTIFICATES_PDF_PATH}
+                download="Benjamin_Grauer_Certificates.pdf"
+                startIcon={<DownloadIcon />}
+                sx={{
+                  flex: 1,
+                  color: 'rgba(255,255,255,0.7)',
+                  borderColor: 'rgba(255,255,255,0.2)',
+                  fontSize: '0.75rem',
+                  '&:hover': {
+                    borderColor: 'rgba(255,255,255,0.4)',
+                    bgcolor: 'rgba(255,255,255,0.05)',
+                  },
+                }}
+              >
+                Download
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </List>
     </>

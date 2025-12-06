@@ -1,6 +1,7 @@
 'use client';
 
 import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Box, Snackbar, Alert, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
@@ -18,6 +19,8 @@ export type DocumentTab = 'cv' | 'motivation-letter';
 const CVPageContent = () => {
   const muiTheme = useTheme();
   const isDesktop = useMediaQuery(muiTheme.breakpoints.up('md'));
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
@@ -32,12 +35,24 @@ const CVPageContent = () => {
   const [cvStyles, setCvStyles] = useState<string>('');
   const [activeTab, setActiveTab] = useState<DocumentTab>('cv');
   const [toolbarVisible, setToolbarVisible] = useState(true);
-  const [exportPanelOpen, setExportPanelOpen] = useState(false);
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLDivElement>(null);
   const toolbarBarRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(85);
   const [toolbarBarHeight, setToolbarBarHeight] = useState(57);
+
+  // Sync export panel state with URL parameter
+  const exportPanelOpen = searchParams.get('export') === 'true';
+  const setExportPanelOpen = useCallback((open: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (open) {
+      params.set('export', 'true');
+    } else {
+      params.delete('export');
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [searchParams, router]);
 
   // Check if motivation letter is available
   const hasMotivationLetter = !!activeContent.motivationLetter;

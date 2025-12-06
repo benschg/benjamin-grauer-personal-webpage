@@ -82,6 +82,7 @@ const ExportOptionsDialog = ({ open, onClose, onConfirm, isDownloading, headerHe
         <Box
           sx={{
             p: 2,
+            pr: 3,
             borderTop: '1px solid rgba(255,255,255,0.1)',
             display: 'flex',
             gap: 1,

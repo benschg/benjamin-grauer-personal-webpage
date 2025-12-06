@@ -18,7 +18,7 @@ export const FULL_CV_PDF_PATH = '/working-life/documents/CV-Benjamin.Grauer.2025
 export const documents: Document[] = [
   {
     title: 'References',
-    description: 'Professional references and recommendations',
+    description: 'Professional references and recommendations from previous employers',
     icon: ContactPage,
     fileType: 'PDF',
     downloadUrl: REFERENCES_PDF_PATH,

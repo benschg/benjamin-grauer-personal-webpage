@@ -66,7 +66,7 @@ const DocumentsSection = () => {
         <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
           <Button
             component={Link}
-            href="/working-life/cv"
+            href="/working-life/cv?theme=light&export=true"
             variant="contained"
             endIcon={<ArrowForward />}
             sx={{
