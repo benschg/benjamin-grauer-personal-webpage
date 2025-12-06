@@ -63,7 +63,6 @@ interface CVToolbarProps {
   activeTab?: DocumentTab;
   onTabChange?: (tab: DocumentTab) => void;
   hasMotivationLetter?: boolean;
-  toolbarVisible?: boolean;
   renderToolbarBar?: boolean;
   renderFloatingElements?: boolean;
 }
@@ -75,7 +74,6 @@ const CVToolbar = ({
   activeTab = 'cv',
   onTabChange,
   hasMotivationLetter = false,
-  toolbarVisible = true,
   renderToolbarBar = true,
   renderFloatingElements = true,
 }: CVToolbarProps) => {

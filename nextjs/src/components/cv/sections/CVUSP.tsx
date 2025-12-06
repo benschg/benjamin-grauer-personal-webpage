@@ -260,7 +260,7 @@ const CVUSP = ({ data }: CVUSPProps) => {
         }}
         className="cv-no-print"
       >
-        <Box sx={{ p: 2, width: 280 }}>
+        <Box sx={{ p: 2, width: 300 }}>
           <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
             Regenerate Key Competence
           </Typography>
@@ -269,10 +269,12 @@ const CVUSP = ({ data }: CVUSPProps) => {
             size="small"
             multiline
             rows={2}
-            placeholder="Optional: Add custom instructions..."
+            placeholder="e.g., 'Focus on leadership skills' or 'Highlight technical expertise'"
+            label="Priority focus (optional)"
             value={customInstructions}
             onChange={(e) => setCustomInstructions(e.target.value)}
             sx={{ mb: 1.5 }}
+            InputLabelProps={{ shrink: true }}
           />
           <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end' }}>
             <Button size="small" onClick={handleClosePopover}>
