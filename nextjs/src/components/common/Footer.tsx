@@ -89,21 +89,38 @@ const Footer = () => {
           >
             © 2025 Benjamin Grauer. All rights reserved.
           </Typography>
-          <MuiLink
-            component={Link}
-            href="/privacy-policy"
-            sx={{
-              color: 'rgba(255, 255, 255, 0.8)',
-              fontSize: '0.8rem',
-              textDecoration: 'none',
-              '&:hover': {
-                color: 'white',
-                textDecoration: 'underline',
-              },
-            }}
-          >
-            Privacy Policy
-          </MuiLink>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <MuiLink
+              component={Link}
+              href="/attributions"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.8rem',
+                textDecoration: 'none',
+                '&:hover': {
+                  color: 'white',
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Open Source
+            </MuiLink>
+            <MuiLink
+              component={Link}
+              href="/privacy-policy"
+              sx={{
+                color: 'rgba(255, 255, 255, 0.8)',
+                fontSize: '0.8rem',
+                textDecoration: 'none',
+                '&:hover': {
+                  color: 'white',
+                  textDecoration: 'underline',
+                },
+              }}
+            >
+              Privacy Policy
+            </MuiLink>
+          </Box>
         </Box>
       </Container>
     </Box>
