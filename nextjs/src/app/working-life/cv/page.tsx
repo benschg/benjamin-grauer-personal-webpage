@@ -1,13 +1,14 @@
 'use client';
 
 import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
-import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { Box, Snackbar, Alert, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import MotivationLetterDocument from '@/components/cv/MotivationLetterDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
+import { EXPORT_PANEL_WIDTH } from '@/components/cv/ExportOptionsDialog';
 import { CVThemeProvider, CVVersionProvider, useCVTheme, useCVVersion } from '@/components/cv/contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
@@ -15,6 +16,8 @@ export type DocumentTab = 'cv' | 'motivation-letter';
 
 // Component that uses the context
 const CVPageContent = () => {
+  const muiTheme = useTheme();
+  const isDesktop = useMediaQuery(muiTheme.breakpoints.up('md'));
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
@@ -29,6 +32,7 @@ const CVPageContent = () => {
   const [cvStyles, setCvStyles] = useState<string>('');
   const [activeTab, setActiveTab] = useState<DocumentTab>('cv');
   const [toolbarVisible, setToolbarVisible] = useState(true);
+  const [exportPanelOpen, setExportPanelOpen] = useState(false);
   const lastScrollY = useRef(0);
   const headerRef = useRef<HTMLDivElement>(null);
   const toolbarBarRef = useRef<HTMLDivElement>(null);
@@ -175,6 +179,9 @@ const CVPageContent = () => {
         onTabChange={setActiveTab}
         hasMotivationLetter={hasMotivationLetter}
         renderToolbarBar={false}
+        exportPanelOpen={exportPanelOpen}
+        onExportPanelChange={setExportPanelOpen}
+        headerHeight={headerHeight}
       />
       {/* Fixed header container - slides up when scrolling */}
       <Box
@@ -218,18 +225,26 @@ const CVPageContent = () => {
       {/* Dialogs */}
       <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
       <LLMInputDataDialog open={llmInputDataOpen} onClose={() => setLlmInputDataOpen(false)} version={activeVersion} />
-      {versionError && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
-          <Alert severity="warning" sx={{ maxWidth: 600 }}>
-            {versionError}
-          </Alert>
-        </Box>
-      )}
-      {activeTab === 'cv' ? (
-        <CVDocument ref={cvRef} />
-      ) : (
-        <MotivationLetterDocument ref={motivationLetterRef} />
-      )}
+      {/* Content container - shifts when export panel is open on desktop */}
+      <Box
+        sx={{
+          marginRight: isDesktop && exportPanelOpen ? `${EXPORT_PANEL_WIDTH}px` : 0,
+          transition: 'margin-right 0.3s ease-in-out',
+        }}
+      >
+        {versionError && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+            <Alert severity="warning" sx={{ maxWidth: 600 }}>
+              {versionError}
+            </Alert>
+          </Box>
+        )}
+        {activeTab === 'cv' ? (
+          <CVDocument ref={cvRef} />
+        ) : (
+          <MotivationLetterDocument ref={motivationLetterRef} />
+        )}
+      </Box>
       <Snackbar open={!!pdfError} autoHideDuration={6000} onClose={() => setPdfError(null)}>
         <Alert severity="error" onClose={() => setPdfError(null)}>
           {pdfError}
