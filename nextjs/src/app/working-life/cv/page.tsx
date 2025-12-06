@@ -23,7 +23,7 @@ const CVPageContent = () => {
   const router = useRouter();
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
-  const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
+  const { theme, showPhoto, showExperience, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
   const { activeContent, activeVersion, error: versionError, isEditing } = useCVVersion();
   const { user } = useAuth();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -129,9 +129,20 @@ const CVPageContent = () => {
       // Effective privacy level: only allow private info if user is logged in
       const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
 
-      // Determine filename based on active tab
+      // Determine filename based on active tab and options
+      // Format: Benjamin_Grauer_CV[_detailed][_no_photo][_private][_attachments]_light.pdf
+      const buildCVFilename = () => {
+        const parts = ['Benjamin_Grauer_CV'];
+        if (showExperience) parts.push('detailed');
+        if (!showPhoto) parts.push('no_photo');
+        if (effectivePrivacyLevel !== 'none') parts.push('private');
+        if (showAttachments) parts.push('attachments');
+        parts.push(theme);
+        return parts.join('_');
+      };
+
       const baseFilename = activeTab === 'cv'
-        ? (showAttachments ? `Benjamin_Grauer_CV_with_attachments_${theme}` : `Benjamin_Grauer_CV_${theme}`)
+        ? buildCVFilename()
         : `Benjamin_Grauer_Motivation_Letter_${theme}`;
 
       // Call the Next.js API route to generate PDF
@@ -172,7 +183,7 @@ const CVPageContent = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [activeTab, theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
+  }, [activeTab, theme, cvStyles, showPhoto, showExperience, showAttachments, privacyLevel, canShowPrivateInfo]);
 
   return (
     <Box
