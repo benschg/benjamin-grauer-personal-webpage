@@ -72,6 +72,7 @@ const DocumentCard = ({ document }: DocumentCardProps) => {
             color: 'text.secondary',
             mb: 2,
             lineHeight: 1.5,
+            minHeight: '3em',
           }}
         >
           {document.description}

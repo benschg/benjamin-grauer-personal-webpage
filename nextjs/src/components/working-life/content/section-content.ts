@@ -45,7 +45,10 @@ export const recommendationsSectionContent = {
 // Documents Section
 // ============================================================================
 export const documentsSectionContent = {
-  title: 'Documents',
+  title: 'CV Documents',
+  customizeTitle: 'Need a tailored version?',
+  customizeDescription: 'Customize my CV for your specific requirements and export as PDF.',
+  customizeButton: 'Customize CV',
 } as const;
 
 // ============================================================================
@@ -106,3 +109,4 @@ export const personalLifeReferenceSectionContent = {
   buttonText: 'Explore Personal Life',
   tagline: 'Discover the person behind the professional',
 } as const;
+

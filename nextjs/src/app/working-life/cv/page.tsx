@@ -1,13 +1,15 @@
 'use client';
 
 import { Suspense, useRef, useState, useCallback, useEffect } from 'react';
-import { Box, Snackbar, Alert, CircularProgress } from '@mui/material';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { Box, Snackbar, Alert, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
 import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import MotivationLetterDocument from '@/components/cv/MotivationLetterDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
+import { EXPORT_PANEL_WIDTH } from '@/components/cv/ExportOptionsDialog';
 import { CVThemeProvider, CVVersionProvider, useCVTheme, useCVVersion } from '@/components/cv/contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 
@@ -15,9 +17,13 @@ export type DocumentTab = 'cv' | 'motivation-letter';
 
 // Component that uses the context
 const CVPageContent = () => {
+  const muiTheme = useTheme();
+  const isDesktop = useMediaQuery(muiTheme.breakpoints.up('md'));
+  const searchParams = useSearchParams();
+  const router = useRouter();
   const cvRef = useRef<HTMLDivElement>(null);
   const motivationLetterRef = useRef<HTMLDivElement>(null);
-  const { theme, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
+  const { theme, showPhoto, showExperience, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
   const { activeContent, activeVersion, error: versionError, isEditing } = useCVVersion();
   const { user } = useAuth();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
@@ -34,6 +40,19 @@ const CVPageContent = () => {
   const toolbarBarRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(85);
   const [toolbarBarHeight, setToolbarBarHeight] = useState(57);
+
+  // Sync export panel state with URL parameter
+  const exportPanelOpen = searchParams.get('export') === 'true';
+  const setExportPanelOpen = useCallback((open: boolean) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (open) {
+      params.set('export', 'true');
+    } else {
+      params.delete('export');
+    }
+    const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+    router.replace(newUrl, { scroll: false });
+  }, [searchParams, router]);
 
   // Check if motivation letter is available
   const hasMotivationLetter = !!activeContent.motivationLetter;
@@ -110,9 +129,20 @@ const CVPageContent = () => {
       // Effective privacy level: only allow private info if user is logged in
       const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
 
-      // Determine filename based on active tab
+      // Determine filename based on active tab and options
+      // Format: Benjamin_Grauer_CV[_detailed][_no_photo][_private][_attachments]_light.pdf
+      const buildCVFilename = () => {
+        const parts = ['Benjamin_Grauer_CV'];
+        if (showExperience) parts.push('detailed');
+        if (!showPhoto) parts.push('no_photo');
+        if (effectivePrivacyLevel !== 'none') parts.push('private');
+        if (showAttachments) parts.push('attachments');
+        parts.push(theme);
+        return parts.join('_');
+      };
+
       const baseFilename = activeTab === 'cv'
-        ? (showAttachments ? `Benjamin_Grauer_CV_with_attachments_${theme}` : `Benjamin_Grauer_CV_${theme}`)
+        ? buildCVFilename()
         : `Benjamin_Grauer_Motivation_Letter_${theme}`;
 
       // Call the Next.js API route to generate PDF
@@ -153,7 +183,7 @@ const CVPageContent = () => {
     } finally {
       setIsDownloading(false);
     }
-  }, [activeTab, theme, cvStyles, showAttachments, privacyLevel, canShowPrivateInfo]);
+  }, [activeTab, theme, cvStyles, showPhoto, showExperience, showAttachments, privacyLevel, canShowPrivateInfo]);
 
   return (
     <Box
@@ -175,6 +205,9 @@ const CVPageContent = () => {
         onTabChange={setActiveTab}
         hasMotivationLetter={hasMotivationLetter}
         renderToolbarBar={false}
+        exportPanelOpen={exportPanelOpen}
+        onExportPanelChange={setExportPanelOpen}
+        headerHeight={headerHeight}
       />
       {/* Fixed header container - slides up when scrolling */}
       <Box
@@ -218,18 +251,26 @@ const CVPageContent = () => {
       {/* Dialogs */}
       <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
       <LLMInputDataDialog open={llmInputDataOpen} onClose={() => setLlmInputDataOpen(false)} version={activeVersion} />
-      {versionError && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
-          <Alert severity="warning" sx={{ maxWidth: 600 }}>
-            {versionError}
-          </Alert>
-        </Box>
-      )}
-      {activeTab === 'cv' ? (
-        <CVDocument ref={cvRef} />
-      ) : (
-        <MotivationLetterDocument ref={motivationLetterRef} />
-      )}
+      {/* Content container - shifts when export panel is open on desktop */}
+      <Box
+        sx={{
+          marginRight: isDesktop && exportPanelOpen ? `${EXPORT_PANEL_WIDTH}px` : 0,
+          transition: 'margin-right 0.3s ease-in-out',
+        }}
+      >
+        {versionError && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', pt: 2 }}>
+            <Alert severity="warning" sx={{ maxWidth: 600 }}>
+              {versionError}
+            </Alert>
+          </Box>
+        )}
+        {activeTab === 'cv' ? (
+          <CVDocument ref={cvRef} />
+        ) : (
+          <MotivationLetterDocument ref={motivationLetterRef} />
+        )}
+      </Box>
       <Snackbar open={!!pdfError} autoHideDuration={6000} onClose={() => setPdfError(null)}>
         <Alert severity="error" onClose={() => setPdfError(null)}>
           {pdfError}

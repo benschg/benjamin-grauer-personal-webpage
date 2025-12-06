@@ -13,12 +13,12 @@ export interface Document {
 // PDF path constants for reuse
 export const REFERENCES_PDF_PATH = '/working-life/documents/References_Benjamin_20251120.pdf';
 export const CERTIFICATES_PDF_PATH = '/working-life/documents/Certificates.Combined_Benjamin.Grauer_20201024.pdf';
-export const FULL_CV_PDF_PATH = '/working-life/documents/CV-Benjamin.Grauer.20251110_anon_full.pdf';
+export const FULL_CV_PDF_PATH = '/working-life/documents/Benjamin_Grauer_CV_detailed_light.pdf';
 
 export const documents: Document[] = [
   {
     title: 'References',
-    description: 'Professional references and recommendations',
+    description: 'Professional references and recommendations from previous employers',
     icon: ContactPage,
     fileType: 'PDF',
     downloadUrl: REFERENCES_PDF_PATH,
