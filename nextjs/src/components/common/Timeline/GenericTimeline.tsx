@@ -325,7 +325,7 @@ const GenericTimeline = ({
                             <Box
                               sx={{
                                 flexShrink: 0,
-                                width: { xs: '100%', sm: 120, md: 160 },
+                                width: { xs: '100%', sm: 140, md: 180 },
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: { xs: 'flex-start', sm: 'center' },
@@ -337,9 +337,9 @@ const GenericTimeline = ({
                                 component="img"
                                 sx={{
                                   width: { xs: 'auto', sm: '100%' },
-                                  maxWidth: { xs: 200, sm: '100%' },
+                                  maxWidth: { xs: 220, sm: '100%' },
                                   height: 'auto',
-                                  maxHeight: 120,
+                                  maxHeight: 140,
                                   objectFit: 'contain',
                                   borderRadius: 1,
                                   backgroundColor: 'transparent',

@@ -48,28 +48,6 @@ export const timelineEvents: TimelineEvent[] = [
     image: "/docugap-app-screenshot.png",
   },
   {
-    id: "2020-3d-animations",
-    year: "2020-2025",
-    title: "3D Animations YouTube Channel",
-    company: "Personal Project",
-    description:
-      "YouTube channel showcasing experimental 3D animations and simulations created with Blender. Features fluid simulations, particle systems, and experimental visual effects.",
-    type: "project",
-    skills: [
-      "Blender",
-      "3D Animation",
-      "Fluid Simulation",
-      "Particle Systems",
-      "Visual Effects",
-    ],
-    achievements: [
-      "Multiple fluid simulation projects",
-      "Abstract and experimental animations",
-      "Technical skill demonstrations",
-    ],
-    image: "/portfolio/projects/3d-animations.png",
-  },
-  {
     id: "2023-verity",
     year: "2023-2025",
     title: "Head of Applications and Frameworks",
@@ -96,7 +74,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Redefined UX standards with engaging 3D visualizations improving the ease of use of the system",
       "Transformed stack of 30 CLI and mixed technology tools into one intuitive single page web application",
     ],
-    image: "/working-life/verity-1024x496.webp",
+    image: "/verity-drone.png",
   },
   {
     id: "2021-9tlabs",
@@ -125,7 +103,29 @@ export const timelineEvents: TimelineEvent[] = [
       "Managed IT infrastructure and SAAS integrations",
       "Coached young developers in software engineering best practices",
     ],
-    image: "/working-life/9TLabs_logo-white2x.png",
+    image: "/9tlabs-products.png",
+  },
+  {
+    id: "2020-3d-animations",
+    year: "2020-2025",
+    title: "3D Animations YouTube Channel",
+    company: "Personal Project",
+    description:
+      "YouTube channel showcasing experimental 3D animations and simulations created with Blender. Features fluid simulations, particle systems, and experimental visual effects.",
+    type: "project",
+    skills: [
+      "Blender",
+      "3D Animation",
+      "Fluid Simulation",
+      "Particle Systems",
+      "Visual Effects",
+    ],
+    achievements: [
+      "Multiple fluid simulation projects",
+      "Abstract and experimental animations",
+      "Technical skill demonstrations",
+    ],
+    image: "/portfolio/projects/3d-animations.png",
   },
   {
     id: "2019-shiftup",
@@ -146,6 +146,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Business agility knowledge",
       "Innovation leadership skills",
     ],
+    image: "/3s-book-illustrations-10stages-diagram-English.webp",
   },
   {
     id: "2017-head-data",
@@ -174,6 +175,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Enabled remote management of global simulator fleet",
       "All standard products now communicate with cloud",
     ],
+    image: "/VirtaMed-Connect-Icon_medium1024.webp",
   },
   {
     id: "2017-ireb",
@@ -332,6 +334,7 @@ export const timelineEvents: TimelineEvent[] = [
       "Crafted first UI using Qt and later WPF",
       "Defined coding guidelines for C++, C#, and Python",
     ],
+    image: "/portfolio/projects/virtamed-simulator.webp",
   },
   {
     id: "2007-masters-thesis",
