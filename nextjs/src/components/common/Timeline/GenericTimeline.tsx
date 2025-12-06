@@ -211,112 +211,136 @@ const GenericTimeline = ({
                           display: 'flex',
                           justifyContent: 'space-between',
                           alignItems: 'flex-start',
+                          gap: 2,
+                          flexDirection: { xs: 'column', sm: 'row' },
                         }}
                       >
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Typography
-                            variant="h6"
-                            sx={{
-                              fontSize: '0.9rem',
-                              fontWeight: 600,
-                              color: 'primary.main',
-                            }}
-                          >
-                            {event.year}
-                          </Typography>
-                          <Typography
-                            variant="h5"
-                            sx={{
-                              fontSize: '1.1rem',
-                              fontWeight: 700,
-                              mb: 0.5,
-                              color: 'text.primary',
-                            }}
-                          >
-                            {event.title}
-                          </Typography>
-                          {showCompany && event.company && (
+                        <Box
+                          sx={{
+                            display: 'flex',
+                            flexGrow: 1,
+                            minWidth: 0,
+                            gap: 2,
+                            width: '100%',
+                            flexDirection: { xs: 'column', sm: 'row' },
+                          }}
+                        >
+                          <Box sx={{ flexGrow: 1, minWidth: 0 }}>
                             <Typography
-                              variant="subtitle1"
+                              variant="h6"
                               sx={{
                                 fontSize: '0.9rem',
                                 fontWeight: 600,
-                                mb: 1,
-                                color: 'text.secondary',
-                              }}
-                            >
-                              {event.company}
-                            </Typography>
-                          )}
-                          {event.location && (
-                            <Typography
-                              variant="subtitle1"
-                              sx={{
-                                fontSize: '0.9rem',
-                                fontWeight: 600,
-                                mb: 1,
-                                color: 'text.secondary',
-                              }}
-                            >
-                              {event.location}
-                            </Typography>
-                          )}
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              color: 'text.secondary',
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {event.description}
-                          </Typography>
-
-                          {showDistance && event.distance && (
-                            <Typography
-                              variant="body2"
-                              sx={{
                                 color: 'primary.main',
-                                fontWeight: 600,
-                                mt: 1,
                               }}
                             >
-                              Distance: {event.distance}
+                              {event.year}
                             </Typography>
-                          )}
-                          {showTime && event.time && (
+                            <Typography
+                              variant="h5"
+                              sx={{
+                                fontSize: '1.1rem',
+                                fontWeight: 700,
+                                mb: 0.5,
+                                color: 'text.primary',
+                              }}
+                            >
+                              {event.title}
+                            </Typography>
+                            {showCompany && event.company && (
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontSize: '0.9rem',
+                                  fontWeight: 600,
+                                  mb: 1,
+                                  color: 'text.secondary',
+                                }}
+                              >
+                                {event.company}
+                              </Typography>
+                            )}
+                            {event.location && (
+                              <Typography
+                                variant="subtitle1"
+                                sx={{
+                                  fontSize: '0.9rem',
+                                  fontWeight: 600,
+                                  mb: 1,
+                                  color: 'text.secondary',
+                                }}
+                              >
+                                {event.location}
+                              </Typography>
+                            )}
                             <Typography
                               variant="body2"
                               sx={{
-                                color: 'primary.main',
-                                fontWeight: 600,
-                                mt: 0.5,
+                                color: 'text.secondary',
+                                lineHeight: 1.5,
                               }}
                             >
-                              Time: {event.time}
+                              {event.description}
                             </Typography>
-                          )}
-                          {showAchievement && event.achievement && (
-                            <Typography
-                              variant="body2"
-                              sx={{
-                                color: 'success.main',
-                                fontWeight: 600,
-                                mt: 1,
-                                fontStyle: 'italic',
-                              }}
-                            >
-                              {event.achievement}
-                            </Typography>
-                          )}
 
+                            {showDistance && event.distance && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'primary.main',
+                                  fontWeight: 600,
+                                  mt: 1,
+                                }}
+                              >
+                                Distance: {event.distance}
+                              </Typography>
+                            )}
+                            {showTime && event.time && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'primary.main',
+                                  fontWeight: 600,
+                                  mt: 0.5,
+                                }}
+                              >
+                                Time: {event.time}
+                              </Typography>
+                            )}
+                            {showAchievement && event.achievement && (
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  color: 'success.main',
+                                  fontWeight: 600,
+                                  mt: 1,
+                                  fontStyle: 'italic',
+                                }}
+                              >
+                                {event.achievement}
+                              </Typography>
+                            )}
+                          </Box>
                           {event.image && (
-                            <Box sx={{ mt: 2 }}>
+                            <Box
+                              sx={{
+                                flexShrink: 0,
+                                width: { xs: '100%', sm: 120, md: 160 },
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: { xs: 'flex-start', sm: 'center' },
+                                order: { xs: 1, sm: 0 },
+                                mt: { xs: 2, sm: 0 },
+                              }}
+                            >
                               <CardMedia
                                 component="img"
                                 sx={{
-                                  height: 120,
+                                  width: { xs: 'auto', sm: '100%' },
+                                  maxWidth: { xs: 200, sm: '100%' },
+                                  height: 'auto',
+                                  maxHeight: 120,
                                   objectFit: 'contain',
-                                  objectPosition: 'left',
                                   borderRadius: 1,
                                   backgroundColor: 'transparent',
                                 }}
@@ -326,7 +350,9 @@ const GenericTimeline = ({
                             </Box>
                           )}
                         </Box>
-                        <Box sx={{ ml: 1 }}>{isExpanded ? <ExpandLess /> : <ExpandMore />}</Box>
+                        <Box sx={{ flexShrink: 0, alignSelf: { xs: 'flex-end', sm: 'flex-start' } }}>
+                          {isExpanded ? <ExpandLess /> : <ExpandMore />}
+                        </Box>
                       </Box>
 
                       <Collapse in={isExpanded} timeout="auto" unmountOnExit>

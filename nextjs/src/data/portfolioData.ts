@@ -240,6 +240,42 @@ export const portfolioProjects: Project[] = [
     featured: false,
   },
   {
+    id: 'docugap',
+    title: 'Docugap - AI Document Comparison',
+    description:
+      'AI-powered document comparison platform with smart change detection and dual viewing modes.',
+    longDescription:
+      'Docugap is an AI-powered document comparison platform that helps professionals save hours by automating document comparison tasks. Built the complete frontend and backend infrastructure (excluding AI processing), featuring smart change detection, dual viewing modes (side-by-side and redline), and export capabilities. The platform enables efficient document review workflows with delegation features.',
+    category: 'Web Development',
+    technologies: ['Next.js', 'TRPC', 'TypeScript', 'React', 'Full-Stack Development'],
+    features: [
+      'Smart AI-powered change detection',
+      'Side-by-side comparison view',
+      'Redline/track changes view',
+      'Export and delegation workflows',
+      'Professional document review tools',
+    ],
+    role: 'Full-Stack Developer',
+    year: '2025',
+    status: 'Completed',
+    images: {
+      thumbnail: '/docugap-app-screenshot.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://docugap.com/',
+    },
+    highlights: [
+      'Complete frontend and backend architecture',
+      'Dual viewing modes for document comparison',
+      'Integration with AI processing pipeline',
+      'Professional export and delegation features',
+    ],
+    teamSize: 3,
+    impact: 'Enables professionals to save hours by automating document comparison workflows',
+    featured: true,
+  },
+  {
     id: 'glyphic',
     title: 'Glyphic - Font Creation Tool',
     description:
