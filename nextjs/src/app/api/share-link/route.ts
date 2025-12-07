@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
       privacy_level: settings?.privacyLevel || 'none',
       show_experience: settings?.showExperience ?? true,
       show_attachments: settings?.showAttachments ?? false,
-      show_export: settings?.showExport ?? true,
+      show_export: settings?.showExport ?? false,
     };
 
     // Check if a link already exists for this exact URL + settings combination
@@ -237,7 +237,7 @@ export async function GET(request: NextRequest) {
           privacyLevel: link.privacy_level || 'none',
           showExperience: link.show_experience ?? true,
           showAttachments: link.show_attachments ?? false,
-          showExport: link.show_export ?? true,
+          showExport: link.show_export ?? false,
         },
       })),
     });

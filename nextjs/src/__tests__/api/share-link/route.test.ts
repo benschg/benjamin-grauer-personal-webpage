@@ -67,7 +67,7 @@ describe('Share Link Settings Mapping', () => {
       privacyLevel: dbRow.privacy_level || 'none',
       showExperience: dbRow.show_experience ?? true,
       showAttachments: dbRow.show_attachments ?? false,
-      showExport: dbRow.show_export ?? true,
+      showExport: dbRow.show_export ?? false,
     };
 
     expect(frontendSettings).toEqual(expectedFrontendSettings);
@@ -89,7 +89,7 @@ describe('Share Link Settings Mapping', () => {
       privacyLevel: dbRow.privacy_level || 'none',
       showExperience: dbRow.show_experience ?? true,
       showAttachments: dbRow.show_attachments ?? false,
-      showExport: dbRow.show_export ?? true,
+      showExport: dbRow.show_export ?? false,
     };
 
     expect(frontendSettings).toEqual({
@@ -98,7 +98,7 @@ describe('Share Link Settings Mapping', () => {
       privacyLevel: 'none',
       showExperience: true,
       showAttachments: false,
-      showExport: true,
+      showExport: false,
     });
   });
 
@@ -109,7 +109,7 @@ describe('Share Link Settings Mapping', () => {
       privacy_level: 'none',
       show_experience: false, // Explicitly false
       show_attachments: false,
-      show_export: false, // Explicitly false, should not default to true
+      show_export: true, // Explicitly true, should not default to false
     };
 
     const frontendSettings = {
@@ -118,12 +118,12 @@ describe('Share Link Settings Mapping', () => {
       privacyLevel: dbRow.privacy_level || 'none',
       showExperience: dbRow.show_experience ?? true, // ?? preserves false
       showAttachments: dbRow.show_attachments ?? false,
-      showExport: dbRow.show_export ?? true, // ?? preserves false
+      showExport: dbRow.show_export ?? false, // ?? preserves true
     };
 
     expect(frontendSettings.showPhoto).toBe(false);
     expect(frontendSettings.showExperience).toBe(false);
-    expect(frontendSettings.showExport).toBe(false);
+    expect(frontendSettings.showExport).toBe(true); // Explicitly set to true
   });
 });
 
@@ -166,7 +166,7 @@ describe('Display Settings Defaults', () => {
     privacyLevel: 'none',
     showExperience: true,
     showAttachments: false,
-    showExport: true,
+    showExport: false,
   };
 
   it('should have correct default values', () => {
@@ -175,7 +175,7 @@ describe('Display Settings Defaults', () => {
     expect(DEFAULT_DISPLAY_SETTINGS.privacyLevel).toBe('none');
     expect(DEFAULT_DISPLAY_SETTINGS.showExperience).toBe(true);
     expect(DEFAULT_DISPLAY_SETTINGS.showAttachments).toBe(false);
-    expect(DEFAULT_DISPLAY_SETTINGS.showExport).toBe(true);
+    expect(DEFAULT_DISPLAY_SETTINGS.showExport).toBe(false);
   });
 
   it('should use defaults when creating link without explicit settings', () => {
@@ -187,7 +187,7 @@ describe('Display Settings Defaults', () => {
       privacy_level: (inputSettings as Record<string, unknown>)?.privacyLevel || 'none',
       show_experience: (inputSettings as Record<string, unknown>)?.showExperience ?? true,
       show_attachments: (inputSettings as Record<string, unknown>)?.showAttachments ?? false,
-      show_export: (inputSettings as Record<string, unknown>)?.showExport ?? true,
+      show_export: (inputSettings as Record<string, unknown>)?.showExport ?? false,
     };
 
     expect(displaySettings.theme).toBe('dark');
@@ -195,7 +195,7 @@ describe('Display Settings Defaults', () => {
     expect(displaySettings.privacy_level).toBe('none');
     expect(displaySettings.show_experience).toBe(true);
     expect(displaySettings.show_attachments).toBe(false);
-    expect(displaySettings.show_export).toBe(true);
+    expect(displaySettings.show_export).toBe(false);
   });
 });
 
