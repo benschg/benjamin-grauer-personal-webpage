@@ -141,7 +141,6 @@ const CVToolbar = ({
   const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
   const [copySnackbarMessage, setCopySnackbarMessage] = useState("");
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
-  const [showExportOnShare, setShowExportOnShare] = useState(true);
 
   // Get current URL for sharing (includes all display settings)
   const getCurrentShareUrl = () => {
@@ -158,7 +157,8 @@ const CVToolbar = ({
     if (privacyLevel !== "none") params.set("privacy", privacyLevel);
     if (!showExperience) params.set("experience", "0");
     if (showAttachments) params.set("attachments", "1");
-    if (!showExportOnShare) params.set("showExport", "0");
+    // showExport follows the export panel state - if panel is open, show the export button
+    if (!externalExportPanelOpen) params.set("showExport", "0");
     if (externalExportPanelOpen) params.set("export", "true");
 
     const baseUrl = `${window.location.origin}/working-life/cv`;
@@ -897,7 +897,7 @@ const CVToolbar = ({
           privacyLevel,
           showExperience,
           showAttachments,
-          showExport: showExportOnShare,
+          showExport: !!externalExportPanelOpen,
         }}
       />
     </>

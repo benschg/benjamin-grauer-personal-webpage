@@ -33,7 +33,7 @@ export const DISPLAY_SETTINGS_URL_PARAMS: Record<keyof DisplaySettings, string> 
   privacyLevel: 'privacy',
   showExperience: 'experience',
   showAttachments: 'attachments',
-  showExport: 'export',
+  showExport: 'showExport', // Note: 'export' is used for export panel open state
 };
 
 // Default values for DisplaySettings
