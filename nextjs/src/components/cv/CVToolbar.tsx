@@ -21,6 +21,9 @@ import {
 import PrintIcon from '@mui/icons-material/Print';
 import DownloadIcon from '@mui/icons-material/Download';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import SubjectIcon from '@mui/icons-material/Subject';
+import ArticleIcon from '@mui/icons-material/Article';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import PersonIcon from '@mui/icons-material/Person';
@@ -121,10 +124,13 @@ const CVToolbar = ({
   const { user, signIn, signOut } = useAuth();
   const {
     isEditing,
+    activeContent,
   } = useCVVersion();
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [printWarningOpen, setPrintWarningOpen] = useState(false);
   const [internalExportDialogOpen, setInternalExportDialogOpen] = useState(false);
+  const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
+  const [copySnackbarMessage, setCopySnackbarMessage] = useState('');
 
   // Use external control if provided, otherwise use internal state
   const exportDialogOpen = externalExportPanelOpen ?? internalExportDialogOpen;
@@ -171,6 +177,46 @@ const CVToolbar = ({
     if (privacyLevel === 'none') return 'Hidden (contact on request)';
     if (privacyLevel === 'personal') return 'Personal contact info visible';
     return 'All contact info visible (including references)';
+  };
+
+  // Copy motivation letter content to clipboard
+  const handleCopySubject = async () => {
+    const letter = activeContent.motivationLetter;
+    if (!letter) return;
+
+    try {
+      await navigator.clipboard.writeText(letter.subject);
+      setCopySnackbarMessage('Subject copied to clipboard');
+      setCopySnackbarOpen(true);
+    } catch (err) {
+      console.error('Failed to copy subject:', err);
+    }
+  };
+
+  const handleCopyBody = async () => {
+    const letter = activeContent.motivationLetter;
+    if (!letter) return;
+
+    // Combine all letter body parts
+    const bodyText = [
+      letter.greeting,
+      '',
+      letter.opening,
+      '',
+      letter.body,
+      '',
+      letter.closing,
+      '',
+      letter.signoff,
+    ].join('\n');
+
+    try {
+      await navigator.clipboard.writeText(bodyText);
+      setCopySnackbarMessage('Letter body copied to clipboard');
+      setCopySnackbarOpen(true);
+    } catch (err) {
+      console.error('Failed to copy body:', err);
+    }
   };
 
   // Toolbar bar content (top navigation bar)
@@ -439,6 +485,37 @@ const CVToolbar = ({
             gap: 1.5,
           }}
         >
+          {/* Copy buttons for motivation letter mode */}
+          {activeTab === 'motivation-letter' && activeContent.motivationLetter && (
+            <>
+              <Tooltip title="Copy Subject" placement="top">
+                <Fab
+                  size="medium"
+                  onClick={handleCopySubject}
+                  sx={{
+                    bgcolor: '#343a40',
+                    color: 'white',
+                    '&:hover': { bgcolor: '#4a5058' },
+                  }}
+                >
+                  <SubjectIcon />
+                </Fab>
+              </Tooltip>
+              <Tooltip title="Copy Letter Body" placement="top">
+                <Fab
+                  size="medium"
+                  onClick={handleCopyBody}
+                  sx={{
+                    bgcolor: '#343a40',
+                    color: 'white',
+                    '&:hover': { bgcolor: '#4a5058' },
+                  }}
+                >
+                  <ArticleIcon />
+                </Fab>
+              </Tooltip>
+            </>
+          )}
           <Fab
             variant="extended"
             color="primary"
@@ -504,25 +581,58 @@ const CVToolbar = ({
             <AddIcon fontSize="small" />
           </IconButton>
         </Box>
-        {/* Show Export FAB only when not editing */}
+        {/* Export FAB with copy buttons stacked above for motivation letter mode - Mobile */}
         {!isEditing && onDownloadPdf && (
-          <Fab
-            variant="extended"
-            size="medium"
-            onClick={handleExportClick}
-            disabled={isDownloading}
-            sx={{
-              bgcolor: '#89665d',
-              color: 'white',
-              '&:hover': { bgcolor: '#6d524a' },
-              '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
-              gap: 0.5,
-              fontSize: '0.8rem',
-            }}
-          >
-            {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
-            {isDownloading ? 'Generating...' : 'Export PDF'}
-          </Fab>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+            {/* Copy buttons stacked above Export */}
+            {activeTab === 'motivation-letter' && activeContent.motivationLetter && (
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Tooltip title="Copy Subject" placement="top">
+                  <Fab
+                    size="small"
+                    onClick={handleCopySubject}
+                    sx={{
+                      bgcolor: '#343a40',
+                      color: 'white',
+                      '&:hover': { bgcolor: '#4a5058' },
+                    }}
+                  >
+                    <SubjectIcon fontSize="small" />
+                  </Fab>
+                </Tooltip>
+                <Tooltip title="Copy Letter Body" placement="top">
+                  <Fab
+                    size="small"
+                    onClick={handleCopyBody}
+                    sx={{
+                      bgcolor: '#343a40',
+                      color: 'white',
+                      '&:hover': { bgcolor: '#4a5058' },
+                    }}
+                  >
+                    <ArticleIcon fontSize="small" />
+                  </Fab>
+                </Tooltip>
+              </Box>
+            )}
+            <Fab
+              variant="extended"
+              size="medium"
+              onClick={handleExportClick}
+              disabled={isDownloading}
+              sx={{
+                bgcolor: '#89665d',
+                color: 'white',
+                '&:hover': { bgcolor: '#6d524a' },
+                '&.Mui-disabled': { bgcolor: 'rgba(137, 102, 93, 0.5)' },
+                gap: 0.5,
+                fontSize: '0.8rem',
+              }}
+            >
+              {isDownloading ? <CircularProgress size={18} color="inherit" /> : <DownloadIcon fontSize="small" />}
+              {isDownloading ? 'Generating...' : 'Export PDF'}
+            </Fab>
+          </Box>
         )}
         <SpeedDial
           ariaLabel="CV Controls"
@@ -594,6 +704,24 @@ const CVToolbar = ({
         isDownloading={isDownloading}
         headerHeight={headerHeight}
       />
+
+      {/* Copy confirmation snackbar - shown at top to avoid floating buttons */}
+      <Snackbar
+        open={copySnackbarOpen}
+        autoHideDuration={2000}
+        onClose={() => setCopySnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        sx={{ mt: 8 }}
+      >
+        <Alert
+          onClose={() => setCopySnackbarOpen(false)}
+          severity="success"
+          sx={{ width: '100%' }}
+          icon={<ContentCopyIcon fontSize="small" />}
+        >
+          {copySnackbarMessage}
+        </Alert>
+      </Snackbar>
     </>
   );
 

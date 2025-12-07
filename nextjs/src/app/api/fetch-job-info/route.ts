@@ -109,12 +109,19 @@ async function fetchWebPage(url: string): Promise<string> {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; CVGenerator/1.0)',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9',
       },
     });
 
     if (!response.ok) {
+      if (response.status === 429) {
+        throw new Error(`WEBSITE_RATE_LIMIT: The job posting website is rate limiting requests. Try again in a few minutes or paste the job description manually.`);
+      }
+      if (response.status === 403) {
+        throw new Error(`WEBSITE_BLOCKED: The job posting website blocked the request. This site may require login or block automated access. Please paste the job description manually.`);
+      }
       throw new Error(`HTTP ${response.status}`);
     }
 
@@ -130,6 +137,9 @@ async function fetchWebPage(url: string): Promise<string> {
       : textContent;
   } catch (error) {
     console.error(`Failed to fetch ${url}:`, error);
+    if (error instanceof Error && (error.message.startsWith('WEBSITE_') || error.message.startsWith('HTTP'))) {
+      throw error;
+    }
     throw new Error(`Could not fetch content from URL`);
   }
 }
@@ -175,7 +185,7 @@ export async function POST(request: Request) {
     const pageContent = await fetchWebPage(params.url);
 
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
 
     const prompt = EXTRACT_JOB_INFO_PROMPT.replace('{url}', params.url).replace(
       '{content}',
@@ -195,15 +205,59 @@ export async function POST(request: Request) {
     console.error('Error fetching job info:', error);
 
     if (error instanceof Error) {
-      if (error.message.includes('429') || error.message.includes('quota')) {
+      const message = error.message.toLowerCase();
+
+      // Quota/rate limit errors
+      if (message.includes('429') || message.includes('quota') || message.includes('rate limit') || message.includes('resource_exhausted')) {
         return NextResponse.json(
-          { error: 'API quota exceeded. Please try again later.' },
+          { error: 'Gemini API quota exceeded. The free tier has limited requests per minute. Please wait a minute and try again, or check your Google Cloud Console for quota details.' },
           { status: 429 }
         );
       }
+
+      // Authentication errors
+      if (message.includes('401') || message.includes('api key') || message.includes('invalid_api_key')) {
+        return NextResponse.json(
+          { error: 'Gemini API key is invalid or expired. Please check your GEMINI_API_KEY environment variable.' },
+          { status: 500 }
+        );
+      }
+
+      // Website rate limit (not Gemini)
+      if (message.includes('website_rate_limit')) {
+        return NextResponse.json(
+          { error: 'The job posting website is rate limiting requests. Try again in a few minutes or paste the job description manually.' },
+          { status: 429 }
+        );
+      }
+
+      // Website blocked access
+      if (message.includes('website_blocked')) {
+        return NextResponse.json(
+          { error: 'The job posting website blocked the request. This site may require login or block automated access. Please paste the job description manually.' },
+          { status: 403 }
+        );
+      }
+
+      // URL fetch errors
+      if (message.includes('could not fetch')) {
+        return NextResponse.json(
+          { error: 'Could not fetch the job posting URL. The page may be blocked, require login, or the URL may be invalid.' },
+          { status: 400 }
+        );
+      }
+
+      // JSON parsing errors (AI response issues)
+      if (message.includes('json') || message.includes('unexpected token')) {
+        return NextResponse.json(
+          { error: 'Failed to parse job information from the page. The AI could not extract structured data. Try a different job posting URL.' },
+          { status: 500 }
+        );
+      }
+
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+    return NextResponse.json({ error: 'An unexpected error occurred while fetching job info.' }, { status: 500 });
   }
 }
