@@ -37,6 +37,11 @@ jobs:
         cd nextjs
         bunx tsc --noEmit
 
+    - name: Run tests
+      run: |
+        cd nextjs
+        bun run test:run
+
     - name: Build application
       env:
         # Dummy values for CI build - Supabase client requires these to be set
