@@ -1,12 +1,44 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { Box, Typography, Container, Paper, Grid, IconButton } from '@mui/material';
 import { LocationOn, Email, GitHub } from '@mui/icons-material';
 import { sharedProfile } from '@/data/shared-profile';
 import StravaIcon from '@/components/icons/StravaIcon';
 import SteamIcon from '@/components/icons/SteamIcon';
 
+interface SiteSettings {
+  public_email: string | null;
+  public_address: string | null;
+}
+
 const PersonalHero = () => {
+  const [settings, setSettings] = useState<SiteSettings>({
+    public_email: null,
+    public_address: null,
+  });
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/public-contact');
+        if (response.ok) {
+          const data = await response.json();
+          setSettings({
+            public_email: data.public_email,
+            public_address: data.public_address,
+          });
+        }
+      } catch (err) {
+        console.error('Failed to fetch public contact:', err);
+      }
+    };
+    fetchSettings();
+  }, []);
+
+  // Use public settings from DB, fallback to defaults
+  const displayEmail = settings.public_email || sharedProfile.email;
+  const displayAddress = settings.public_address || sharedProfile.location;
   return (
     <Box
       sx={{
@@ -98,14 +130,14 @@ const PersonalHero = () => {
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <LocationOn sx={{ color: 'primary.main', mr: 1 }} />
                 <Typography variant="body2" sx={{ color: '#555' }}>
-                  Zürich, Switzerland
+                  {displayAddress}
                 </Typography>
               </Box>
 
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                 <Email sx={{ color: 'primary.main', mr: 1 }} />
                 <Typography variant="body2" sx={{ color: '#555' }}>
-                  benjamin@benjamingrauer.ch
+                  {displayEmail}
                 </Typography>
               </Box>
 

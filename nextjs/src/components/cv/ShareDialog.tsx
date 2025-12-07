@@ -14,42 +14,23 @@ import {
   Snackbar,
   Alert,
   CircularProgress,
-  Tooltip,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  ListItemSecondaryAction,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import EmailIcon from '@mui/icons-material/Email';
-import DeleteIcon from '@mui/icons-material/Delete';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useAuth } from '@/contexts';
-
-interface ShareLink {
-  id: string;
-  shortCode: string;
-  shortUrl: string;
-  fullUrl: string;
-  versionName: string;
-  createdAt: string;
-  totalVisits: number;
-  uniqueVisits: number;
-  lastVisitedAt: string | null;
-}
+import type { DisplaySettings } from './contexts/types';
 
 interface ShareDialogProps {
   open: boolean;
   onClose: () => void;
   currentUrl: string;
   cvVersionId?: string;
+  settings?: DisplaySettings;
 }
 
-const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProps) => {
+const ShareDialog = ({ open, onClose, currentUrl, cvVersionId, settings }: ShareDialogProps) => {
   const { user } = useAuth();
   const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -57,8 +38,6 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState(false);
-  const [allLinks, setAllLinks] = useState<ShareLink[]>([]);
-  const [isLoadingLinks, setIsLoadingLinks] = useState(false);
 
   // Create or get short link when dialog opens
   const createShortLink = useCallback(async () => {
@@ -74,6 +53,7 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
         body: JSON.stringify({
           fullUrl: currentUrl,
           cvVersionId,
+          settings,
         }),
       });
 
@@ -89,32 +69,13 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
     } finally {
       setIsLoading(false);
     }
-  }, [currentUrl, cvVersionId, isAdmin]);
-
-  // Fetch all links for dashboard
-  const fetchAllLinks = useCallback(async () => {
-    if (!isAdmin) return;
-
-    setIsLoadingLinks(true);
-    try {
-      const response = await fetch('/api/share-link');
-      if (response.ok) {
-        const data = await response.json();
-        setAllLinks(data.links || []);
-      }
-    } catch (err) {
-      console.error('Error fetching links:', err);
-    } finally {
-      setIsLoadingLinks(false);
-    }
-  }, [isAdmin]);
+  }, [currentUrl, cvVersionId, settings, isAdmin]);
 
   useEffect(() => {
     if (open && isAdmin) {
       createShortLink();
-      fetchAllLinks();
     }
-  }, [open, isAdmin, createShortLink, fetchAllLinks]);
+  }, [open, isAdmin, createShortLink]);
 
   const handleCopy = async (url: string) => {
     try {
@@ -144,45 +105,6 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
     const body = `Hi,\n\nPlease find my CV at the following link:\n${url}\n\nBest regards,\nBenjamin`;
     const mailtoUrl = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     window.location.href = mailtoUrl;
-  };
-
-  const handleDeleteLink = async (linkId: string) => {
-    try {
-      const response = await fetch(`/api/share-link?id=${linkId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        setAllLinks((prev) => prev.filter((link) => link.id !== linkId));
-      }
-    } catch (err) {
-      console.error('Error deleting link:', err);
-    }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-    });
-  };
-
-  const formatRelativeTime = (dateString: string | null) => {
-    if (!dateString) return 'Never';
-    const date = new Date(dateString);
-    const now = new Date();
-    const diffMs = now.getTime() - date.getTime();
-    const diffMins = Math.floor(diffMs / 60000);
-    const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
-
-    if (diffMins < 1) return 'Just now';
-    if (diffMins < 60) return `${diffMins}m ago`;
-    if (diffHours < 24) return `${diffHours}h ago`;
-    if (diffDays < 7) return `${diffDays}d ago`;
-    return formatDate(dateString);
   };
 
   // Non-admin view - just show the current URL to copy
@@ -285,7 +207,7 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
     );
   }
 
-  // Admin view with short URL and dashboard
+  // Admin view with short URL
   return (
     <Dialog
       open={open}
@@ -296,7 +218,6 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
         sx: {
           bgcolor: '#343a40',
           color: 'white',
-          maxHeight: '80vh',
         },
       }}
     >
@@ -388,108 +309,6 @@ const ShareDialog = ({ open, onClose, currentUrl, cvVersionId }: ShareDialogProp
             Email
           </Button>
         </Box>
-
-        {/* Dashboard Section */}
-        <Divider sx={{ my: 3, borderColor: 'rgba(255,255,255,0.1)' }} />
-
-        <Typography
-          variant="subtitle2"
-          sx={{
-            fontFamily: 'Orbitron',
-            letterSpacing: '0.05em',
-            color: 'rgba(255,255,255,0.7)',
-            mb: 2,
-          }}
-        >
-          Shared Links Dashboard
-        </Typography>
-
-        {isLoadingLinks ? (
-          <Box sx={{ display: 'flex', justifyContent: 'center', py: 3 }}>
-            <CircularProgress size={24} sx={{ color: '#89665d' }} />
-          </Box>
-        ) : allLinks.length === 0 ? (
-          <Typography
-            variant="body2"
-            sx={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', py: 2 }}
-          >
-            No shared links yet
-          </Typography>
-        ) : (
-          <List sx={{ py: 0 }}>
-            {allLinks.map((link) => (
-              <ListItem
-                key={link.id}
-                sx={{
-                  bgcolor: 'rgba(255,255,255,0.05)',
-                  borderRadius: 1,
-                  mb: 1,
-                  pr: 12,
-                }}
-              >
-                <ListItemText
-                  primary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                      <Typography
-                        variant="body2"
-                        sx={{ fontFamily: 'monospace', color: '#89665d' }}
-                      >
-                        /s/{link.shortCode}
-                      </Typography>
-                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>
-                        → {link.versionName}
-                      </Typography>
-                    </Box>
-                  }
-                  secondary={
-                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mt: 0.5 }}>
-                      <Tooltip title={`${link.uniqueVisits} unique / ${link.totalVisits} total visits`}>
-                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <VisibilityIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />
-                          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.7)' }}>
-                            {link.totalVisits}
-                          </Typography>
-                        </Box>
-                      </Tooltip>
-                      <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>
-                        Last: {formatRelativeTime(link.lastVisitedAt)}
-                      </Typography>
-                    </Box>
-                  }
-                />
-                <ListItemSecondaryAction>
-                  <Tooltip title="Open link">
-                    <IconButton
-                      size="small"
-                      onClick={() => window.open(link.shortUrl, '_blank')}
-                      sx={{ color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      <OpenInNewIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Copy link">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleCopy(link.shortUrl)}
-                      sx={{ color: 'rgba(255,255,255,0.5)' }}
-                    >
-                      <ContentCopyIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                  <Tooltip title="Delete link">
-                    <IconButton
-                      size="small"
-                      onClick={() => handleDeleteLink(link.id)}
-                      sx={{ color: 'rgba(255,255,255,0.5)', '&:hover': { color: '#f44336' } }}
-                    >
-                      <DeleteIcon fontSize="small" />
-                    </IconButton>
-                  </Tooltip>
-                </ListItemSecondaryAction>
-              </ListItem>
-            ))}
-          </List>
-        )}
       </DialogContent>
 
       <Snackbar

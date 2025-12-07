@@ -44,6 +44,7 @@ import AttachFileOffIcon from '@mui/icons-material/LinkOff';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DescriptionIcon from '@mui/icons-material/Description';
 import EmailIcon from '@mui/icons-material/Email';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
@@ -136,12 +137,25 @@ const CVToolbar = ({
   const [copySnackbarMessage, setCopySnackbarMessage] = useState('');
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
 
-  // Get current URL for sharing
+  // Get current URL for sharing (includes all display settings)
   const getCurrentShareUrl = () => {
     if (typeof window === 'undefined') return '';
+    const params = new URLSearchParams();
+
+    // Add version if set
     const versionId = searchParams.get('version');
+    if (versionId) params.set('version', versionId);
+
+    // Add display settings
+    if (theme !== 'dark') params.set('theme', theme);
+    if (!showPhoto) params.set('photo', '0');
+    if (privacyLevel !== 'none') params.set('privacy', privacyLevel);
+    if (!showExperience) params.set('experience', '0');
+    if (showAttachments) params.set('attachments', '1');
+
     const baseUrl = `${window.location.origin}/working-life/cv`;
-    return versionId ? `${baseUrl}?version=${versionId}` : baseUrl;
+    const queryString = params.toString();
+    return queryString ? `${baseUrl}?${queryString}` : baseUrl;
   };
 
   // Use external control if provided, otherwise use internal state
@@ -311,6 +325,18 @@ const CVToolbar = ({
               <ShareIcon />
             </IconButton>
           </Tooltip>
+
+          {/* Admin dashboard link - only for admins */}
+          {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+            <Tooltip title="Admin Dashboard">
+              <IconButton
+                onClick={() => router.push('/admin')}
+                sx={{ color: '#89665d' }}
+              >
+                <AdminPanelSettingsIcon />
+              </IconButton>
+            </Tooltip>
+          )}
 
           {/* Auth button */}
           {user ? (
@@ -756,6 +782,13 @@ const CVToolbar = ({
         onClose={() => setShareDialogOpen(false)}
         currentUrl={getCurrentShareUrl()}
         cvVersionId={searchParams.get('version') || undefined}
+        settings={{
+          theme,
+          showPhoto,
+          privacyLevel,
+          showExperience,
+          showAttachments,
+        }}
       />
     </>
   );

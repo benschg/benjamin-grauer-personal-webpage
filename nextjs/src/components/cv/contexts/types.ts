@@ -5,6 +5,15 @@ export type CVTheme = 'dark' | 'light';
 // Privacy levels: 'none' = hidden, 'personal' = show my contact info, 'full' = show all including reference contacts
 export type PrivacyLevel = 'none' | 'personal' | 'full';
 
+// Display settings that are shareable via URL/share links
+export interface DisplaySettings {
+  theme: CVTheme;
+  showPhoto: boolean;
+  privacyLevel: PrivacyLevel;
+  showExperience: boolean;
+  showAttachments: boolean;
+}
+
 export interface CVThemeContextType {
   theme: CVTheme;
   toggleTheme: () => void;

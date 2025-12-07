@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const { fullUrl, cvVersionId } = await request.json();
+    const { fullUrl, cvVersionId, settings } = await request.json();
 
     if (!fullUrl) {
       return NextResponse.json(
@@ -36,12 +36,26 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if a link already exists for this URL
+    // Extract display settings with defaults
+    const displaySettings = {
+      theme: settings?.theme || 'dark',
+      show_photo: settings?.showPhoto ?? true,
+      privacy_level: settings?.privacyLevel || 'none',
+      show_experience: settings?.showExperience ?? true,
+      show_attachments: settings?.showAttachments ?? false,
+    };
+
+    // Check if a link already exists for this exact URL + settings combination
     const { data: existingLink } = await supabase
       .from('cv_share_links')
       .select('id, short_code')
       .eq('full_url', fullUrl)
       .eq('created_by', user.id)
+      .eq('theme', displaySettings.theme)
+      .eq('show_photo', displaySettings.show_photo)
+      .eq('privacy_level', displaySettings.privacy_level)
+      .eq('show_experience', displaySettings.show_experience)
+      .eq('show_attachments', displaySettings.show_attachments)
       .single();
 
     if (existingLink) {
@@ -79,7 +93,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create the share link
+    // Create the share link with display settings
     const { data: newLink, error } = await supabase
       .from('cv_share_links')
       .insert({
@@ -87,6 +101,7 @@ export async function POST(request: NextRequest) {
         full_url: fullUrl,
         cv_version_id: cvVersionId || null,
         created_by: user.id,
+        ...displaySettings,
       })
       .select('id, short_code')
       .single();
@@ -138,6 +153,11 @@ export async function GET(request: NextRequest) {
         full_url,
         cv_version_id,
         created_at,
+        theme,
+        show_photo,
+        privacy_level,
+        show_experience,
+        show_attachments,
         cv_versions (
           name
         )
@@ -206,6 +226,13 @@ export async function GET(request: NextRequest) {
         totalVisits: link.totalVisits,
         uniqueVisits: link.uniqueVisits,
         lastVisitedAt: link.lastVisitedAt,
+        settings: {
+          theme: link.theme || 'dark',
+          showPhoto: link.show_photo ?? true,
+          privacyLevel: link.privacy_level || 'none',
+          showExperience: link.show_experience ?? true,
+          showAttachments: link.show_attachments ?? false,
+        },
       })),
     });
 
