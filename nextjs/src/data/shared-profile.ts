@@ -5,6 +5,9 @@ const publicProfile = {
   linkedin: 'linkedin.com/in/benjamin-grauer',
   website: 'benjamingrauer.ch',
   photo: '/Benjamin_Grauer_ProfilePic_Transparent_1024.webp',
+  github: 'https://github.com/benschg',
+  strava: 'https://www.strava.com/athletes/3896765',
+  steam: 'https://steamcommunity.com/profiles/76561197970355967',
 };
 
 // Private information loaded from environment variables

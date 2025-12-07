@@ -1,8 +1,10 @@
 'use client';
 
-import { Box, Typography, Container, Paper, Grid } from '@mui/material';
-import { LocationOn, Email } from '@mui/icons-material';
-import { sharedProfile } from '../../data/shared-profile';
+import { Box, Typography, Container, Paper, Grid, IconButton } from '@mui/material';
+import { LocationOn, Email, GitHub } from '@mui/icons-material';
+import { sharedProfile } from '@/data/shared-profile';
+import StravaIcon from '@/components/icons/StravaIcon';
+import SteamIcon from '@/components/icons/SteamIcon';
 
 const PersonalHero = () => {
   return (
@@ -93,23 +95,49 @@ const PersonalHero = () => {
                 Get in Touch
               </Typography>
 
-              {sharedProfile.location && (
-                <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-                  <LocationOn sx={{ color: 'primary.main', mr: 1 }} />
-                  <Typography variant="body2" sx={{ color: '#555' }}>
-                    {sharedProfile.location}
-                  </Typography>
-                </Box>
-              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <LocationOn sx={{ color: 'primary.main', mr: 1 }} />
+                <Typography variant="body2" sx={{ color: '#555' }}>
+                  Zürich, Switzerland
+                </Typography>
+              </Box>
 
-              {sharedProfile.email && (
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                  <Email sx={{ color: 'primary.main', mr: 1 }} />
-                  <Typography variant="body2" sx={{ color: '#555' }}>
-                    {sharedProfile.email}
-                  </Typography>
-                </Box>
-              )}
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Email sx={{ color: 'primary.main', mr: 1 }} />
+                <Typography variant="body2" sx={{ color: '#555' }}>
+                  benjamin@benjamingrauer.ch
+                </Typography>
+              </Box>
+
+              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1 }}>
+                <IconButton
+                  href={sharedProfile.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{ color: '#333' }}
+                >
+                  <GitHub />
+                </IconButton>
+                <IconButton
+                  href={sharedProfile.strava}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{ color: '#fc4c02' }}
+                >
+                  <StravaIcon />
+                </IconButton>
+                <IconButton
+                  href={sharedProfile.steam}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="small"
+                  sx={{ color: '#1b2838' }}
+                >
+                  <SteamIcon />
+                </IconButton>
+              </Box>
             </Paper>
           </Grid>
         </Grid>

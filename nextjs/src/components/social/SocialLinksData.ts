@@ -2,12 +2,12 @@ import {
   GitHub,
   LinkedIn,
   Language,
-  SportsEsports,
   YouTube,
-  DirectionsRun,
   Watch,
 } from '@mui/icons-material';
 import type { SocialLink } from './SocialLink';
+import StravaIcon from '@/components/icons/StravaIcon';
+import SteamIcon from '@/components/icons/SteamIcon';
 
 export const socialLinks: SocialLink[] = [
   { name: 'GitHub', url: 'http://github.com/benschg', icon: GitHub },
@@ -16,12 +16,12 @@ export const socialLinks: SocialLink[] = [
   {
     name: 'Steam',
     url: 'https://steamcommunity.com/profiles/76561197970355967',
-    icon: SportsEsports,
+    icon: SteamIcon,
   },
   { name: 'YouTube', url: 'https://www.youtube.com/@benschg', icon: YouTube },
 ];
 
 export const fitnessLinks: SocialLink[] = [
-  { name: 'Strava', url: 'https://www.strava.com/athletes/3896765', icon: DirectionsRun },
+  { name: 'Strava', url: 'https://www.strava.com/athletes/3896765', icon: StravaIcon },
   { name: 'Garmin', url: 'https://connect.garmin.com/modern/profile/benschg', icon: Watch },
 ];
