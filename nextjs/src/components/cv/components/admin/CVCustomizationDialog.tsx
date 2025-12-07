@@ -25,6 +25,26 @@ import type { CVVersionContent } from '@/services/cv/cvVersion.types';
 import type { CompanyResearch } from '@/services/ai/gemini.service';
 import type { GeminiModelId } from '@/config/gemini.config';
 
+// Modern scrollbar styling
+export const modernScrollbarSx = {
+  '&::-webkit-scrollbar': {
+    width: '8px',
+    height: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: '4px',
+    '&:hover': {
+      background: 'rgba(255, 255, 255, 0.3)',
+    },
+  },
+  scrollbarWidth: 'thin',
+  scrollbarColor: 'rgba(255, 255, 255, 0.2) transparent',
+};
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;

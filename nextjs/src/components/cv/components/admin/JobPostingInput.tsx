@@ -58,6 +58,7 @@ import {
   aggregateCVData,
   formatDataForPrompt,
 } from '@/services/ai/cvDataAggregator';
+import { modernScrollbarSx } from './CVCustomizationDialog';
 
 // Get preview text for a single data source
 const getDataSourcePreview = (key: keyof CVDataSourceSelection): string => {
@@ -270,7 +271,7 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
       {/* Scrollable content area */}
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2, pr: 1 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2, pr: 1, ...modernScrollbarSx }}>
       {/* Load Previous Section */}
       {versionsWithContext.length > 0 && (
         <Box sx={{ mb: 1 }}>

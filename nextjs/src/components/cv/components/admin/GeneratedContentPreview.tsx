@@ -31,6 +31,7 @@ import { regenerateCVItem } from '@/services/ai/gemini.service';
 import type { JobInputData } from './JobPostingInput';
 import MotivationLetterPreview from './MotivationLetterPreview';
 import { sharedProfile } from '@/data/shared-profile';
+import { modernScrollbarSx } from './CVCustomizationDialog';
 
 interface GeneratedContentPreviewProps {
   originalContent: CVVersionContent;
@@ -282,7 +283,7 @@ const GeneratedContentPreview = ({
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
       {/* Scrollable content area */}
-      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 3, pr: 1 }}>
+      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 3, pr: 1, ...modernScrollbarSx }}>
         <Alert severity="success">
           Successfully analyzed {companyResearch.company.name} and generated customized content!
         </Alert>
