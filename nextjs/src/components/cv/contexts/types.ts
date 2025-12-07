@@ -43,7 +43,7 @@ export const DEFAULT_DISPLAY_SETTINGS: DisplaySettings = {
   privacyLevel: 'none',
   showExperience: true,
   showAttachments: false,
-  showExport: true,
+  showExport: false,
 };
 
 export interface CVThemeContextType {
