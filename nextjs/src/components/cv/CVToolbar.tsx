@@ -159,6 +159,7 @@ const CVToolbar = ({
     if (!showExperience) params.set("experience", "0");
     if (showAttachments) params.set("attachments", "1");
     if (!showExportOnShare) params.set("showExport", "0");
+    if (externalExportPanelOpen) params.set("export", "true");
 
     const baseUrl = `${window.location.origin}/working-life/cv`;
     const queryString = params.toString();
