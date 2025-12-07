@@ -254,7 +254,7 @@ const ShareLinksManager = () => {
                         </Tooltip>
                       )}
                       {link.settings?.showExport && (
-                        <Tooltip title="Export button visible">
+                        <Tooltip title="Export panel visible">
                           <DownloadIcon sx={{ fontSize: 16, color: '#89665d' }} />
                         </Tooltip>
                       )}

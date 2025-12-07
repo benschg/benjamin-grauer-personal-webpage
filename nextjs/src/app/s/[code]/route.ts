@@ -30,10 +30,10 @@ export async function GET(
 ) {
   const { code } = await params;
 
-  // Look up the short code
+  // Look up the short code with all settings
   const { data: shareLink, error } = await supabaseAdmin
     .from('cv_share_links')
-    .select('id, full_url')
+    .select('id, full_url, cv_version_id, theme, show_photo, privacy_level, show_experience, show_attachments, show_export')
     .eq('short_code', code)
     .single();
 
@@ -41,6 +41,24 @@ export async function GET(
     // Redirect to home page if link not found
     return NextResponse.redirect(new URL('/', request.url));
   }
+
+  // Build the redirect URL from stored settings (more reliable than full_url)
+  const urlParams = new URLSearchParams();
+  if (shareLink.cv_version_id) urlParams.set('version', shareLink.cv_version_id);
+  if (shareLink.theme && shareLink.theme !== 'dark') urlParams.set('theme', shareLink.theme);
+  if (shareLink.show_photo === false) urlParams.set('photo', '0');
+  if (shareLink.privacy_level && shareLink.privacy_level !== 'none') urlParams.set('privacy', shareLink.privacy_level);
+  if (shareLink.show_experience === false) urlParams.set('experience', '0');
+  if (shareLink.show_attachments === true) urlParams.set('attachments', '1');
+  // show_export controls whether export panel is open AND export button is visible
+  if (shareLink.show_export === true) {
+    urlParams.set('export', 'true');
+  } else {
+    urlParams.set('showExport', '0');
+  }
+
+  const queryString = urlParams.toString();
+  const redirectPath = queryString ? `/working-life/cv?${queryString}` : '/working-life/cv';
 
   // Record the visit (don't await - fire and forget for speed)
   const clientIP = getClientIP(request);
@@ -61,6 +79,6 @@ export async function GET(
       if (error) console.error('Failed to record visit:', error);
     });
 
-  // Redirect to the full URL
-  return NextResponse.redirect(new URL(shareLink.full_url, request.url), 307);
+  // Redirect to the CV page with stored settings
+  return NextResponse.redirect(new URL(redirectPath, request.url), 307);
 }
