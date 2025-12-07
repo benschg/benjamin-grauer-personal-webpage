@@ -12,6 +12,7 @@ import {
   IconButton,
   useMediaQuery,
   useTheme,
+  Backdrop,
 } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import CloseIcon from '@mui/icons-material/Close';
@@ -31,10 +32,47 @@ const ExportOptionsDialog = ({ open, onClose, onConfirm, isDownloading, headerHe
   const muiTheme = useTheme();
   const isDesktop = useMediaQuery(muiTheme.breakpoints.up('md'));
 
+  // Fullscreen loading overlay
+  const loadingOverlay = (
+    <Backdrop
+      open={!!isDownloading}
+      sx={{
+        zIndex: 99999,
+        bgcolor: 'rgba(0, 0, 0, 0.85)',
+        flexDirection: 'column',
+        gap: 3,
+      }}
+    >
+      <CircularProgress
+        size={60}
+        thickness={4}
+        sx={{ color: '#89665d' }}
+      />
+      <Typography
+        variant="h6"
+        sx={{
+          color: 'white',
+          fontFamily: 'Orbitron',
+          letterSpacing: '0.1em',
+        }}
+      >
+        Generating PDF...
+      </Typography>
+      <Typography
+        variant="body2"
+        sx={{ color: 'rgba(255,255,255,0.6)' }}
+      >
+        This may take a few seconds
+      </Typography>
+    </Backdrop>
+  );
+
   // Desktop: Side panel that slides in from right, positioned below header
   if (isDesktop) {
     return (
-      <Box
+      <>
+        {loadingOverlay}
+        <Box
         sx={{
           position: 'fixed',
           top: headerHeight,
@@ -110,12 +148,15 @@ const ExportOptionsDialog = ({ open, onClose, onConfirm, isDownloading, headerHe
           </Button>
         </Box>
       </Box>
+      </>
     );
   }
 
   // Mobile: Dialog
   return (
-    <Dialog
+    <>
+      {loadingOverlay}
+      <Dialog
       open={open}
       onClose={onClose}
       maxWidth="sm"
@@ -157,6 +198,7 @@ const ExportOptionsDialog = ({ open, onClose, onConfirm, isDownloading, headerHe
         </Button>
       </DialogActions>
     </Dialog>
+    </>
   );
 };
 

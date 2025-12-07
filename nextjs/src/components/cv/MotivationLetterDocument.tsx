@@ -5,6 +5,8 @@ import { useCVTheme, useCVVersion } from './contexts';
 import { sharedProfile } from '@/data/shared-profile';
 import type { MotivationLetter } from '@/types/database.types';
 import EditableText from './components/EditableText';
+import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import LanguageIcon from '@mui/icons-material/Language';
 import './styles/cv.css';
 
 interface MotivationLetterDocumentProps {
@@ -119,6 +121,16 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
                       {sharedProfile.email && <span>{sharedProfile.email}</span>}
                       {sharedProfile.phone && <span>{sharedProfile.phone}</span>}
                       {sharedProfile.location && <span>{sharedProfile.location}</span>}
+                      {sharedProfile.website && (
+                        <a
+                          href={`https://${sharedProfile.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ textDecoration: 'none', color: 'inherit' }}
+                        >
+                          {sharedProfile.website}
+                        </a>
+                      )}
                     </div>
                   )}
                 </div>
@@ -213,9 +225,27 @@ const MotivationLetterDocument = forwardRef<HTMLDivElement, MotivationLetterDocu
 
           {/* Footer */}
           <div className="cv-footer">
-            <span>{sharedProfile.linkedin}</span>
+            <a
+              href={`https://${sharedProfile.linkedin}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cv-footer-item"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <LinkedInIcon sx={{ fontSize: 14, mr: 0.3 }} />
+              {sharedProfile.linkedin}
+            </a>
             <span className="cv-footer-separator">•</span>
-            <span>{sharedProfile.website}</span>
+            <a
+              href={`https://${sharedProfile.website}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cv-footer-item"
+              style={{ textDecoration: 'none', color: 'inherit' }}
+            >
+              <LanguageIcon sx={{ fontSize: 14, mr: 0.3 }} />
+              {sharedProfile.website}
+            </a>
           </div>
         </div>
       </div>

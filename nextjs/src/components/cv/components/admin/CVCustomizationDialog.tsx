@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -25,6 +25,26 @@ import type { CVVersionContent } from '@/services/cv/cvVersion.types';
 import type { CompanyResearch } from '@/services/ai/gemini.service';
 import type { GeminiModelId } from '@/config/gemini.config';
 
+// Modern scrollbar styling
+export const modernScrollbarSx = {
+  '&::-webkit-scrollbar': {
+    width: '8px',
+    height: '8px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: '4px',
+    '&:hover': {
+      background: 'rgba(255, 255, 255, 0.3)',
+    },
+  },
+  scrollbarWidth: 'thin',
+  scrollbarColor: 'rgba(255, 255, 255, 0.2) transparent',
+};
+
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
@@ -32,7 +52,18 @@ interface TabPanelProps {
 }
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => (
-  <Box role="tabpanel" hidden={value !== index} sx={{ py: 2 }}>
+  <Box
+    role="tabpanel"
+    hidden={value !== index}
+    sx={{
+      py: 2,
+      flex: 1,
+      display: value === index ? 'flex' : 'none',
+      flexDirection: 'column',
+      minHeight: 0,
+      overflow: 'hidden',
+    }}
+  >
     {value === index && children}
   </Box>
 );
@@ -40,11 +71,19 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => (
 interface CVCustomizationDialogProps {
   open: boolean;
   onClose: () => void;
+  initialTab?: number;
 }
 
-const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) => {
-  const [tabValue, setTabValue] = useState(0);
+const CVCustomizationDialog = ({ open, onClose, initialTab = 0 }: CVCustomizationDialogProps) => {
+  const [tabValue, setTabValue] = useState(initialTab);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Reset to initialTab when dialog opens
+  useEffect(() => {
+    if (open) {
+      setTabValue(initialTab);
+    }
+  }, [open, initialTab]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedContent, setGeneratedContent] = useState<CVVersionContent | null>(null);
@@ -125,14 +164,41 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== 'backdropClick') {
+          handleClose();
+        }
+      }}
+      maxWidth="md"
+      fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            height: '85vh',
+            maxHeight: '85vh',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        },
+      }}
+    >
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         CV Customization
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flex: 1,
+          minHeight: 0,
+        }}
+      >
         {!isGeminiConfigured() && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             Gemini API is not configured. AI customization features are disabled. You can still
@@ -140,7 +206,22 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
           </Alert>
         )}
 
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, v) => setTabValue(v)}
+          sx={{
+            flexShrink: 0,
+            '& .MuiTab-root': {
+              color: 'text.secondary',
+              '&.Mui-selected': {
+                color: 'text.primary',
+              },
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: 'text.primary',
+            },
+          }}
+        >
           <Tab label="Generate" disabled={!isGeminiConfigured()} />
           <Tab label="Preview" disabled={!generatedContent} />
           <Tab label="Versions" />

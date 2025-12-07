@@ -30,6 +30,7 @@ const CVPageContent = () => {
   const isAdmin = user && adminEmail && user.email === adminEmail;
   const [isDownloading, setIsDownloading] = useState(false);
   const [customizationOpen, setCustomizationOpen] = useState(false);
+  const [customizationInitialTab, setCustomizationInitialTab] = useState(0);
   const [llmInputDataOpen, setLlmInputDataOpen] = useState(false);
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [cvStyles, setCvStyles] = useState<string>('');
@@ -238,7 +239,10 @@ const CVPageContent = () => {
         {/* Admin bar - always visible for admin */}
         {isAdmin && (
           <CVAdminBar
-            onCustomizationOpen={() => setCustomizationOpen(true)}
+            onCustomizationOpen={(initialTab = 0) => {
+              setCustomizationInitialTab(initialTab);
+              setCustomizationOpen(true);
+            }}
             onLlmInputDataOpen={() => setLlmInputDataOpen(true)}
           />
         )}
@@ -249,7 +253,11 @@ const CVPageContent = () => {
         className="cv-no-print"
       />
       {/* Dialogs */}
-      <CVCustomizationDialog open={customizationOpen} onClose={() => setCustomizationOpen(false)} />
+      <CVCustomizationDialog
+        open={customizationOpen}
+        onClose={() => setCustomizationOpen(false)}
+        initialTab={customizationInitialTab}
+      />
       <LLMInputDataDialog open={llmInputDataOpen} onClose={() => setLlmInputDataOpen(false)} version={activeVersion} />
       {/* Content container - shifts when export panel is open on desktop */}
       <Box

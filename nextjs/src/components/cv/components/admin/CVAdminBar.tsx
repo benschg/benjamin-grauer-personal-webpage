@@ -43,7 +43,7 @@ const truncatingFlexRowSx = {
 };
 
 interface CVAdminBarProps {
-  onCustomizationOpen: () => void;
+  onCustomizationOpen: (initialTab?: number) => void;
   onLlmInputDataOpen: () => void;
 }
 
@@ -144,7 +144,7 @@ const CVAdminBar = ({ onCustomizationOpen, onLlmInputDataOpen }: CVAdminBarProps
         }}
       >
         <Box sx={{ minWidth: 0, flex: '0 1 auto', overflow: 'hidden' }}>
-          <CVVersionSelector />
+          <CVVersionSelector onManageVersions={() => onCustomizationOpen(2)} />
         </Box>
         {/* Show LLM input data button when a custom version is selected */}
         {activeVersion?.job_context && (
@@ -161,7 +161,7 @@ const CVAdminBar = ({ onCustomizationOpen, onLlmInputDataOpen }: CVAdminBarProps
         <Tooltip title="AI Customization">
           <IconButton
             size="small"
-            onClick={onCustomizationOpen}
+            onClick={() => onCustomizationOpen()}
             sx={adminIconButtonSx}
           >
             <AutoAwesomeIcon fontSize="small" />
