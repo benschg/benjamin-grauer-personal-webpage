@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import {
   Box,
   Typography,
@@ -15,7 +15,6 @@ import {
   TableRow,
   Chip,
   Alert,
-  Popover,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -68,12 +67,9 @@ const ShareLinksManager = () => {
   const [error, setError] = useState<string | null>(null);
   const [copySuccess, setCopySuccess] = useState<string | null>(null);
 
-  // Visits popover state
-  const [visitsAnchorEl, setVisitsAnchorEl] = useState<HTMLElement | null>(null);
-  const [visitsLinkId, setVisitsLinkId] = useState<string | null>(null);
-  const [visits, setVisits] = useState<Visit[]>([]);
-  const [visitsLoading, setVisitsLoading] = useState(false);
-  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  // Visits cache - load on demand when tooltip opens
+  const [visitsCache, setVisitsCache] = useState<Record<string, Visit[]>>({});
+  const [loadingVisits, setLoadingVisits] = useState<string | null>(null);
 
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -147,53 +143,76 @@ const ShareLinksManager = () => {
     setLinkToDelete(null);
   };
 
-  // Fetch visits for a link on hover
-  const fetchVisits = async (linkId: string) => {
-    setVisitsLoading(true);
+  // Fetch visits for a link when tooltip opens
+  const fetchVisitsForLink = async (linkId: string) => {
+    if (visitsCache[linkId] || loadingVisits === linkId) return;
+
+    setLoadingVisits(linkId);
     try {
       const response = await fetch(`/api/share-link/${linkId}/visits`);
       if (response.ok) {
         const data = await response.json();
-        setVisits(data.visits || []);
+        setVisitsCache(prev => ({ ...prev, [linkId]: data.visits || [] }));
       }
     } catch (err) {
       console.error('Error fetching visits:', err);
     } finally {
-      setVisitsLoading(false);
+      setLoadingVisits(null);
     }
-  };
-
-  const handleVisitsHover = (event: React.MouseEvent<HTMLElement>, linkId: string) => {
-    // Clear any existing timeout
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    // Delay showing popover to avoid flickering
-    hoverTimeoutRef.current = setTimeout(() => {
-      setVisitsAnchorEl(event.currentTarget);
-      setVisitsLinkId(linkId);
-      fetchVisits(linkId);
-    }, 300);
-  };
-
-  const handleVisitsLeave = () => {
-    if (hoverTimeoutRef.current) {
-      clearTimeout(hoverTimeoutRef.current);
-    }
-    setVisitsAnchorEl(null);
-    setVisitsLinkId(null);
-    setVisits([]);
   };
 
   const getDeviceIcon = (device: string) => {
     switch (device) {
       case 'Mobile':
-        return <PhoneAndroidIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />;
+        return <PhoneAndroidIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', mr: 0.5 }} />;
       case 'Tablet':
-        return <TabletIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />;
+        return <TabletIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', mr: 0.5 }} />;
       default:
-        return <ComputerIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)' }} />;
+        return <ComputerIcon sx={{ fontSize: 14, color: 'rgba(255,255,255,0.5)', mr: 0.5 }} />;
     }
+  };
+
+  const renderVisitsTooltip = (link: ShareLink) => {
+    const visits = visitsCache[link.id];
+    const isLoading = loadingVisits === link.id;
+
+    if (link.totalVisits === 0) {
+      return 'No visits yet';
+    }
+
+    if (isLoading || !visits) {
+      return (
+        <Box sx={{ p: 1 }}>
+          <Typography variant="body2">Loading visits...</Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Box sx={{ p: 1, maxWidth: 300 }}>
+        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+          Recent Visits ({link.uniqueVisits} unique / {link.totalVisits} total)
+        </Typography>
+        {visits.slice(0, 10).map((visit, idx) => (
+          <Box key={visit.id} sx={{ display: 'flex', alignItems: 'center', py: 0.5, borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}>
+            {getDeviceIcon(visit.device)}
+            <Box sx={{ flex: 1 }}>
+              <Typography variant="caption" sx={{ display: 'block' }}>
+                {visit.browser} · {visit.device}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
+                {formatRelativeTime(visit.visitedAt)}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+        {visits.length > 10 && (
+          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mt: 1 }}>
+            +{visits.length - 10} more visits
+          </Typography>
+        )}
+      </Box>
+    );
   };
 
   const formatDate = (dateString: string) => {
@@ -355,24 +374,38 @@ const ShareLinksManager = () => {
                     </Box>
                   </TableCell>
                   <TableCell sx={{ borderColor: 'rgba(255,255,255,0.1)' }} align="center">
-                    <Box
-                      onMouseEnter={(e) => link.totalVisits > 0 && handleVisitsHover(e, link.id)}
-                      onMouseLeave={handleVisitsLeave}
-                      sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: 0.5,
-                        cursor: link.totalVisits > 0 ? 'pointer' : 'default',
-                        py: 0.5,
-                        px: 1,
-                        borderRadius: 1,
-                        '&:hover': link.totalVisits > 0 ? { bgcolor: 'rgba(255,255,255,0.05)' } : {},
+                    <Tooltip
+                      title={renderVisitsTooltip(link)}
+                      onOpen={() => fetchVisitsForLink(link.id)}
+                      placement="bottom"
+                      arrow
+                      slotProps={{
+                        tooltip: {
+                          sx: {
+                            bgcolor: '#2a2e32',
+                            '& .MuiTooltip-arrow': { color: '#2a2e32' },
+                            maxWidth: 350,
+                          },
+                        },
                       }}
                     >
-                      <VisibilityIcon sx={{ fontSize: 16, color: 'rgba(255,255,255,0.5)' }} />
-                      <Typography sx={{ color: 'white' }}>{link.uniqueVisits} / {link.totalVisits}</Typography>
-                    </Box>
+                      <Box
+                        sx={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 0.5,
+                          cursor: 'pointer',
+                          py: 0.5,
+                          px: 1,
+                          borderRadius: 1,
+                          '&:hover': { bgcolor: 'rgba(255,255,255,0.05)' },
+                        }}
+                      >
+                        <VisibilityIcon sx={{ fontSize: 16, color: 'rgba(255,255,255,0.5)' }} />
+                        <Typography sx={{ color: 'white' }}>{link.uniqueVisits} / {link.totalVisits}</Typography>
+                      </Box>
+                    </Tooltip>
                   </TableCell>
                   <TableCell sx={{ color: 'rgba(255,255,255,0.7)', borderColor: 'rgba(255,255,255,0.1)' }}>
                     {formatRelativeTime(link.lastVisitedAt)}
@@ -420,87 +453,6 @@ const ShareLinksManager = () => {
           <strong>Unique Visitors:</strong> {links.reduce((sum, l) => sum + l.uniqueVisits, 0)}
         </Typography>
       </Box>
-
-      {/* Visits Popover */}
-      <Popover
-        open={Boolean(visitsAnchorEl)}
-        anchorEl={visitsAnchorEl}
-        onClose={handleVisitsLeave}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'center',
-        }}
-        disableRestoreFocus
-        sx={{
-          pointerEvents: 'none',
-          '& .MuiPopover-paper': {
-            pointerEvents: 'auto',
-            bgcolor: '#2a2e32',
-            color: 'white',
-            maxHeight: 300,
-            minWidth: 350,
-          },
-        }}
-      >
-        <Box sx={{ p: 2 }} onMouseLeave={handleVisitsLeave}>
-          <Typography variant="subtitle2" sx={{ mb: 1.5, color: 'rgba(255,255,255,0.7)' }}>
-            Recent Visits
-          </Typography>
-          {visitsLoading ? (
-            <Box sx={{ display: 'flex', justifyContent: 'center', py: 2 }}>
-              <CircularProgress size={20} sx={{ color: '#89665d' }} />
-            </Box>
-          ) : visits.length === 0 ? (
-            <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.5)' }}>
-              No visits yet
-            </Typography>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {visits.map((visit) => (
-                <Box
-                  key={visit.id}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1.5,
-                    py: 0.75,
-                    borderBottom: '1px solid rgba(255,255,255,0.05)',
-                    '&:last-child': { borderBottom: 'none' },
-                  }}
-                >
-                  {getDeviceIcon(visit.device)}
-                  <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Typography variant="body2" sx={{ fontSize: '0.8rem' }}>
-                      {visit.browser} · {visit.device}
-                    </Typography>
-                    {visit.referrer && (
-                      <Typography
-                        variant="caption"
-                        sx={{
-                          color: 'rgba(255,255,255,0.4)',
-                          display: 'block',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                      >
-                        from {new URL(visit.referrer).hostname}
-                      </Typography>
-                    )}
-                  </Box>
-                  <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', whiteSpace: 'nowrap' }}>
-                    {formatRelativeTime(visit.visitedAt)}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          )}
-        </Box>
-      </Popover>
 
       {/* Delete Confirmation Dialog */}
       <Dialog

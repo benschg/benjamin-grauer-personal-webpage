@@ -50,11 +50,10 @@ export async function GET(
   if (shareLink.privacy_level && shareLink.privacy_level !== 'none') urlParams.set('privacy', shareLink.privacy_level);
   if (shareLink.show_experience === false) urlParams.set('experience', '0');
   if (shareLink.show_attachments === true) urlParams.set('attachments', '1');
-  // show_export controls whether export panel is open AND export button is visible
+  // show_export controls whether export panel should be pre-opened
+  // The export button is always visible for share links
   if (shareLink.show_export === true) {
     urlParams.set('export', 'true');
-  } else {
-    urlParams.set('showExport', '0');
   }
 
   const queryString = urlParams.toString();

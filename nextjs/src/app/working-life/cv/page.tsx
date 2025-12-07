@@ -238,6 +238,8 @@ const CVPageContent = () => {
             onTabChange={setActiveTab}
             hasMotivationLetter={hasMotivationLetter}
             renderFloatingElements={false}
+            exportPanelOpen={exportPanelOpen}
+            onExportPanelChange={setExportPanelOpen}
             showExportButton={showExportButton}
           />
         </Box>
