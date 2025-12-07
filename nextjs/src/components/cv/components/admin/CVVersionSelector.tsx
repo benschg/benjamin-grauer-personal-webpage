@@ -225,32 +225,31 @@ const CVVersionSelector = ({ onManageVersions }: CVVersionSelectorProps) => {
       ))}
 
       {/* Manage Versions link */}
-      {onManageVersions && (
-        <>
-          <Divider />
-          <MenuItem
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClose();
-              onManageVersions();
-            }}
-            sx={{
-              justifyContent: 'center',
-              gap: 1,
-              py: 1.5,
-              bgcolor: 'action.hover',
-              '&:hover': {
-                bgcolor: 'action.selected',
-              },
-            }}
-          >
-            <SettingsIcon fontSize="small" color="action" />
-            <Typography variant="body2" fontWeight={500}>
-              Manage Versions
-            </Typography>
-          </MenuItem>
-        </>
-      )}
+      {onManageVersions && [
+        <Divider key="manage-divider" />,
+        <MenuItem
+          key="manage-versions"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleClose();
+            onManageVersions();
+          }}
+          sx={{
+            justifyContent: 'center',
+            gap: 1,
+            py: 1.5,
+            bgcolor: 'action.hover',
+            '&:hover': {
+              bgcolor: 'action.selected',
+            },
+          }}
+        >
+          <SettingsIcon fontSize="small" color="action" />
+          <Typography variant="body2" fontWeight={500}>
+            Manage Versions
+          </Typography>
+        </MenuItem>,
+      ]}
     </Select>
   );
 };
