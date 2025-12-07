@@ -32,7 +32,18 @@ interface TabPanelProps {
 }
 
 const TabPanel = ({ children, value, index }: TabPanelProps) => (
-  <Box role="tabpanel" hidden={value !== index} sx={{ py: 2 }}>
+  <Box
+    role="tabpanel"
+    hidden={value !== index}
+    sx={{
+      py: 2,
+      flex: 1,
+      display: value === index ? 'flex' : 'none',
+      flexDirection: 'column',
+      minHeight: 0,
+      overflow: 'hidden',
+    }}
+  >
     {value === index && children}
   </Box>
 );
@@ -134,14 +145,32 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
       }}
       maxWidth="md"
       fullWidth
+      slotProps={{
+        paper: {
+          sx: {
+            height: '85vh',
+            maxHeight: '85vh',
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        },
+      }}
     >
-      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexShrink: 0 }}>
         CV Customization
         <IconButton onClick={handleClose}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflow: 'hidden',
+          flex: 1,
+          minHeight: 0,
+        }}
+      >
         {!isGeminiConfigured() && (
           <Alert severity="warning" sx={{ mb: 2 }}>
             Gemini API is not configured. AI customization features are disabled. You can still
@@ -149,7 +178,7 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
           </Alert>
         )}
 
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)}>
+        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ flexShrink: 0 }}>
           <Tab label="Generate" disabled={!isGeminiConfigured()} />
           <Tab label="Preview" disabled={!generatedContent} />
           <Tab label="Versions" />

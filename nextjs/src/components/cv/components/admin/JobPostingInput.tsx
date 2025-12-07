@@ -268,7 +268,9 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
   const hasValidInput = jobTitle.trim();
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
+      {/* Scrollable content area */}
+      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2, pr: 1 }}>
       {/* Load Previous Section */}
       {versionsWithContext.length > 0 && (
         <Box sx={{ mb: 1 }}>
@@ -650,26 +652,30 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
         </AccordionDetails>
       </Accordion>
 
-      {error && <Alert severity="error">{error}</Alert>}
+      </Box>
 
-      {isGenerating && (
-        <Box sx={{ width: '100%', mb: 2 }}>
-          <LinearProgress />
-          <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
-            AI is analyzing your data and generating customized content...
-          </Typography>
-        </Box>
-      )}
+      {/* Fixed footer area */}
+      <Box sx={{ flexShrink: 0, pt: 2, borderTop: 1, borderColor: 'divider', mt: 2 }}>
+        {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
-      <Button
-        variant="contained"
-        onClick={handleSubmit}
-        disabled={!hasValidInput || isGenerating}
-        startIcon={isGenerating ? <CircularProgress size={20} /> : <AutoAwesomeIcon />}
-        sx={{ alignSelf: 'flex-start' }}
-      >
-        {isGenerating ? 'Generating...' : 'Generate Customized CV'}
-      </Button>
+        {isGenerating && (
+          <Box sx={{ width: '100%', mb: 2 }}>
+            <LinearProgress />
+            <Typography variant="caption" color="text.secondary" sx={{ mt: 1, display: 'block' }}>
+              AI is analyzing your data and generating customized content...
+            </Typography>
+          </Box>
+        )}
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={!hasValidInput || isGenerating}
+          startIcon={isGenerating ? <CircularProgress size={20} /> : <AutoAwesomeIcon />}
+        >
+          {isGenerating ? 'Generating...' : 'Generate Customized CV'}
+        </Button>
+      </Box>
     </Box>
   );
 };

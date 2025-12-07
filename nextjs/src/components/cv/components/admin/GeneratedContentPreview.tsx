@@ -280,10 +280,12 @@ const GeneratedContentPreview = ({
   };
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Alert severity="success">
-        Successfully analyzed {companyResearch.company.name} and generated customized content!
-      </Alert>
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, overflow: 'hidden' }}>
+      {/* Scrollable content area */}
+      <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 3, pr: 1 }}>
+        <Alert severity="success">
+          Successfully analyzed {companyResearch.company.name} and generated customized content!
+        </Alert>
 
       <Paper sx={{ p: 2 }}>
         <Typography variant="subtitle2" gutterBottom>
@@ -643,9 +645,10 @@ const GeneratedContentPreview = ({
         />
       )}
 
-      <Divider />
+      </Box>
 
-      <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+      {/* Fixed footer area */}
+      <Box sx={{ flexShrink: 0, pt: 2, borderTop: 1, borderColor: 'divider', mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
         <TextField
           label="Version Name"
           value={versionName}
