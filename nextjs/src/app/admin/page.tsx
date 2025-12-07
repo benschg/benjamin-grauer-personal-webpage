@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Box,
@@ -35,7 +35,7 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => (
 const TAB_KEYS = ['share-links', 'references', 'contact'] as const;
 type TabKey = typeof TAB_KEYS[number];
 
-const AdminDashboard = () => {
+const AdminDashboardContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, loading } = useAuth();
@@ -146,5 +146,25 @@ const AdminDashboard = () => {
     </Box>
   );
 };
+
+const LoadingFallback = () => (
+  <Box
+    sx={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      bgcolor: '#1a1d20',
+    }}
+  >
+    <CircularProgress sx={{ color: '#89665d' }} />
+  </Box>
+);
+
+const AdminDashboard = () => (
+  <Suspense fallback={<LoadingFallback />}>
+    <AdminDashboardContent />
+  </Suspense>
+);
 
 export default AdminDashboard;

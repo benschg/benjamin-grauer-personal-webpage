@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Box, Snackbar, Alert, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
-import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import MotivationLetterDocument from '@/components/cv/MotivationLetterDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
@@ -114,11 +113,6 @@ const CVPageContent = () => {
     }
   }, [hasMotivationLetter, activeTab]);
 
-  const handlePrint = useReactToPrint({
-    contentRef: activeTab === 'cv' ? cvRef : motivationLetterRef,
-    documentTitle: activeTab === 'cv' ? 'Benjamin_Grauer_CV' : 'Benjamin_Grauer_Motivation_Letter',
-  });
-
   const handleDownloadPdf = useCallback(async () => {
     const currentRef = activeTab === 'cv' ? cvRef.current : motivationLetterRef.current;
     if (!currentRef || !cvStyles) return;
@@ -202,7 +196,6 @@ const CVPageContent = () => {
     >
       {/* CVToolbar renders floating elements (fixed position, not affected by transform) */}
       <CVToolbar
-        onPrint={handlePrint}
         onDownloadPdf={handleDownloadPdf}
         isDownloading={isDownloading}
         activeTab={activeTab}
@@ -231,7 +224,6 @@ const CVPageContent = () => {
         {/* Toolbar bar - inside the translated container */}
         <Box ref={toolbarBarRef}>
           <CVToolbar
-            onPrint={handlePrint}
             onDownloadPdf={handleDownloadPdf}
             isDownloading={isDownloading}
             activeTab={activeTab}

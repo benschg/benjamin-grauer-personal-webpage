@@ -18,7 +18,6 @@ import {
   ToggleButton,
   Fab,
 } from "@mui/material";
-import PrintIcon from "@mui/icons-material/Print";
 import DownloadIcon from "@mui/icons-material/Download";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -41,22 +40,16 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 import AttachFileOffIcon from "@mui/icons-material/LinkOff";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import DescriptionIcon from "@mui/icons-material/Description";
 import EmailIcon from "@mui/icons-material/Email";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import { useCVTheme, useCVVersion } from "./contexts";
-import {
-  CERTIFICATES_PDF_PATH,
-  REFERENCES_PDF_PATH,
-} from "@/components/working-life/content";
 import { useAuth } from "@/contexts";
 import ExportOptionsDialog from "./ExportOptionsDialog";
 import ShareDialog from "./ShareDialog";
 import type { DocumentTab } from "@/app/working-life/cv/page";
 
 interface CVToolbarProps {
-  onPrint: () => void;
   onDownloadPdf?: () => void;
   isDownloading?: boolean;
   activeTab?: DocumentTab;
@@ -71,7 +64,6 @@ interface CVToolbarProps {
 }
 
 const CVToolbar = ({
-  onPrint,
   onDownloadPdf,
   isDownloading,
   activeTab = "cv",
@@ -135,7 +127,6 @@ const CVToolbar = ({
   const { user, signIn, signOut } = useAuth();
   const { isEditing, activeContent } = useCVVersion();
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
-  const [printWarningOpen, setPrintWarningOpen] = useState(false);
   const [internalExportDialogOpen, setInternalExportDialogOpen] =
     useState(false);
   const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
@@ -170,19 +161,6 @@ const CVToolbar = ({
   const exportDialogOpen = externalExportPanelOpen ?? internalExportDialogOpen;
   const setExportDialogOpen =
     onExportPanelChange ?? setInternalExportDialogOpen;
-
-  const handlePrintClick = () => {
-    if (showAttachments) {
-      setPrintWarningOpen(true);
-    } else {
-      onPrint();
-    }
-  };
-
-  const handleConfirmPrint = () => {
-    setPrintWarningOpen(false);
-    onPrint();
-  };
 
   const handleBack = () => {
     router.push("/working-life");
@@ -394,87 +372,6 @@ const CVToolbar = ({
           )}
         </Box>
 
-        {/* Print warning when attachments are enabled */}
-        <Snackbar
-          open={printWarningOpen}
-          onClose={() => setPrintWarningOpen(false)}
-          anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
-        >
-          <Alert
-            severity="warning"
-            onClose={() => setPrintWarningOpen(false)}
-            sx={{ width: "100%", maxWidth: "500px" }}
-          >
-            <Box sx={{ mb: 1.5 }}>
-              <strong>Attachments cannot be included when printing.</strong>
-            </Box>
-            <Box sx={{ mb: 1, fontSize: "0.875rem" }}>
-              View documents separately or download the complete PDF with all
-              attachments.
-            </Box>
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap", mt: 2 }}>
-              <Button
-                color="inherit"
-                size="small"
-                href={CERTIFICATES_PDF_PATH}
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<OpenInNewIcon />}
-              >
-                Certificates
-              </Button>
-              <Button
-                color="inherit"
-                size="small"
-                href={REFERENCES_PDF_PATH}
-                target="_blank"
-                rel="noopener noreferrer"
-                startIcon={<OpenInNewIcon />}
-              >
-                References
-              </Button>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                gap: 1,
-                mt: 2,
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button
-                color="inherit"
-                size="small"
-                onClick={() => setPrintWarningOpen(false)}
-              >
-                Cancel
-              </Button>
-              <Button
-                color="inherit"
-                size="small"
-                variant="outlined"
-                onClick={handleConfirmPrint}
-                startIcon={<PrintIcon />}
-              >
-                Print Anyway
-              </Button>
-              {onDownloadPdf && (
-                <Button
-                  color="inherit"
-                  size="small"
-                  variant="outlined"
-                  onClick={() => {
-                    setPrintWarningOpen(false);
-                    onDownloadPdf();
-                  }}
-                  startIcon={<DownloadIcon />}
-                >
-                  Download All
-                </Button>
-              )}
-            </Box>
-          </Alert>
-        </Snackbar>
       </Box>
     </>
   );
@@ -798,13 +695,6 @@ const CVToolbar = ({
             },
           }}
         >
-          {/* Print */}
-          <SpeedDialAction
-            icon={<PrintIcon />}
-            tooltipTitle="Print"
-            onClick={handlePrintClick}
-          />
-
           {/* Private Info Toggle - only show when logged in */}
           {canShowPrivateInfo && (
             <SpeedDialAction
