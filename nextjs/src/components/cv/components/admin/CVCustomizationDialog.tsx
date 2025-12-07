@@ -125,7 +125,16 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+    <Dialog
+      open={open}
+      onClose={(_, reason) => {
+        if (reason !== 'backdropClick') {
+          handleClose();
+        }
+      }}
+      maxWidth="md"
+      fullWidth
+    >
       <DialogTitle sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         CV Customization
         <IconButton onClick={handleClose}>
