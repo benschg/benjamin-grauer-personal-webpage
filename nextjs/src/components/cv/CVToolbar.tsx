@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import {
   Button,
   Box,
@@ -33,6 +33,7 @@ import LockOpenIcon from '@mui/icons-material/LockOpen';
 import SecurityIcon from '@mui/icons-material/Security';
 import LoginIcon from '@mui/icons-material/Login';
 import LogoutIcon from '@mui/icons-material/Logout';
+import ShareIcon from '@mui/icons-material/Share';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import WorkOffIcon from '@mui/icons-material/WorkOff';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -47,6 +48,7 @@ import { useCVTheme, useCVVersion } from './contexts';
 import { CERTIFICATES_PDF_PATH, REFERENCES_PDF_PATH } from '@/components/working-life/content';
 import { useAuth } from '@/contexts';
 import ExportOptionsDialog from './ExportOptionsDialog';
+import ShareDialog from './ShareDialog';
 import type { DocumentTab } from '@/app/working-life/cv/page';
 
 interface CVToolbarProps {
@@ -77,6 +79,7 @@ const CVToolbar = ({
   headerHeight = 0,
 }: CVToolbarProps) => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const {
     theme,
     toggleTheme,
@@ -131,6 +134,15 @@ const CVToolbar = ({
   const [internalExportDialogOpen, setInternalExportDialogOpen] = useState(false);
   const [copySnackbarOpen, setCopySnackbarOpen] = useState(false);
   const [copySnackbarMessage, setCopySnackbarMessage] = useState('');
+  const [shareDialogOpen, setShareDialogOpen] = useState(false);
+
+  // Get current URL for sharing
+  const getCurrentShareUrl = () => {
+    if (typeof window === 'undefined') return '';
+    const versionId = searchParams.get('version');
+    const baseUrl = `${window.location.origin}/working-life/cv`;
+    return versionId ? `${baseUrl}?version=${versionId}` : baseUrl;
+  };
 
   // Use external control if provided, otherwise use internal state
   const exportDialogOpen = externalExportPanelOpen ?? internalExportDialogOpen;
@@ -293,6 +305,13 @@ const CVToolbar = ({
           )}
         </Box>
         <Box className="cv-toolbar-actions">
+          {/* Share button */}
+          <Tooltip title="Share CV">
+            <IconButton onClick={() => setShareDialogOpen(true)} sx={{ color: 'white' }}>
+              <ShareIcon />
+            </IconButton>
+          </Tooltip>
+
           {/* Auth button */}
           {user ? (
             <Tooltip title={`Sign out (${user.email})`}>
@@ -730,6 +749,14 @@ const CVToolbar = ({
     <>
       {renderToolbarBar && toolbarBar}
       {renderFloatingElements && floatingElements}
+
+      {/* Share Dialog */}
+      <ShareDialog
+        open={shareDialogOpen}
+        onClose={() => setShareDialogOpen(false)}
+        currentUrl={getCurrentShareUrl()}
+        cvVersionId={searchParams.get('version') || undefined}
+      />
     </>
   );
 };
