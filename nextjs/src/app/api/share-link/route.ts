@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
       privacy_level: settings?.privacyLevel || 'none',
       show_experience: settings?.showExperience ?? true,
       show_attachments: settings?.showAttachments ?? false,
+      show_export: settings?.showExport ?? true,
     };
 
     // Check if a link already exists for this exact URL + settings combination
@@ -56,6 +57,7 @@ export async function POST(request: NextRequest) {
       .eq('privacy_level', displaySettings.privacy_level)
       .eq('show_experience', displaySettings.show_experience)
       .eq('show_attachments', displaySettings.show_attachments)
+      .eq('show_export', displaySettings.show_export)
       .single();
 
     if (existingLink) {
@@ -158,6 +160,7 @@ export async function GET(request: NextRequest) {
         privacy_level,
         show_experience,
         show_attachments,
+        show_export,
         cv_versions (
           name
         )
@@ -232,6 +235,7 @@ export async function GET(request: NextRequest) {
           privacyLevel: link.privacy_level || 'none',
           showExperience: link.show_experience ?? true,
           showAttachments: link.show_attachments ?? false,
+          showExport: link.show_export ?? true,
         },
       })),
     });

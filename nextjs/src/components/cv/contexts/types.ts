@@ -12,7 +12,39 @@ export interface DisplaySettings {
   privacyLevel: PrivacyLevel;
   showExperience: boolean;
   showAttachments: boolean;
+  showExport: boolean;
 }
+
+// Database column names mapping for DisplaySettings
+// When you add a new field to DisplaySettings, add the corresponding DB column name here
+export const DISPLAY_SETTINGS_DB_COLUMNS: Record<keyof DisplaySettings, string> = {
+  theme: 'theme',
+  showPhoto: 'show_photo',
+  privacyLevel: 'privacy_level',
+  showExperience: 'show_experience',
+  showAttachments: 'show_attachments',
+  showExport: 'show_export',
+};
+
+// URL parameter names mapping for DisplaySettings
+export const DISPLAY_SETTINGS_URL_PARAMS: Record<keyof DisplaySettings, string> = {
+  theme: 'theme',
+  showPhoto: 'photo',
+  privacyLevel: 'privacy',
+  showExperience: 'experience',
+  showAttachments: 'attachments',
+  showExport: 'export',
+};
+
+// Default values for DisplaySettings
+export const DEFAULT_DISPLAY_SETTINGS: DisplaySettings = {
+  theme: 'dark',
+  showPhoto: true,
+  privacyLevel: 'none',
+  showExperience: true,
+  showAttachments: false,
+  showExport: true,
+};
 
 export interface CVThemeContextType {
   theme: CVTheme;
