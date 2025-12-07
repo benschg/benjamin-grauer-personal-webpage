@@ -20,11 +20,18 @@ import {
   DialogContent,
   DialogActions,
   Button,
+  FormControlLabel,
+  Switch,
+  ToggleButtonGroup,
+  ToggleButton,
+  Divider,
 } from '@mui/material';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import EditIcon from '@mui/icons-material/Edit';
+import SaveIcon from '@mui/icons-material/Save';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
@@ -75,6 +82,12 @@ const ShareLinksManager = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [linkToDelete, setLinkToDelete] = useState<ShareLink | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  // Edit dialog state
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [linkToEdit, setLinkToEdit] = useState<ShareLink | null>(null);
+  const [editSettings, setEditSettings] = useState<DisplaySettings | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const fetchLinks = useCallback(async () => {
     setIsLoading(true);
@@ -143,6 +156,55 @@ const ShareLinksManager = () => {
     setLinkToDelete(null);
   };
 
+  const handleEditClick = (link: ShareLink) => {
+    setLinkToEdit(link);
+    setEditSettings({ ...link.settings });
+    setEditDialogOpen(true);
+  };
+
+  const handleEditSave = async () => {
+    if (!linkToEdit || !editSettings) return;
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/share-link', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: linkToEdit.id,
+          settings: editSettings,
+        }),
+      });
+
+      if (response.ok) {
+        // Update local state
+        setLinks((prev) =>
+          prev.map((link) =>
+            link.id === linkToEdit.id
+              ? { ...link, settings: editSettings }
+              : link
+          )
+        );
+        setEditDialogOpen(false);
+        setLinkToEdit(null);
+        setEditSettings(null);
+      } else {
+        setError('Failed to update settings');
+      }
+    } catch (err) {
+      console.error('Error updating settings:', err);
+      setError('Failed to update settings');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEditCancel = () => {
+    setEditDialogOpen(false);
+    setLinkToEdit(null);
+    setEditSettings(null);
+  };
+
   // Fetch visits for a link when tooltip opens
   const fetchVisitsForLink = async (linkId: string) => {
     if (visitsCache[linkId] || loadingVisits === linkId) return;
@@ -183,31 +245,31 @@ const ShareLinksManager = () => {
     if (isLoading || !visits) {
       return (
         <Box sx={{ p: 1 }}>
-          <Typography variant="body2">Loading visits...</Typography>
+          <Typography variant="body2" sx={{ fontFamily: 'Quicksand, sans-serif' }}>Loading visits...</Typography>
         </Box>
       );
     }
 
     return (
-      <Box sx={{ p: 1, maxWidth: 300 }}>
-        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600 }}>
+      <Box sx={{ p: 1, maxWidth: 300, fontFamily: 'Quicksand, sans-serif' }}>
+        <Typography variant="subtitle2" sx={{ mb: 1, fontWeight: 600, fontFamily: 'Quicksand, sans-serif' }}>
           Recent Visits ({link.uniqueVisits} unique / {link.totalVisits} total)
         </Typography>
         {visits.slice(0, 10).map((visit, idx) => (
           <Box key={visit.id} sx={{ display: 'flex', alignItems: 'center', py: 0.5, borderTop: idx > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none' }}>
             {getDeviceIcon(visit.device)}
             <Box sx={{ flex: 1 }}>
-              <Typography variant="caption" sx={{ display: 'block' }}>
+              <Typography variant="caption" sx={{ display: 'block', fontFamily: 'Quicksand, sans-serif' }}>
                 {visit.browser} · {visit.device}
               </Typography>
-              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)' }}>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.6)', fontFamily: 'Quicksand, sans-serif' }}>
                 {formatRelativeTime(visit.visitedAt)}
               </Typography>
             </Box>
           </Box>
         ))}
         {visits.length > 10 && (
-          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mt: 1 }}>
+          <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)', display: 'block', mt: 1, fontFamily: 'Quicksand, sans-serif' }}>
             +{visits.length - 10} more visits
           </Typography>
         )}
@@ -411,6 +473,15 @@ const ShareLinksManager = () => {
                     {formatRelativeTime(link.lastVisitedAt)}
                   </TableCell>
                   <TableCell sx={{ borderColor: 'rgba(255,255,255,0.1)' }} align="right">
+                    <Tooltip title="Edit settings">
+                      <IconButton
+                        size="small"
+                        onClick={() => handleEditClick(link)}
+                        sx={{ color: 'rgba(255,255,255,0.5)', '&:hover': { color: '#89665d' } }}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                    </Tooltip>
                     <Tooltip title="Open link">
                       <IconButton
                         size="small"
@@ -509,6 +580,213 @@ const ShareLinksManager = () => {
             startIcon={isDeleting ? <CircularProgress size={16} color="inherit" /> : <DeleteIcon />}
           >
             {isDeleting ? 'Deleting...' : 'Delete'}
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Edit Settings Dialog */}
+      <Dialog
+        open={editDialogOpen}
+        onClose={handleEditCancel}
+        maxWidth="sm"
+        fullWidth
+        PaperProps={{
+          sx: {
+            bgcolor: '#343a40',
+            color: 'white',
+          },
+        }}
+      >
+        <DialogTitle sx={{ fontFamily: 'Orbitron', fontSize: '1.1rem' }}>
+          Edit Share Link Settings
+        </DialogTitle>
+        <DialogContent>
+          {linkToEdit && (
+            <Box sx={{ mb: 2, p: 1.5, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1 }}>
+              <Typography
+                sx={{
+                  fontFamily: 'monospace',
+                  color: '#89665d',
+                  fontSize: '0.9rem',
+                }}
+              >
+                /s/{linkToEdit.shortCode}
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.5)' }}>
+                {linkToEdit.versionName}
+              </Typography>
+            </Box>
+          )}
+
+          {editSettings && (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              {/* Theme */}
+              <Box>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 1 }}>
+                  Theme
+                </Typography>
+                <ToggleButtonGroup
+                  value={editSettings.theme}
+                  exclusive
+                  onChange={(_, value) => value && setEditSettings({ ...editSettings, theme: value })}
+                  size="small"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      color: 'rgba(255,255,255,0.5)',
+                      borderColor: 'rgba(255,255,255,0.2)',
+                      '&.Mui-selected': {
+                        color: '#89665d',
+                        bgcolor: 'rgba(137,102,93,0.2)',
+                      },
+                    },
+                  }}
+                >
+                  <ToggleButton value="dark">
+                    <DarkModeIcon sx={{ mr: 0.5, fontSize: 18 }} />
+                    Dark
+                  </ToggleButton>
+                  <ToggleButton value="light">
+                    <LightModeIcon sx={{ mr: 0.5, fontSize: 18 }} />
+                    Light
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              {/* Privacy Level */}
+              <Box>
+                <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', mb: 1 }}>
+                  Privacy Level
+                </Typography>
+                <ToggleButtonGroup
+                  value={editSettings.privacyLevel}
+                  exclusive
+                  onChange={(_, value) => value && setEditSettings({ ...editSettings, privacyLevel: value })}
+                  size="small"
+                  sx={{
+                    '& .MuiToggleButton-root': {
+                      color: 'rgba(255,255,255,0.5)',
+                      borderColor: 'rgba(255,255,255,0.2)',
+                      '&.Mui-selected': {
+                        color: '#89665d',
+                        bgcolor: 'rgba(137,102,93,0.2)',
+                      },
+                    },
+                  }}
+                >
+                  <ToggleButton value="none">None</ToggleButton>
+                  <ToggleButton value="partial">Partial</ToggleButton>
+                  <ToggleButton value="full">Full</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+
+              <Divider sx={{ borderColor: 'rgba(255,255,255,0.1)' }} />
+
+              {/* Toggle switches */}
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={editSettings.showPhoto}
+                      onChange={(e) => setEditSettings({ ...editSettings, showPhoto: e.target.checked })}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#89665d' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#89665d' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <PersonIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.5)' }} />
+                      <Typography variant="body2">Show Photo</Typography>
+                    </Box>
+                  }
+                  sx={{ color: 'white' }}
+                />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={editSettings.showExperience}
+                      onChange={(e) => setEditSettings({ ...editSettings, showExperience: e.target.checked })}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#89665d' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#89665d' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <WorkHistoryIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.5)' }} />
+                      <Typography variant="body2">Show Experience Pages</Typography>
+                    </Box>
+                  }
+                  sx={{ color: 'white' }}
+                />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={editSettings.showAttachments}
+                      onChange={(e) => setEditSettings({ ...editSettings, showAttachments: e.target.checked })}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#89665d' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#89665d' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <AttachFileIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.5)' }} />
+                      <Typography variant="body2">Show Attachments</Typography>
+                    </Box>
+                  }
+                  sx={{ color: 'white' }}
+                />
+
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={editSettings.showExport}
+                      onChange={(e) => setEditSettings({ ...editSettings, showExport: e.target.checked })}
+                      sx={{
+                        '& .MuiSwitch-switchBase.Mui-checked': { color: '#89665d' },
+                        '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#89665d' },
+                      }}
+                    />
+                  }
+                  label={
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <DownloadIcon sx={{ fontSize: 18, color: 'rgba(255,255,255,0.5)' }} />
+                      <Typography variant="body2">Open Export Panel</Typography>
+                    </Box>
+                  }
+                  sx={{ color: 'white' }}
+                />
+              </Box>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions sx={{ px: 3, pb: 2 }}>
+          <Button
+            onClick={handleEditCancel}
+            sx={{ color: 'rgba(255,255,255,0.7)' }}
+            disabled={isSaving}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleEditSave}
+            variant="contained"
+            disabled={isSaving}
+            startIcon={isSaving ? <CircularProgress size={16} color="inherit" /> : <SaveIcon />}
+            sx={{
+              bgcolor: '#89665d',
+              '&:hover': { bgcolor: '#6d5149' },
+            }}
+          >
+            {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
         </DialogActions>
       </Dialog>

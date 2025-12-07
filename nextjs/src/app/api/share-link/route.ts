@@ -251,6 +251,70 @@ export async function GET(request: NextRequest) {
   }
 }
 
+// PATCH: Update a share link's settings
+export async function PATCH(request: NextRequest) {
+  try {
+    const supabase = await createClient();
+
+    // Check authentication
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
+    const { id, settings } = await request.json();
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'Link ID is required' },
+        { status: 400 }
+      );
+    }
+
+    // Build update object from settings
+    const updates: Record<string, unknown> = {};
+    if (settings?.theme !== undefined) updates.theme = settings.theme;
+    if (settings?.showPhoto !== undefined) updates.show_photo = settings.showPhoto;
+    if (settings?.privacyLevel !== undefined) updates.privacy_level = settings.privacyLevel;
+    if (settings?.showExperience !== undefined) updates.show_experience = settings.showExperience;
+    if (settings?.showAttachments !== undefined) updates.show_attachments = settings.showAttachments;
+    if (settings?.showExport !== undefined) updates.show_export = settings.showExport;
+
+    if (Object.keys(updates).length === 0) {
+      return NextResponse.json(
+        { error: 'No settings to update' },
+        { status: 400 }
+      );
+    }
+
+    const { error } = await supabase
+      .from('cv_share_links')
+      .update(updates)
+      .eq('id', id)
+      .eq('created_by', user.id);
+
+    if (error) {
+      console.error('Error updating share link:', error);
+      return NextResponse.json(
+        { error: 'Failed to update share link' },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+
+  } catch (error) {
+    console.error('Error in share-link PATCH:', error);
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 }
+    );
+  }
+}
+
 // DELETE: Delete a share link
 export async function DELETE(request: NextRequest) {
   try {
