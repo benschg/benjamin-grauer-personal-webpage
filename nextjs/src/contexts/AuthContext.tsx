@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 
@@ -32,15 +32,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const supabase = createClient();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-  const whitelistedEmails = process.env.NEXT_PUBLIC_WHITELISTED_EMAILS?.split(',').map(e => e.trim().toLowerCase()) ?? [];
 
-  const checkWhitelisted = (email: string | undefined): boolean => {
+  // Cache whitelisted emails from database
+  const whitelistedEmailsRef = useRef<string[]>([]);
+  const whitelistFetchedRef = useRef(false);
+
+  // Fetch whitelisted emails from database
+  const fetchWhitelistedEmails = useCallback(async () => {
+    if (whitelistFetchedRef.current) return whitelistedEmailsRef.current;
+
+    try {
+      const response = await fetch('/api/whitelisted-emails');
+      if (response.ok) {
+        const data = await response.json();
+        whitelistedEmailsRef.current = (data.emails || []).map((e: { email: string }) => e.email.toLowerCase());
+        whitelistFetchedRef.current = true;
+      }
+    } catch (err) {
+      console.error('Failed to fetch whitelisted emails:', err);
+    }
+    return whitelistedEmailsRef.current;
+  }, []);
+
+  const checkWhitelisted = useCallback(async (email: string | undefined): Promise<boolean> => {
     if (!email) return false;
     const lowerEmail = email.toLowerCase();
     // Admin is always whitelisted
     if (lowerEmail === adminEmail?.toLowerCase()) return true;
+
+    const whitelistedEmails = await fetchWhitelistedEmails();
     return whitelistedEmails.includes(lowerEmail);
-  };
+  }, [adminEmail, fetchWhitelistedEmails]);
 
   useEffect(() => {
     // Get initial session
@@ -53,10 +75,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const user = session?.user ?? null;
+      const isWhitelisted = await checkWhitelisted(user?.email);
       setState({
         user,
         isAdmin: user?.email === adminEmail,
-        isWhitelisted: checkWhitelisted(user?.email),
+        isWhitelisted,
         loading: false,
         error: null,
       });
@@ -68,10 +91,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         const user = session?.user ?? null;
+        const isWhitelisted = await checkWhitelisted(user?.email);
         setState({
           user,
           isAdmin: user?.email === adminEmail,
-          isWhitelisted: checkWhitelisted(user?.email),
+          isWhitelisted,
           loading: false,
           error: null,
         });
@@ -81,7 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, adminEmail]);
+  }, [supabase, adminEmail, checkWhitelisted]);
 
   const signIn = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));

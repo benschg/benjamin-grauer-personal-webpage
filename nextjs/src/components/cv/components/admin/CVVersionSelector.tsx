@@ -199,6 +199,31 @@ const CVVersionSelector = ({ onManageVersions }: CVVersionSelectorProps) => {
         </Box>
       )}
 
+      {/* Include active version if not in filtered list (e.g., loaded from URL before versions sync) */}
+      {activeVersion && !filteredVersions.some(v => v.id === activeVersion.id) && (
+        <MenuItem
+          key={activeVersion.id}
+          value={activeVersion.id}
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 80px',
+            gap: 2,
+            alignItems: 'center',
+          }}
+        >
+          <Typography variant="body2" noWrap>
+            {activeVersion.job_context?.company || activeVersion.name}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" noWrap>
+            {activeVersion.job_context?.position || '—'}
+          </Typography>
+          <Tooltip title={formatFullDateTime(activeVersion.created_at)} placement="top">
+            <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
+              {formatDate(activeVersion.created_at)}
+            </Typography>
+          </Tooltip>
+        </MenuItem>
+      )}
       {filteredVersions.map((version) => (
         <MenuItem
           key={version.id}

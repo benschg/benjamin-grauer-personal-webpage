@@ -113,9 +113,8 @@ Required environment variables (set in Vercel dashboard):
 ```
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
-NEXT_PUBLIC_CONTACT_EMAIL=
-NEXT_PUBLIC_CONTACT_PHONE=
-NEXT_PUBLIC_CONTACT_ADDRESS=
+NEXT_PUBLIC_ADMIN_EMAIL=
+SUPABASE_SERVICE_ROLE_KEY=
 GEMINI_API_KEY=
 ```
 
@@ -123,6 +122,11 @@ GEMINI_API_KEY=
 Tables:
 - `cv_versions` - Stored CV customizations
 - `cv_styles` - CV styling preferences
+- `cv_references` - Professional references
+- `cv_share_links` - Short URL share links with visit tracking
+- `cv_share_link_visits` - Visit analytics for share links
+- `site_settings` - Contact info and site configuration (single row)
+- `whitelisted_emails` - Users with access to private info
 
 ## API Routes
 - `POST /api/generate-cv` - Generate AI-customized CV content

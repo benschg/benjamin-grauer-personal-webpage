@@ -5,7 +5,6 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { Box, Snackbar, Alert, CircularProgress, useMediaQuery, useTheme } from '@mui/material';
 import { CVAdminBar, CVCustomizationDialog, LLMInputDataDialog } from '@/components/cv/components/admin';
 import { useAuth } from '@/contexts';
-import { useReactToPrint } from 'react-to-print';
 import CVDocument from '@/components/cv/CVDocument';
 import MotivationLetterDocument from '@/components/cv/MotivationLetterDocument';
 import CVToolbar from '@/components/cv/CVToolbar';
@@ -41,6 +40,9 @@ const CVPageContent = () => {
   const toolbarBarRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(85);
   const [toolbarBarHeight, setToolbarBarHeight] = useState(57);
+
+  // Check if export button should be shown (controlled by share link settings)
+  const showExportButton = searchParams.get('showExport') !== '0';
 
   // Sync export panel state with URL parameter
   const exportPanelOpen = searchParams.get('export') === 'true';
@@ -110,11 +112,6 @@ const CVPageContent = () => {
       setActiveTab('cv');
     }
   }, [hasMotivationLetter, activeTab]);
-
-  const handlePrint = useReactToPrint({
-    contentRef: activeTab === 'cv' ? cvRef : motivationLetterRef,
-    documentTitle: activeTab === 'cv' ? 'Benjamin_Grauer_CV' : 'Benjamin_Grauer_Motivation_Letter',
-  });
 
   const handleDownloadPdf = useCallback(async () => {
     const currentRef = activeTab === 'cv' ? cvRef.current : motivationLetterRef.current;
@@ -199,7 +196,6 @@ const CVPageContent = () => {
     >
       {/* CVToolbar renders floating elements (fixed position, not affected by transform) */}
       <CVToolbar
-        onPrint={handlePrint}
         onDownloadPdf={handleDownloadPdf}
         isDownloading={isDownloading}
         activeTab={activeTab}
@@ -209,6 +205,7 @@ const CVPageContent = () => {
         exportPanelOpen={exportPanelOpen}
         onExportPanelChange={setExportPanelOpen}
         headerHeight={headerHeight}
+        showExportButton={showExportButton}
       />
       {/* Fixed header container - slides up when scrolling */}
       <Box
@@ -227,13 +224,15 @@ const CVPageContent = () => {
         {/* Toolbar bar - inside the translated container */}
         <Box ref={toolbarBarRef}>
           <CVToolbar
-            onPrint={handlePrint}
             onDownloadPdf={handleDownloadPdf}
             isDownloading={isDownloading}
             activeTab={activeTab}
             onTabChange={setActiveTab}
             hasMotivationLetter={hasMotivationLetter}
             renderFloatingElements={false}
+            exportPanelOpen={exportPanelOpen}
+            onExportPanelChange={setExportPanelOpen}
+            showExportButton={showExportButton}
           />
         </Box>
         {/* Admin bar - always visible for admin */}

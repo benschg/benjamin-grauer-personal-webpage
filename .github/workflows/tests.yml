@@ -37,11 +37,17 @@ jobs:
         cd nextjs
         bunx tsc --noEmit
 
+    - name: Run tests
+      run: |
+        cd nextjs
+        bun run test:run
+
     - name: Build application
       env:
         # Dummy values for CI build - Supabase client requires these to be set
         NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
         NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+        SUPABASE_SERVICE_ROLE_KEY: placeholder-service-role-key
       run: |
         cd nextjs
         bun run build
