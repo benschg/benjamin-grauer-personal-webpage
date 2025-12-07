@@ -184,10 +184,12 @@ export async function GET(request: NextRequest) {
           .select('*', { count: 'exact', head: true })
           .eq('share_link_id', link.id);
 
-        const { count: uniqueVisits } = await supabase
+        // Count distinct IP hashes for unique visitors
+        const { data: uniqueIPs } = await supabase
           .from('cv_share_link_visits')
-          .select('ip_hash', { count: 'exact', head: true })
+          .select('ip_hash')
           .eq('share_link_id', link.id);
+        const uniqueVisits = new Set(uniqueIPs?.map(v => v.ip_hash) || []).size;
 
         const { data: lastVisit } = await supabase
           .from('cv_share_link_visits')
