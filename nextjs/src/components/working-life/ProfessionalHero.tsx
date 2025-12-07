@@ -15,7 +15,10 @@ const ProfessionalHero = () => {
     >
       <Container maxWidth="lg">
         <Grid container spacing={4} alignItems="flex-end">
-          <Grid size={{ xs: 12, md: 8 }}>
+          <Grid
+            size={{ xs: 12, md: 8 }}
+            sx={{ order: { xs: 2, md: 1 } }}
+          >
             <Typography
               variant="h1"
               sx={{
@@ -61,7 +64,7 @@ const ProfessionalHero = () => {
           </Grid>
           <Grid
             size={{ xs: 12, md: 4 }}
-            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end' }}
+            sx={{ display: 'flex', justifyContent: 'center', alignItems: 'flex-end', order: { xs: 1, md: 2 } }}
           >
             <Box
               component="img"
