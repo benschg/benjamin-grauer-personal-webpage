@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -18,25 +18,23 @@ import {
   Chip,
   IconButton,
   Divider,
-  List,
-  ListItemButton,
-  ListItemText,
-  ListItemIcon,
-  Collapse,
   FormControlLabel,
   Checkbox,
   Paper,
   Tooltip,
   LinearProgress,
+  InputAdornment,
+  Collapse,
 } from '@mui/material';
+import type { SelectChangeEvent } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import PsychologyIcon from '@mui/icons-material/Psychology';
 import LinkIcon from '@mui/icons-material/Link';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import LanguageIcon from '@mui/icons-material/Language';
-import ClearIcon from '@mui/icons-material/Clear';
 import HistoryIcon from '@mui/icons-material/History';
 import BusinessIcon from '@mui/icons-material/Business';
 import WorkIcon from '@mui/icons-material/Work';
@@ -122,12 +120,14 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
   const [uploadedFile, setUploadedFile] = useState<JobInputData['uploadedFile']>();
   const [customInstructions, setCustomInstructions] = useState('');
   const [selectedModel, setSelectedModel] = useState<GeminiModelId>(DEFAULT_GEMINI_MODEL);
-  const [showPreviousVersions, setShowPreviousVersions] = useState(false);
   const [dataSourceSelection, setDataSourceSelection] = useState<CVDataSourceSelection>(DEFAULT_DATA_SELECTION);
   const [showInputPreview, setShowInputPreview] = useState(false);
   const [isFetchingJobInfo, setIsFetchingJobInfo] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [previousVersionsOpen, setPreviousVersionsOpen] = useState(false);
+  const [previousSearchQuery, setPreviousSearchQuery] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const previousSearchInputRef = useRef<HTMLInputElement>(null);
 
   const { versions } = useCVVersion();
   const dataSourceLabels = getDataSourceLabels();
@@ -136,6 +136,46 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
   const versionsWithContext = versions.filter(
     (v) => v.job_context && (v.job_context.jobPosting || v.job_context.jobPostingUrl)
   );
+
+  // Filter previous versions based on search query
+  const filteredPreviousVersions = versionsWithContext.filter((version) => {
+    if (!previousSearchQuery.trim()) return true;
+    const query = previousSearchQuery.toLowerCase();
+    const nameMatch = version.name.toLowerCase().includes(query);
+    const companyMatch = version.job_context?.company?.toLowerCase().includes(query);
+    const positionMatch = version.job_context?.position?.toLowerCase().includes(query);
+    return nameMatch || companyMatch || positionMatch;
+  });
+
+  // Focus search input when menu opens
+  useEffect(() => {
+    if (previousVersionsOpen) {
+      const timer = setTimeout(() => {
+        previousSearchInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [previousVersionsOpen]);
+
+  const handlePreviousVersionsClose = () => {
+    setPreviousSearchQuery('');
+    setPreviousVersionsOpen(false);
+  };
+
+  const formatDate = (timestamp: string) => {
+    return new Date(timestamp).toLocaleDateString();
+  };
+
+  const formatFullDateTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
 
   const handleLoadPrevious = (version: CVVersion) => {
     if (!version.job_context) return;
@@ -165,7 +205,16 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
       fileInputRef.current.value = '';
     }
 
-    setShowPreviousVersions(false);
+    handlePreviousVersionsClose();
+  };
+
+  const handlePreviousVersionChange = (event: SelectChangeEvent<string>) => {
+    const versionId = event.target.value;
+    if (!versionId) return;
+    const version = versionsWithContext.find((v) => v.id === versionId);
+    if (version) {
+      handleLoadPrevious(version);
+    }
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,51 +323,138 @@ const JobPostingInput = ({ onGenerate, isGenerating, error }: JobPostingInputPro
       <Box sx={{ flex: 1, overflow: 'auto', minHeight: 0, display: 'flex', flexDirection: 'column', gap: 2, pr: 1, ...modernScrollbarSx }}>
       {/* Load Previous Section */}
       {versionsWithContext.length > 0 && (
-        <Box sx={{ mb: 1 }}>
-          <Button
-            variant="outlined"
-            size="small"
-            startIcon={<HistoryIcon />}
-            endIcon={showPreviousVersions ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-            onClick={() => setShowPreviousVersions(!showPreviousVersions)}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+          <HistoryIcon sx={{ color: 'text.secondary' }} />
+          <Select
+            value=""
+            onChange={handlePreviousVersionChange}
+            displayEmpty
+            open={previousVersionsOpen}
+            onOpen={() => setPreviousVersionsOpen(true)}
+            onClose={handlePreviousVersionsClose}
             disabled={isGenerating}
+            renderValue={() => (
+              <Typography variant="body2" color="text.secondary">
+                Load from Previous ({versionsWithContext.length})
+              </Typography>
+            )}
+            MenuProps={{
+              PaperProps: {
+                sx: {
+                  minWidth: 400,
+                  maxWidth: 500,
+                },
+              },
+            }}
+            sx={{
+              minWidth: 200,
+              '.MuiSelect-select': {
+                py: 1,
+              },
+            }}
           >
-            Load from Previous ({versionsWithContext.length})
-          </Button>
-          <Collapse in={showPreviousVersions}>
-            <List
-              dense
-              sx={{
-                mt: 1,
-                bgcolor: 'action.hover',
-                borderRadius: 1,
-                maxHeight: 200,
-                overflow: 'auto',
-              }}
+            {/* Search bar */}
+            <Box
+              sx={{ px: 2, py: 1, position: 'sticky', top: 0, bgcolor: 'background.paper', zIndex: 1 }}
+              onKeyDown={(e) => e.stopPropagation()}
             >
-              {versionsWithContext.map((version) => (
-                <ListItemButton
-                  key={version.id}
-                  onClick={() => handleLoadPrevious(version)}
-                  disabled={isGenerating}
-                >
-                  <ListItemIcon sx={{ minWidth: 36 }}>
-                    <BusinessIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={version.name}
-                    secondary={
-                      version.job_context?.company
-                        ? `${version.job_context.company}${version.job_context.position ? ` - ${version.job_context.position}` : ''}`
-                        : version.job_context?.jobPostingUrl || 'Job posting text'
-                    }
-                    primaryTypographyProps={{ variant: 'body2' }}
-                    secondaryTypographyProps={{ variant: 'caption' }}
-                  />
-                </ListItemButton>
-              ))}
-            </List>
-          </Collapse>
+              <TextField
+                inputRef={previousSearchInputRef}
+                size="small"
+                placeholder="Search versions..."
+                value={previousSearchQuery}
+                onChange={(e) => setPreviousSearchQuery(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
+                  }
+                }}
+                fullWidth
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon fontSize="small" color="action" />
+                    </InputAdornment>
+                  ),
+                  endAdornment: previousSearchQuery && (
+                    <InputAdornment position="end">
+                      <Box
+                        component="span"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setPreviousSearchQuery('');
+                          previousSearchInputRef.current?.focus();
+                        }}
+                        sx={{ cursor: 'pointer', display: 'flex' }}
+                      >
+                        <ClearIcon fontSize="small" color="action" />
+                      </Box>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            </Box>
+            <Divider />
+
+            {/* Header row */}
+            {filteredPreviousVersions.length > 0 && (
+              <Box
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 80px',
+                  gap: 2,
+                  px: 2,
+                  py: 1,
+                  bgcolor: 'action.hover',
+                }}
+              >
+                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                  Company
+                </Typography>
+                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                  Position
+                </Typography>
+                <Typography variant="caption" color="text.secondary" fontWeight="bold">
+                  Date
+                </Typography>
+              </Box>
+            )}
+
+            {/* No results message */}
+            {filteredPreviousVersions.length === 0 && previousSearchQuery && (
+              <Box sx={{ px: 2, py: 2, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  No versions match &quot;{previousSearchQuery}&quot;
+                </Typography>
+              </Box>
+            )}
+
+            {filteredPreviousVersions.map((version) => (
+              <MenuItem
+                key={version.id}
+                value={version.id}
+                sx={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 80px',
+                  gap: 2,
+                  alignItems: 'center',
+                }}
+              >
+                <Typography variant="body2" noWrap>
+                  {version.job_context?.company || version.name}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" noWrap>
+                  {version.job_context?.position || '—'}
+                </Typography>
+                <Tooltip title={formatFullDateTime(version.created_at)} placement="top">
+                  <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
+                    {formatDate(version.created_at)}
+                  </Typography>
+                </Tooltip>
+              </MenuItem>
+            ))}
+          </Select>
         </Box>
       )}
 

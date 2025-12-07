@@ -1,13 +1,18 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Select, MenuItem, Box, Typography, Divider, TextField, InputAdornment } from '@mui/material';
+import { Select, MenuItem, Box, Typography, Divider, TextField, InputAdornment, Tooltip } from '@mui/material';
 import type { SelectChangeEvent } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useCVVersion } from '../../contexts';
 
-const CVVersionSelector = () => {
+interface CVVersionSelectorProps {
+  onManageVersions?: () => void;
+}
+
+const CVVersionSelector = ({ onManageVersions }: CVVersionSelectorProps) => {
   const { versions, activeVersion, selectVersion, loading } = useCVVersion();
   const [searchQuery, setSearchQuery] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +51,17 @@ const CVVersionSelector = () => {
 
   const formatDate = (timestamp: string) => {
     return new Date(timestamp).toLocaleDateString();
+  };
+
+  const formatFullDateTime = (timestamp: string) => {
+    return new Date(timestamp).toLocaleString(undefined, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
   };
 
   // Get display text for the selected version
@@ -200,11 +216,41 @@ const CVVersionSelector = () => {
           <Typography variant="body2" color="text.secondary" noWrap>
             {version.job_context?.position || '—'}
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {formatDate(version.created_at)}
-          </Typography>
+          <Tooltip title={formatFullDateTime(version.created_at)} placement="top">
+            <Typography variant="caption" color="text.secondary" sx={{ cursor: 'default' }}>
+              {formatDate(version.created_at)}
+            </Typography>
+          </Tooltip>
         </MenuItem>
       ))}
+
+      {/* Manage Versions link */}
+      {onManageVersions && (
+        <>
+          <Divider />
+          <MenuItem
+            onClick={(e) => {
+              e.stopPropagation();
+              handleClose();
+              onManageVersions();
+            }}
+            sx={{
+              justifyContent: 'center',
+              gap: 1,
+              py: 1.5,
+              bgcolor: 'action.hover',
+              '&:hover': {
+                bgcolor: 'action.selected',
+              },
+            }}
+          >
+            <SettingsIcon fontSize="small" color="action" />
+            <Typography variant="body2" fontWeight={500}>
+              Manage Versions
+            </Typography>
+          </MenuItem>
+        </>
+      )}
     </Select>
   );
 };

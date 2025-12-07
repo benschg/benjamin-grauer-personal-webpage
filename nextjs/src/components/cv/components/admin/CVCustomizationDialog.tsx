@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -71,11 +71,19 @@ const TabPanel = ({ children, value, index }: TabPanelProps) => (
 interface CVCustomizationDialogProps {
   open: boolean;
   onClose: () => void;
+  initialTab?: number;
 }
 
-const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) => {
-  const [tabValue, setTabValue] = useState(0);
+const CVCustomizationDialog = ({ open, onClose, initialTab = 0 }: CVCustomizationDialogProps) => {
+  const [tabValue, setTabValue] = useState(initialTab);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Reset to initialTab when dialog opens
+  useEffect(() => {
+    if (open) {
+      setTabValue(initialTab);
+    }
+  }, [open, initialTab]);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [generatedContent, setGeneratedContent] = useState<CVVersionContent | null>(null);
@@ -198,7 +206,22 @@ const CVCustomizationDialog = ({ open, onClose }: CVCustomizationDialogProps) =>
           </Alert>
         )}
 
-        <Tabs value={tabValue} onChange={(_, v) => setTabValue(v)} sx={{ flexShrink: 0 }}>
+        <Tabs
+          value={tabValue}
+          onChange={(_, v) => setTabValue(v)}
+          sx={{
+            flexShrink: 0,
+            '& .MuiTab-root': {
+              color: 'text.secondary',
+              '&.Mui-selected': {
+                color: 'text.primary',
+              },
+            },
+            '& .MuiTabs-indicator': {
+              backgroundColor: 'text.primary',
+            },
+          }}
+        >
           <Tab label="Generate" disabled={!isGeminiConfigured()} />
           <Tab label="Preview" disabled={!generatedContent} />
           <Tab label="Versions" />
