@@ -28,6 +28,7 @@ import PersonOffIcon from '@mui/icons-material/PersonOff';
 import LockIcon from '@mui/icons-material/Lock';
 import WorkHistoryIcon from '@mui/icons-material/WorkHistory';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
+import DownloadIcon from '@mui/icons-material/Download';
 import type { DisplaySettings } from '@/components/cv/contexts/types';
 
 interface ShareLink {
@@ -250,6 +251,11 @@ const ShareLinksManager = () => {
                       {link.settings?.showAttachments && (
                         <Tooltip title="Attachments included">
                           <AttachFileIcon sx={{ fontSize: 16, color: '#89665d' }} />
+                        </Tooltip>
+                      )}
+                      {link.settings?.showExport && (
+                        <Tooltip title="Export button visible">
+                          <DownloadIcon sx={{ fontSize: 16, color: '#89665d' }} />
                         </Tooltip>
                       )}
                     </Box>
