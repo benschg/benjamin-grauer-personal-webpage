@@ -67,6 +67,7 @@ interface CVToolbarProps {
   exportPanelOpen?: boolean;
   onExportPanelChange?: (open: boolean) => void;
   headerHeight?: number;
+  showExportButton?: boolean;
 }
 
 const CVToolbar = ({
@@ -81,6 +82,7 @@ const CVToolbar = ({
   exportPanelOpen: externalExportPanelOpen,
   onExportPanelChange,
   headerHeight = 0,
+  showExportButton = true,
 }: CVToolbarProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -156,6 +158,7 @@ const CVToolbar = ({
     if (privacyLevel !== "none") params.set("privacy", privacyLevel);
     if (!showExperience) params.set("experience", "0");
     if (showAttachments) params.set("attachments", "1");
+    if (!showExportOnShare) params.set("showExport", "0");
 
     const baseUrl = `${window.location.origin}/working-life/cv`;
     const queryString = params.toString();
@@ -629,25 +632,27 @@ const CVToolbar = ({
                 </Tooltip>
               </>
             )}
-          <Fab
-            variant="extended"
-            color="primary"
-            onClick={handleExportClick}
-            disabled={isDownloading}
-            sx={{
-              bgcolor: "#89665d",
-              "&:hover": { bgcolor: "#6d524a" },
-              "&.Mui-disabled": { bgcolor: "rgba(137, 102, 93, 0.5)" },
-              gap: 1,
-            }}
-          >
-            {isDownloading ? (
-              <CircularProgress size={20} color="inherit" />
-            ) : (
-              <DownloadIcon />
-            )}
-            {isDownloading ? "Generating..." : "Export PDF"}
-          </Fab>
+          {showExportButton && (
+            <Fab
+              variant="extended"
+              color="primary"
+              onClick={handleExportClick}
+              disabled={isDownloading}
+              sx={{
+                bgcolor: "#89665d",
+                "&:hover": { bgcolor: "#6d524a" },
+                "&.Mui-disabled": { bgcolor: "rgba(137, 102, 93, 0.5)" },
+                gap: 1,
+              }}
+            >
+              {isDownloading ? (
+                <CircularProgress size={20} color="inherit" />
+              ) : (
+                <DownloadIcon />
+              )}
+              {isDownloading ? "Generating..." : "Export PDF"}
+            </Fab>
+          )}
         </Box>
       )}
 
@@ -751,27 +756,29 @@ const CVToolbar = ({
                   </Tooltip>
                 </Box>
               )}
-            <Fab
-              variant="extended"
-              size="medium"
-              onClick={handleExportClick}
-              disabled={isDownloading}
-              sx={{
-                bgcolor: "#89665d",
-                color: "white",
-                "&:hover": { bgcolor: "#6d524a" },
-                "&.Mui-disabled": { bgcolor: "rgba(137, 102, 93, 0.5)" },
-                gap: 0.5,
-                fontSize: "0.8rem",
-              }}
-            >
-              {isDownloading ? (
-                <CircularProgress size={18} color="inherit" />
-              ) : (
-                <DownloadIcon fontSize="small" />
-              )}
-              {isDownloading ? "Generating..." : "Export PDF"}
-            </Fab>
+            {showExportButton && (
+              <Fab
+                variant="extended"
+                size="medium"
+                onClick={handleExportClick}
+                disabled={isDownloading}
+                sx={{
+                  bgcolor: "#89665d",
+                  color: "white",
+                  "&:hover": { bgcolor: "#6d524a" },
+                  "&.Mui-disabled": { bgcolor: "rgba(137, 102, 93, 0.5)" },
+                  gap: 0.5,
+                  fontSize: "0.8rem",
+                }}
+              >
+                {isDownloading ? (
+                  <CircularProgress size={18} color="inherit" />
+                ) : (
+                  <DownloadIcon fontSize="small" />
+                )}
+                {isDownloading ? "Generating..." : "Export PDF"}
+              </Fab>
+            )}
           </Box>
         )}
         <SpeedDial

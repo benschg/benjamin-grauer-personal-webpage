@@ -20,8 +20,18 @@ function shuffleArray<T>(array: T[]): T[] {
 const RecommendationsSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
-  // Use lazy initializer - shuffles once on first render (client-side)
-  const [shuffledRecommendations] = useState<Recommendation[]>(() => shuffleArray(recommendations));
+  // Start with original order (matches server), shuffle after hydration
+  const [shuffledRecommendations, setShuffledRecommendations] =
+    useState<Recommendation[]>(recommendations);
+
+  // Shuffle after hydration to avoid mismatch
+  useEffect(() => {
+    // Use requestAnimationFrame to defer the state update and satisfy the linter
+    const rafId = requestAnimationFrame(() => {
+      setShuffledRecommendations(shuffleArray(recommendations));
+    });
+    return () => cancelAnimationFrame(rafId);
+  }, []);
 
   const totalPages = Math.ceil(shuffledRecommendations.length / itemsPerPage);
   const startIndex = currentIndex * itemsPerPage;

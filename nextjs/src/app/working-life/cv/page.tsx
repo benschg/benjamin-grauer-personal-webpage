@@ -42,6 +42,9 @@ const CVPageContent = () => {
   const [headerHeight, setHeaderHeight] = useState(85);
   const [toolbarBarHeight, setToolbarBarHeight] = useState(57);
 
+  // Check if export button should be shown (controlled by share link settings)
+  const showExportButton = searchParams.get('showExport') !== '0';
+
   // Sync export panel state with URL parameter
   const exportPanelOpen = searchParams.get('export') === 'true';
   const setExportPanelOpen = useCallback((open: boolean) => {
@@ -209,6 +212,7 @@ const CVPageContent = () => {
         exportPanelOpen={exportPanelOpen}
         onExportPanelChange={setExportPanelOpen}
         headerHeight={headerHeight}
+        showExportButton={showExportButton}
       />
       {/* Fixed header container - slides up when scrolling */}
       <Box
@@ -234,6 +238,7 @@ const CVPageContent = () => {
             onTabChange={setActiveTab}
             hasMotivationLetter={hasMotivationLetter}
             renderFloatingElements={false}
+            showExportButton={showExportButton}
           />
         </Box>
         {/* Admin bar - always visible for admin */}
