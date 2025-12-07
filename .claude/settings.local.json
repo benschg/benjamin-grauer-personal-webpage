@@ -11,7 +11,16 @@
       "Bash(chmod:*)",
       "Bash(npx tsc:*)",
       "Bash(./node_modules/.bin/tsc:*)",
-      "Bash(bun pm:*)"
+      "Bash(bun pm:*)",
+      "Bash(git -C \"c:/git/benjamin-grauer-personal-webpage\" status --short)",
+      "Bash(curl:*)",
+      "Bash(cat:*)",
+      "Bash(git -C \"c:/git/benjamin-grauer-personal-webpage\" diff HEAD -- nextjs/supabase/migrations/20241204_create_share_links.sql)",
+      "Bash(npx supabase:*)",
+      "Bash(git -C \"c:/git/benjamin-grauer-personal-webpage\" add nextjs/src/app/api/share-link/route.ts)",
+      "Bash(git -C \"c:/git/benjamin-grauer-personal-webpage\" commit -m \"$(cat <<''EOF''\nFix unique visitor count to use distinct IP hashes\n\nThe previous query was counting all rows instead of distinct IP hashes.\nNow uses a Set to deduplicate IP hashes for accurate unique visitor count.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git -C \"c:/git/benjamin-grauer-personal-webpage\" diff --stat)",
+      "Bash(bun run:*)"
     ],
     "deny": [],
     "ask": []

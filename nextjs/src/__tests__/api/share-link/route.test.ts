@@ -225,49 +225,30 @@ describe('Visit Statistics Calculation', () => {
 });
 
 describe('CV Version Name Resolution', () => {
-  it('should return "Default CV" when no version data', () => {
-    const cvVersionData = null;
-    let versionName = 'Default CV';
+  type CVVersionData = { name: string }[] | { name: string } | null;
 
+  const resolveVersionName = (cvVersionData: CVVersionData): string => {
+    let versionName = 'Default CV';
     if (cvVersionData) {
       if (Array.isArray(cvVersionData) && cvVersionData.length > 0) {
-        versionName = (cvVersionData[0] as { name: string }).name;
+        versionName = cvVersionData[0].name;
       } else if (typeof cvVersionData === 'object' && 'name' in cvVersionData) {
         versionName = (cvVersionData as { name: string }).name;
       }
     }
+    return versionName;
+  };
 
-    expect(versionName).toBe('Default CV');
+  it('should return "Default CV" when no version data', () => {
+    expect(resolveVersionName(null)).toBe('Default CV');
   });
 
   it('should extract name from object relationship', () => {
-    const cvVersionData = { name: 'Company A CV' };
-    let versionName = 'Default CV';
-
-    if (cvVersionData) {
-      if (Array.isArray(cvVersionData) && cvVersionData.length > 0) {
-        versionName = (cvVersionData[0] as { name: string }).name;
-      } else if (typeof cvVersionData === 'object' && 'name' in cvVersionData) {
-        versionName = (cvVersionData as { name: string }).name;
-      }
-    }
-
-    expect(versionName).toBe('Company A CV');
+    expect(resolveVersionName({ name: 'Company A CV' })).toBe('Company A CV');
   });
 
   it('should extract name from array relationship', () => {
-    const cvVersionData = [{ name: 'Tech Startup CV' }];
-    let versionName = 'Default CV';
-
-    if (cvVersionData) {
-      if (Array.isArray(cvVersionData) && cvVersionData.length > 0) {
-        versionName = (cvVersionData[0] as { name: string }).name;
-      } else if (typeof cvVersionData === 'object' && 'name' in cvVersionData) {
-        versionName = (cvVersionData as { name: string }).name;
-      }
-    }
-
-    expect(versionName).toBe('Tech Startup CV');
+    expect(resolveVersionName([{ name: 'Tech Startup CV' }])).toBe('Tech Startup CV');
   });
 });
 
