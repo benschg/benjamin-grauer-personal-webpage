@@ -4,7 +4,6 @@ import type {
   CVEducationEntry,
   CVFunctionEntry,
   CVPageLayout,
-  CVReferenceEntry,
   CVDomainEntry,
 } from "../types/CVTypes";
 import {
@@ -121,29 +120,8 @@ const getFunctionsFromTimeline = (): CVFunctionEntry[] => {
   });
 };
 
-// Get references from JSON environment variable
-// Format: [{"name":"John","title":"CTO","company":"Acme","email":"j@a.com","phone":"+41..."}]
-const getReferences = (): CVReferenceEntry[] => {
-  const json = process.env.NEXT_PUBLIC_CV_REFERENCES;
-  if (!json) return [];
-
-  try {
-    const parsed = JSON.parse(json);
-    if (Array.isArray(parsed)) {
-      return parsed.map((ref) => ({
-        name: ref.name || "",
-        title: ref.title || "",
-        company: ref.company || "",
-        email: ref.email,
-        phone: ref.phone,
-      }));
-    }
-  } catch (e) {
-    console.error("Failed to parse CV references:", e);
-  }
-
-  return [];
-};
+// References are now fetched from the database via /api/cv-references
+// See CVDocument.tsx for the fetch implementation
 
 // CV Data - edit this to customize your CV content
 export const cvData: CVData = {
@@ -322,6 +300,6 @@ aligned development, and cultivating collaborative engineering cultures.`,
       },
     ] as CVDomainEntry[],
 
-    references: getReferences(),
+    references: [], // Fetched from database in CVDocument
   },
 };

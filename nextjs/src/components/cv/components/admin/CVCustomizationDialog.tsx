@@ -16,6 +16,7 @@ import JobPostingInput from './JobPostingInput';
 import type { JobInputData } from './JobPostingInput';
 import GeneratedContentPreview from './GeneratedContentPreview';
 import CVVersionManager from './CVVersionManager';
+import ReferencesManager from './ReferencesManager';
 import { useCVVersion } from '../../contexts';
 import {
   generateCustomizedCV,
@@ -225,6 +226,7 @@ const CVCustomizationDialog = ({ open, onClose, initialTab = 0 }: CVCustomizatio
           <Tab label="Generate" disabled={!isGeminiConfigured()} />
           <Tab label="Preview" disabled={!generatedContent} />
           <Tab label="Versions" />
+          <Tab label="References" />
         </Tabs>
 
         <TabPanel value={tabValue} index={0}>
@@ -246,6 +248,10 @@ const CVCustomizationDialog = ({ open, onClose, initialTab = 0 }: CVCustomizatio
 
         <TabPanel value={tabValue} index={2}>
           <CVVersionManager />
+        </TabPanel>
+
+        <TabPanel value={tabValue} index={3}>
+          <ReferencesManager />
         </TabPanel>
       </DialogContent>
     </Dialog>

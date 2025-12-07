@@ -1,5 +1,6 @@
-import { forwardRef, useMemo } from 'react';
+import { forwardRef, useMemo, useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
+import type { CVReferenceEntry } from './types/CVTypes';
 import {
   CVHeader,
   CVBadges,
@@ -30,6 +31,15 @@ const isSlicedSection = (section: CVMainSectionType): section is CVSlicedSection
 const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
   const { theme, showPhoto, privacyLevel, canShowPrivateInfo, canShowReferenceInfo, showExperience, zoom } = useCVTheme();
   const { activeContent, isEditing } = useCVVersion();
+  const [references, setReferences] = useState<CVReferenceEntry[]>([]);
+
+  // Fetch references from database
+  useEffect(() => {
+    fetch('/api/cv-references')
+      .then((res) => res.json())
+      .then((data) => setReferences(data.references || []))
+      .catch((err) => console.error('Failed to fetch references:', err));
+  }, []);
 
   // Enforce privacy: only show private info if user is logged in
   const effectivePrivacyLevel = canShowPrivateInfo ? privacyLevel : 'none';
@@ -118,7 +128,7 @@ const CVDocument = forwardRef<HTMLDivElement>((_, ref) => {
         return (
           <CVReferences
             key="references"
-            data={cvData.main.references}
+            data={references}
             showPrivateInfo={effectivePrivacyLevel === 'full' && canShowReferenceInfo}
           />
         );
