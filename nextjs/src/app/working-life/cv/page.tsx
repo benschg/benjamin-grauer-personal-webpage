@@ -24,9 +24,7 @@ const CVPageContent = () => {
   const motivationLetterRef = useRef<HTMLDivElement>(null);
   const { theme, showPhoto, showExperience, showAttachments, privacyLevel, canShowPrivateInfo } = useCVTheme();
   const { activeContent, activeVersion, error: versionError, isEditing } = useCVVersion();
-  const { user } = useAuth();
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-  const isAdmin = user && adminEmail && user.email === adminEmail;
+  const { isAdmin } = useAuth();
   const [isDownloading, setIsDownloading] = useState(false);
   const [customizationOpen, setCustomizationOpen] = useState(false);
   const [customizationInitialTab, setCustomizationInitialTab] = useState(0);

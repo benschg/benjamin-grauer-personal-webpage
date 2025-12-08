@@ -31,15 +31,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   });
 
   const supabase = createClient();
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+  // Check if current user is admin via secure API endpoint
+  const checkAdmin = useCallback(async (): Promise<boolean> => {
+    try {
+      const response = await fetch('/api/check-admin');
+      if (response.ok) {
+        const data = await response.json();
+        return data.isAdmin === true;
+      }
+    } catch (err) {
+      console.error('Failed to check admin status:', err);
+    }
+    return false;
+  }, []);
 
   // Check if current user is whitelisted via secure API endpoint
-  const checkWhitelisted = useCallback(async (email: string | undefined): Promise<boolean> => {
-    if (!email) return false;
-
-    // Admin is always whitelisted (client-side check for immediate feedback)
-    if (email.toLowerCase() === adminEmail?.toLowerCase()) return true;
-
+  const checkWhitelisted = useCallback(async (): Promise<boolean> => {
     // Check whitelist status via secure API (only checks current user's email)
     try {
       const response = await fetch('/api/check-whitelist');
@@ -51,7 +59,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Failed to check whitelist status:', err);
     }
     return false;
-  }, [adminEmail]);
+  }, []);
 
   useEffect(() => {
     // Get initial session
@@ -64,10 +72,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       const user = session?.user ?? null;
-      const isWhitelisted = await checkWhitelisted(user?.email);
+      const [isAdmin, isWhitelisted] = user
+        ? await Promise.all([checkAdmin(), checkWhitelisted()])
+        : [false, false];
       setState({
         user,
-        isAdmin: user?.email === adminEmail,
+        isAdmin,
         isWhitelisted,
         loading: false,
         error: null,
@@ -80,10 +90,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, session) => {
         const user = session?.user ?? null;
-        const isWhitelisted = await checkWhitelisted(user?.email);
+        const [isAdmin, isWhitelisted] = user
+          ? await Promise.all([checkAdmin(), checkWhitelisted()])
+          : [false, false];
         setState({
           user,
-          isAdmin: user?.email === adminEmail,
+          isAdmin,
           isWhitelisted,
           loading: false,
           error: null,
@@ -94,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => {
       subscription.unsubscribe();
     };
-  }, [supabase, adminEmail, checkWhitelisted]);
+  }, [supabase, checkAdmin, checkWhitelisted]);
 
   const signIn = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));

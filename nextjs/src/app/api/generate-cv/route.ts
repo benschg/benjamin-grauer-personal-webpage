@@ -411,8 +411,8 @@ export async function POST(request: Request) {
     }
 
     // Check admin
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    if (adminEmail && user.email !== adminEmail) {
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail || user.email !== adminEmail) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: rateLimitHeaders });
     }
 
