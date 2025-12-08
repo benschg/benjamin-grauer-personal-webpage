@@ -88,6 +88,11 @@ const Footer = () => {
             }}
           >
             © 2025 Benjamin Grauer. All rights reserved.
+            {process.env.NEXT_PUBLIC_GIT_HASH && (
+              <Box component="span" sx={{ ml: 1, opacity: 0.7 }}>
+                ({process.env.NEXT_PUBLIC_GIT_HASH})
+              </Box>
+            )}
           </Typography>
           <Box sx={{ display: 'flex', gap: 2 }}>
             <MuiLink
