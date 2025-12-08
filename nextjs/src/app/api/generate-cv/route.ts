@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
+import { validateUrl } from '@/lib/url-validator';
 
 // Types
 interface CompanyResearch {
@@ -318,13 +319,25 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
   let context = params.jobPosting || '';
 
   if (params.jobPostingUrl) {
-    const pageContent = await fetchWebPage(params.jobPostingUrl);
-    context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+    // Validate URL to prevent SSRF attacks
+    const validation = validateUrl(params.jobPostingUrl);
+    if (validation.isValid) {
+      const pageContent = await fetchWebPage(params.jobPostingUrl);
+      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+    } else {
+      context += `\n\n=== JOB POSTING URL SKIPPED: ${validation.error} ===`;
+    }
   }
 
   if (params.companyWebsite) {
-    const pageContent = await fetchWebPage(params.companyWebsite);
-    context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+    // Validate URL to prevent SSRF attacks
+    const validation = validateUrl(params.companyWebsite);
+    if (validation.isValid) {
+      const pageContent = await fetchWebPage(params.companyWebsite);
+      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+    } else {
+      context += `\n\n=== COMPANY WEBSITE URL SKIPPED: ${validation.error} ===`;
+    }
   }
 
   return context;
