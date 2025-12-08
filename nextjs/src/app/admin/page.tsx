@@ -38,9 +38,7 @@ type TabKey = typeof TAB_KEYS[number];
 const AdminDashboardContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, loading } = useAuth();
-  const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-  const isAdmin = user && adminEmail && user.email === adminEmail;
+  const { isAdmin, loading } = useAuth();
 
   // Get tab from URL, default to 0 (share-links)
   const tabParam = searchParams.get('tab') as TabKey | null;

@@ -5,6 +5,8 @@ import {
   getRateLimitHeaders,
   PDF_RATE_LIMIT,
   SHARE_LINK_RATE_LIMIT,
+  AI_RATE_LIMIT,
+  MOTIVATION_LETTER_RATE_LIMIT,
   type RateLimitConfig,
 } from '@/lib/rate-limiter';
 
@@ -197,6 +199,18 @@ describe('Rate Limiter', () => {
       expect(SHARE_LINK_RATE_LIMIT.maxRequests).toBe(60);
       expect(SHARE_LINK_RATE_LIMIT.windowMs).toBe(60 * 1000); // 1 minute
       expect(SHARE_LINK_RATE_LIMIT.prefix).toBe('share-link');
+    });
+
+    it('should have correct AI rate limit config', () => {
+      expect(AI_RATE_LIMIT.maxRequests).toBe(10);
+      expect(AI_RATE_LIMIT.windowMs).toBe(60 * 60 * 1000); // 1 hour
+      expect(AI_RATE_LIMIT.prefix).toBe('ai-gen');
+    });
+
+    it('should have correct motivation letter rate limit config', () => {
+      expect(MOTIVATION_LETTER_RATE_LIMIT.maxRequests).toBe(10);
+      expect(MOTIVATION_LETTER_RATE_LIMIT.windowMs).toBe(60 * 60 * 1000); // 1 hour
+      expect(MOTIVATION_LETTER_RATE_LIMIT.prefix).toBe('motivation-pdf');
     });
   });
 

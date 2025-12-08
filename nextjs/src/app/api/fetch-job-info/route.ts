@@ -2,6 +2,15 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  getRateLimitHeaders,
+  AI_RATE_LIMIT,
+} from '@/lib/rate-limiter';
+
+// Timeout for external URL fetches (30 seconds)
+const FETCH_TIMEOUT_MS = 30000;
 
 interface JobInfoRequest {
   url: string;
@@ -105,8 +114,12 @@ function htmlToText(html: string): string {
   return lines.join('\n');
 }
 
-// Helper to fetch web page content
+// Helper to fetch web page content with timeout
 async function fetchWebPage(url: string): Promise<string> {
+  // Create AbortController for timeout
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
   try {
     const response = await fetch(url, {
       headers: {
@@ -114,6 +127,7 @@ async function fetchWebPage(url: string): Promise<string> {
         Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         'Accept-Language': 'en-US,en;q=0.9',
       },
+      signal: controller.signal,
     });
 
     if (!response.ok) {
@@ -138,10 +152,18 @@ async function fetchWebPage(url: string): Promise<string> {
       : textContent;
   } catch (error) {
     console.error(`Failed to fetch ${url}:`, error);
-    if (error instanceof Error && (error.message.startsWith('WEBSITE_') || error.message.startsWith('HTTP'))) {
+
+    // Handle timeout/abort
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`FETCH_TIMEOUT: The request timed out after ${FETCH_TIMEOUT_MS / 1000} seconds. The website may be slow or unresponsive.`);
+    }
+
+    if (error instanceof Error && (error.message.startsWith('WEBSITE_') || error.message.startsWith('HTTP') || error.message.startsWith('FETCH_'))) {
       throw error;
     }
     throw new Error(`Could not fetch content from URL`);
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -153,6 +175,24 @@ function parseJsonResponse<T>(text: string): T {
 }
 
 export async function POST(request: Request) {
+  // Check rate limit first
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
+
+  if (!rateLimitResult.allowed) {
+    const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
+    return NextResponse.json(
+      {
+        error: `Rate limit exceeded. You can make ${AI_RATE_LIMIT.maxRequests} AI requests per hour. Please try again in ${resetMinutes} minute${resetMinutes !== 1 ? 's' : ''}.`,
+      },
+      {
+        status: 429,
+        headers: rateLimitHeaders,
+      }
+    );
+  }
+
   try {
     // Verify authentication
     const supabase = await createClient();
@@ -161,31 +201,31 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: rateLimitHeaders });
     }
 
     // Check admin
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    if (adminEmail && user.email !== adminEmail) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail || user.email !== adminEmail) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: rateLimitHeaders });
     }
 
     const params: JobInfoRequest = await request.json();
 
     if (!params.url) {
-      return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+      return NextResponse.json({ error: 'URL is required' }, { status: 400, headers: rateLimitHeaders });
     }
 
     // Validate URL to prevent SSRF attacks
     const urlValidation = validateUrl(params.url);
     if (!urlValidation.isValid) {
-      return NextResponse.json({ error: urlValidation.error }, { status: 400 });
+      return NextResponse.json({ error: urlValidation.error }, { status: 400, headers: rateLimitHeaders });
     }
 
     // Initialize Gemini with a fast model for this simple extraction
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500, headers: rateLimitHeaders });
     }
 
     // Fetch the job posting content
@@ -207,7 +247,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       ...jobInfo,
       jobPostingText: pageContent,
-    });
+    }, { headers: rateLimitHeaders });
   } catch (error) {
     console.error('Error fetching job info:', error);
 
@@ -218,7 +258,15 @@ export async function POST(request: Request) {
       if (message.includes('429') || message.includes('quota') || message.includes('rate limit') || message.includes('resource_exhausted')) {
         return NextResponse.json(
           { error: 'Gemini API quota exceeded. The free tier has limited requests per minute. Please wait a minute and try again, or check your Google Cloud Console for quota details.' },
-          { status: 429 }
+          { status: 429, headers: rateLimitHeaders }
+        );
+      }
+
+      // Fetch timeout
+      if (message.includes('fetch_timeout')) {
+        return NextResponse.json(
+          { error: 'The request timed out. The website may be slow or unresponsive. Please try again or paste the job description manually.' },
+          { status: 408, headers: rateLimitHeaders }
         );
       }
 
@@ -226,7 +274,7 @@ export async function POST(request: Request) {
       if (message.includes('401') || message.includes('api key') || message.includes('invalid_api_key')) {
         return NextResponse.json(
           { error: 'Gemini API key is invalid or expired. Please check your GEMINI_API_KEY environment variable.' },
-          { status: 500 }
+          { status: 500, headers: rateLimitHeaders }
         );
       }
 
@@ -234,7 +282,7 @@ export async function POST(request: Request) {
       if (message.includes('website_rate_limit')) {
         return NextResponse.json(
           { error: 'The job posting website is rate limiting requests. Try again in a few minutes or paste the job description manually.' },
-          { status: 429 }
+          { status: 429, headers: rateLimitHeaders }
         );
       }
 
@@ -242,7 +290,7 @@ export async function POST(request: Request) {
       if (message.includes('website_blocked')) {
         return NextResponse.json(
           { error: 'The job posting website blocked the request. This site may require login or block automated access. Please paste the job description manually.' },
-          { status: 403 }
+          { status: 403, headers: rateLimitHeaders }
         );
       }
 
@@ -250,7 +298,7 @@ export async function POST(request: Request) {
       if (message.includes('could not fetch')) {
         return NextResponse.json(
           { error: 'Could not fetch the job posting URL. The page may be blocked, require login, or the URL may be invalid.' },
-          { status: 400 }
+          { status: 400, headers: rateLimitHeaders }
         );
       }
 
@@ -258,13 +306,13 @@ export async function POST(request: Request) {
       if (message.includes('json') || message.includes('unexpected token')) {
         return NextResponse.json(
           { error: 'Failed to parse job information from the page. The AI could not extract structured data. Try a different job posting URL.' },
-          { status: 500 }
+          { status: 500, headers: rateLimitHeaders }
         );
       }
 
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred while fetching job info.' }, { status: 500 });
+    return NextResponse.json({ error: 'An unexpected error occurred while fetching job info.' }, { status: 500, headers: rateLimitHeaders });
   }
 }

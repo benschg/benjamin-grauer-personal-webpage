@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  getRateLimitHeaders,
+  AI_RATE_LIMIT,
+} from '@/lib/rate-limiter';
 
 // Maximum length for custom instructions to prevent abuse
 const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 1000;
@@ -261,6 +267,24 @@ Respond with ONLY a JSON object in this exact format (no markdown, no code block
 }
 
 export async function POST(request: Request) {
+  // Check rate limit first
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
+
+  if (!rateLimitResult.allowed) {
+    const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
+    return NextResponse.json(
+      {
+        error: `Rate limit exceeded. You can make ${AI_RATE_LIMIT.maxRequests} AI generation requests per hour. Please try again in ${resetMinutes} minute${resetMinutes !== 1 ? 's' : ''}.`,
+      },
+      {
+        status: 429,
+        headers: rateLimitHeaders,
+      }
+    );
+  }
+
   try {
     // Verify authentication
     const supabase = await createClient();
@@ -269,13 +293,13 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: rateLimitHeaders });
     }
 
     // Check admin
-    const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
-    if (adminEmail && user.email !== adminEmail) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    const adminEmail = process.env.ADMIN_EMAIL;
+    if (!adminEmail || user.email !== adminEmail) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: rateLimitHeaders });
     }
 
     const params: RegenerateItemRequest = await request.json();
@@ -284,7 +308,7 @@ export async function POST(request: Request) {
     if (!params.itemType || !params.currentValue) {
       return NextResponse.json(
         { error: 'Item type and current value are required' },
-        { status: 400 }
+        { status: 400, headers: rateLimitHeaders }
       );
     }
 
@@ -295,7 +319,7 @@ export async function POST(request: Request) {
     // Initialize Gemini
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500, headers: rateLimitHeaders });
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -312,7 +336,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       newValue: cleanedText,
       model: modelId,
-    });
+    }, { headers: rateLimitHeaders });
   } catch (error) {
     console.error('Error regenerating CV item:', error);
 
@@ -320,12 +344,12 @@ export async function POST(request: Request) {
       if (error.message.includes('429') || error.message.includes('quota')) {
         return NextResponse.json(
           { error: 'API quota exceeded. Please try again later.' },
-          { status: 429 }
+          { status: 429, headers: rateLimitHeaders }
         );
       }
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500, headers: rateLimitHeaders });
   }
 }

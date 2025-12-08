@@ -31,8 +31,7 @@ interface ShareDialogProps {
 }
 
 const ShareDialog = ({ open, onClose, currentUrl, cvVersionId, settings }: ShareDialogProps) => {
-  const { user } = useAuth();
-  const isAdmin = user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+  const { isAdmin } = useAuth();
 
   const [shortUrl, setShortUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
