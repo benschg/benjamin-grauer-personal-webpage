@@ -78,6 +78,37 @@ interface CVGenerationRequest {
   modelId?: string;
 }
 
+// Maximum length for custom instructions to prevent abuse
+const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 2000;
+
+// Sanitize custom instructions to prevent prompt injection attacks
+function sanitizeCustomInstructions(instructions: string | undefined): string {
+  if (!instructions) return '';
+
+  // Truncate to max length
+  let sanitized = instructions.slice(0, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+
+  // Remove potential prompt injection patterns
+  // These patterns attempt to escape the current context or override instructions
+  const dangerousPatterns = [
+    /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /you\s+are\s+now\s+(a|an)\s+/gi,
+    /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+    /system\s*:\s*/gi,
+    /\[\[system\]\]/gi,
+    /<<system>>/gi,
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    sanitized = sanitized.replace(pattern, '[REMOVED]');
+  }
+
+  return sanitized.trim();
+}
+
 // Prompt templates
 const PROMPT_VERSION = '1.0';
 
@@ -422,10 +453,13 @@ export async function POST(request: Request) {
       .replace('{profileData}', params.profileData || '(No additional profile data provided)')
       .replace('{whatLookingForSection}', ''); // Removed: now part of profileData
 
-    if (params.customInstructions) {
+    // Sanitize custom instructions to prevent prompt injection
+    const sanitizedInstructions = sanitizeCustomInstructions(params.customInstructions);
+
+    if (sanitizedInstructions) {
       cvPrompt = cvPrompt.replace(
         '{customInstructions}',
-        `Additional Instructions from User:\n${params.customInstructions}`
+        `Additional Instructions from User:\n${sanitizedInstructions}`
       );
     } else {
       cvPrompt = cvPrompt.replace('{customInstructions}', '');
@@ -443,10 +477,10 @@ export async function POST(request: Request) {
       .replace('{jobPosting}', jobPostingContext)
       .replace('{profileData}', params.profileData || '(No additional profile data provided)');
 
-    if (params.customInstructions) {
+    if (sanitizedInstructions) {
       motivationPrompt = motivationPrompt.replace(
         '{customInstructions}',
-        `Additional Instructions from User:\n${params.customInstructions}`
+        `Additional Instructions from User:\n${sanitizedInstructions}`
       );
     } else {
       motivationPrompt = motivationPrompt.replace('{customInstructions}', '');

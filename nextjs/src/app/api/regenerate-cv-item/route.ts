@@ -3,6 +3,36 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
 
+// Maximum length for custom instructions to prevent abuse
+const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 1000;
+
+// Sanitize custom instructions to prevent prompt injection attacks
+function sanitizeCustomInstructions(instructions: string | undefined): string {
+  if (!instructions) return '';
+
+  // Truncate to max length
+  let sanitized = instructions.slice(0, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+
+  // Remove potential prompt injection patterns
+  const dangerousPatterns = [
+    /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /you\s+are\s+now\s+(a|an)\s+/gi,
+    /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+    /system\s*:\s*/gi,
+    /\[\[system\]\]/gi,
+    /<<system>>/gi,
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    sanitized = sanitized.replace(pattern, '[REMOVED]');
+  }
+
+  return sanitized.trim();
+}
+
 // Types
 interface CompanyResearch {
   company: {
@@ -77,6 +107,9 @@ function cleanAIResponse(text: string): string {
 function getPromptForItemType(request: RegenerateItemRequest): string {
   const { itemType, currentValue, context, customInstructions } = request;
 
+  // Sanitize custom instructions before use
+  const sanitizedInstructions = sanitizeCustomInstructions(customInstructions);
+
   const companyContext = context.companyName && context.jobTitle
     ? `\n\nTarget Company: ${context.companyName}\nTarget Role: ${context.jobTitle}`
     : '';
@@ -89,8 +122,8 @@ function getPromptForItemType(request: RegenerateItemRequest): string {
     ? `\n\nCompany Research:\n${JSON.stringify(context.companyResearch, null, 2)}`
     : '';
 
-  const customInstructionsText = customInstructions
-    ? `\n\nAdditional Instructions:\n${customInstructions}`
+  const customInstructionsText = sanitizedInstructions
+    ? `\n\nAdditional Instructions:\n${sanitizedInstructions}`
     : '';
 
   switch (itemType) {
@@ -179,7 +212,7 @@ Respond with ONLY the new skill text, no additional formatting or explanation.`;
 
     case 'keyCompetenceTitle':
       return `You are an expert CV writer. Generate a new key competence title for a CV.${companyContext}${researchContext}${jobPostingContext}
-${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated title directly addresses this request.\n` : ''}
+${sanitizedInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${sanitizedInstructions}\nMake sure your generated title directly addresses this request.\n` : ''}
 Current title: "${currentValue}"
 ${context.competenceDescription ? `Current description: "${context.competenceDescription}"` : ''}
 
@@ -194,7 +227,7 @@ Respond with ONLY the new title text, no additional formatting or explanation.`;
 
     case 'keyCompetenceDescription':
       return `You are an expert CV writer. Generate a new key competence description for a CV.${companyContext}${researchContext}${jobPostingContext}
-${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated description directly addresses this request.\n` : ''}
+${sanitizedInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${sanitizedInstructions}\nMake sure your generated description directly addresses this request.\n` : ''}
 ${context.competenceTitle ? `Competence title: "${context.competenceTitle}"` : ''}
 Current description: "${currentValue}"
 
@@ -208,7 +241,7 @@ Respond with ONLY the new description text, no additional formatting or explanat
 
     case 'keyCompetence':
       return `You are an expert CV writer. Generate a new key competence (title and description) for a CV.${companyContext}${researchContext}${jobPostingContext}
-${customInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${customInstructions}\nMake sure your generated competence directly addresses this request.\n` : ''}
+${sanitizedInstructions ? `\n**PRIORITY INSTRUCTION - The user specifically wants:** ${sanitizedInstructions}\nMake sure your generated competence directly addresses this request.\n` : ''}
 Current title: "${context.competenceTitle || currentValue}"
 Current description: "${context.competenceDescription || ''}"
 
