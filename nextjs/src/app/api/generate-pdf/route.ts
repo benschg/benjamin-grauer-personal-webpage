@@ -171,6 +171,25 @@ async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promis
   return mergedPdf.save();
 }
 
+// Sanitize HTML by removing script tags and event handlers to prevent XSS in PDF
+function sanitizeHtmlForPdf(html: string): string {
+  let sanitized = html;
+
+  // Remove script tags and their contents
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+  // Remove javascript: URLs
+  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+
+  // Remove inline event handlers (onclick, onerror, onload, etc.)
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+
+  // Remove data: URLs in iframes (potential XSS vector)
+  sanitized = sanitized.replace(/<iframe[^>]*src\s*=\s*["']data:[^"']*["'][^>]*>/gi, '');
+
+  return sanitized;
+}
+
 // Fix MUI SVG icons - they render with currentColor which doesn't work in static HTML
 // Also remove any problematic inline styles
 function fixSvgIcons(html: string, theme: 'dark' | 'light'): string {
@@ -243,8 +262,11 @@ export async function POST(request: Request) {
     const url = new URL(request.url);
     const baseUrl = params.baseUrl || `${url.protocol}//${url.host}`;
 
+    // Sanitize HTML to prevent XSS in PDF (remove scripts, event handlers)
+    let fixedHtml = sanitizeHtmlForPdf(params.html);
+
     // Fix relative image URLs to base64 data URLs
-    let fixedHtml = await fixImageUrls(params.html, baseUrl);
+    fixedHtml = await fixImageUrls(fixedHtml, baseUrl);
 
     // Fix SVG icons for PDF rendering
     fixedHtml = fixSvgIcons(fixedHtml, params.theme);
