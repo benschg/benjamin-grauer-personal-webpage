@@ -4,7 +4,6 @@ import { useState, type ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import {
   Box,
-  Typography,
   Paper,
   Chip,
   Stack,
@@ -12,6 +11,7 @@ import {
   CardMedia,
   ToggleButton,
   ToggleButtonGroup,
+  Typography,
 } from '@mui/material';
 import {
   Timeline,
@@ -22,6 +22,7 @@ import {
   TimelineDot,
 } from '@mui/lab';
 import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { SectionTitle } from '@/components/common';
 
 export interface TimelineEvent {
   id: string;
@@ -46,6 +47,7 @@ export interface FilterOption {
 }
 
 interface GenericTimelineProps {
+  id?: string;
   title: string;
   events: TimelineEvent[];
   getIcon: (type: string) => ReactNode;
@@ -60,6 +62,7 @@ interface GenericTimelineProps {
 }
 
 const GenericTimeline = ({
+  id = 'timeline',
   title,
   events,
   getIcon,
@@ -101,17 +104,7 @@ const GenericTimeline = ({
 
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography
-        variant="h2"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2rem' },
-          fontWeight: 700,
-          mb: 3,
-          color: 'text.primary',
-        }}
-      >
-        {title}
-      </Typography>
+      <SectionTitle id={id} title={title} sx={{ mb: 3 }} />
 
       <Box sx={{ mb: 4 }}>
         <ToggleButtonGroup

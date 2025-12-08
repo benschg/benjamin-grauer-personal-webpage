@@ -4,23 +4,18 @@ import Link from 'next/link';
 import { Box, Typography, Grid, Button } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { SectionTitle } from '@/components/common';
 import DocumentCard from './DocumentCard';
 import { documents, documentsSectionContent } from './content';
 
-const DocumentsSection = () => {
+interface DocumentsSectionProps {
+  id?: string;
+}
+
+const DocumentsSection = ({ id = 'documents' }: DocumentsSectionProps) => {
   return (
     <Box sx={{ mb: 4 }}>
-      <Typography
-        variant="h2"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2rem' },
-          fontWeight: 700,
-          mb: 3,
-          color: 'text.primary',
-        }}
-      >
-        {documentsSectionContent.title}
-      </Typography>
+      <SectionTitle id={id} title={documentsSectionContent.title} sx={{ mb: 3 }} />
       <Grid container spacing={3}>
         {documents.map((doc, index) => (
           <Grid size={{ xs: 12, md: 4 }} key={index}>

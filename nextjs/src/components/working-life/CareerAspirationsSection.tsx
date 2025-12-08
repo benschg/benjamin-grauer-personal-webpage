@@ -12,6 +12,7 @@ import {
   Rocket,
   Palette,
 } from '@mui/icons-material';
+import { SectionTitle } from '@/components/common';
 import { careerAspirations, careerAspirationsIntro, careerAspirationsSectionContent } from './content';
 
 // Map icon names to components
@@ -27,20 +28,14 @@ const iconMap: Record<string, React.ElementType> = {
   Palette,
 };
 
-const CareerAspirationsSection = () => {
+interface CareerAspirationsSectionProps {
+  id?: string;
+}
+
+const CareerAspirationsSection = ({ id = 'aspirations' }: CareerAspirationsSectionProps) => {
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography
-        variant="h2"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2rem' },
-          fontWeight: 700,
-          mb: 2,
-          color: 'text.primary',
-        }}
-      >
-        {careerAspirationsSectionContent.title}
-      </Typography>
+      <SectionTitle id={id} title={careerAspirationsSectionContent.title} sx={{ mb: 2 }} />
       <Typography
         variant="body1"
         sx={{

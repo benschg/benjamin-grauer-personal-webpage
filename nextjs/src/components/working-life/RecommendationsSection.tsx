@@ -4,6 +4,7 @@ import { Box, Typography, IconButton } from '@mui/material';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 import { useState, useEffect, useCallback } from 'react';
+import { SectionTitle } from '@/components/common';
 import RecommendationCard from './RecommendationCard';
 import { recommendations, recommendationsSectionContent, Recommendation } from './content';
 
@@ -17,7 +18,11 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-const RecommendationsSection = () => {
+interface RecommendationsSectionProps {
+  id?: string;
+}
+
+const RecommendationsSection = ({ id = 'recommendations' }: RecommendationsSectionProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
   // Start with original order (matches server), shuffle after hydration
@@ -85,18 +90,13 @@ const RecommendationsSection = () => {
         viewport={{ once: true }}
       >
         <Box sx={{ textAlign: 'center', mb: 4 }}>
-          <Typography
-            variant="h2"
-            component="h2"
-            sx={{
-              fontSize: { xs: '1.8rem', md: '2.5rem' },
-              fontWeight: 700,
-              color: 'text.primary',
-              mb: 2,
-            }}
-          >
-            {recommendationsSectionContent.title}
-          </Typography>
+          <SectionTitle
+            id={id}
+            title={recommendationsSectionContent.title}
+            variant="h3"
+            centered
+            sx={{ fontSize: { xs: '1.8rem', md: '2.5rem' }, mb: 2 }}
+          />
           <Typography
             variant="h6"
             sx={{

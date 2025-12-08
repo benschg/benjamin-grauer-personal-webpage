@@ -1,23 +1,18 @@
 'use client';
 
 import { Box, Typography } from '@mui/material';
+import { SectionTitle } from '@/components/common';
 import { SkillsGrid } from './skills';
 import { skillsSectionContent } from './content';
 
-const SkillsSection = () => {
+interface SkillsSectionProps {
+  id?: string;
+}
+
+const SkillsSection = ({ id = 'skills' }: SkillsSectionProps) => {
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography
-        variant="h2"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2rem' },
-          fontWeight: 700,
-          mb: 1,
-          color: 'text.primary',
-        }}
-      >
-        {skillsSectionContent.title}
-      </Typography>
+      <SectionTitle id={id} title={skillsSectionContent.title} sx={{ mb: 1 }} />
       <Typography
         variant="body2"
         sx={{
