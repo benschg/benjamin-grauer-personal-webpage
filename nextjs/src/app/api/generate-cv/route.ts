@@ -2,6 +2,12 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
+import {
+  checkRateLimit,
+  getClientIdentifier,
+  getRateLimitHeaders,
+  AI_RATE_LIMIT,
+} from '@/lib/rate-limiter';
 
 // Types
 interface CompanyResearch {
@@ -375,6 +381,24 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
 }
 
 export async function POST(request: Request) {
+  // Check rate limit first
+  const clientId = getClientIdentifier(request);
+  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
+
+  if (!rateLimitResult.allowed) {
+    const resetMinutes = Math.ceil(rateLimitResult.resetIn / 60000);
+    return NextResponse.json(
+      {
+        error: `Rate limit exceeded. You can make ${AI_RATE_LIMIT.maxRequests} AI generation requests per hour. Please try again in ${resetMinutes} minute${resetMinutes !== 1 ? 's' : ''}.`,
+      },
+      {
+        status: 429,
+        headers: rateLimitHeaders,
+      }
+    );
+  }
+
   try {
     // Verify authentication
     const supabase = await createClient();
@@ -383,24 +407,24 @@ export async function POST(request: Request) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: rateLimitHeaders });
     }
 
     // Check admin
     const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
     if (adminEmail && user.email !== adminEmail) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403, headers: rateLimitHeaders });
     }
 
     const params: CVGenerationRequest = await request.json();
 
     // Validate input
     if (!params.jobTitle) {
-      return NextResponse.json({ error: 'Job title is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Job title is required' }, { status: 400, headers: rateLimitHeaders });
     }
 
     if (!params.currentTagline || !params.currentProfile) {
-      return NextResponse.json({ error: 'Current CV content is required' }, { status: 400 });
+      return NextResponse.json({ error: 'Current CV content is required' }, { status: 400, headers: rateLimitHeaders });
     }
 
     // Validate and set model
@@ -410,7 +434,7 @@ export async function POST(request: Request) {
     // Initialize Gemini
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500 });
+      return NextResponse.json({ error: 'Gemini API key not configured' }, { status: 500, headers: rateLimitHeaders });
     }
 
     const genAI = new GoogleGenerativeAI(apiKey);
@@ -496,17 +520,17 @@ export async function POST(request: Request) {
       companyResearch,
       model: modelId,
       promptVersion: PROMPT_VERSION,
-    });
+    }, { headers: rateLimitHeaders });
   } catch (error) {
     console.error('Error generating CV:', error);
 
     if (error instanceof Error) {
       if (error.message.includes('429') || error.message.includes('quota')) {
-        return NextResponse.json({ error: 'API quota exceeded. Please try again later.' }, { status: 429 });
+        return NextResponse.json({ error: 'API quota exceeded. Please try again later.' }, { status: 429, headers: rateLimitHeaders });
       }
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500 });
+    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500, headers: rateLimitHeaders });
   }
 }
