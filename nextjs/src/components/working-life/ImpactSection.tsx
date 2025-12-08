@@ -1,23 +1,18 @@
 'use client';
 
-import { Box, Typography, Card, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import { Box, Card, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import { CheckCircle } from '@mui/icons-material';
+import { SectionTitle } from '@/components/common';
 import { impactSectionContent } from './content';
 
-const ImpactSection = () => {
+interface ImpactSectionProps {
+  id?: string;
+}
+
+const ImpactSection = ({ id = 'impact' }: ImpactSectionProps) => {
   return (
     <Box sx={{ mb: 6 }}>
-      <Typography
-        variant="h2"
-        sx={{
-          fontSize: { xs: '1.5rem', md: '2rem' },
-          fontWeight: 700,
-          mb: 2,
-          color: 'text.primary',
-        }}
-      >
-        {impactSectionContent.title}
-      </Typography>
+      <SectionTitle id={id} title={impactSectionContent.title} sx={{ mb: 2 }} />
       <Card
         sx={{
           p: 3,

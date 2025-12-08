@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { Box, Typography, Button, Card, CardContent, Grid } from '@mui/material';
 import { ArrowForward, FamilyRestroom, DirectionsRun, Flight, Hiking } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { SectionTitle } from '@/components/common';
 import { personalHighlights } from '../../data/interestsData';
 import { personalLifeReferenceSectionContent } from './content';
 
@@ -14,7 +15,11 @@ const highlightIcons = [
   <Hiking key="hobbies" sx={{ fontSize: 28 }} />,
 ];
 
-const PersonalLifeReferenceSection = () => {
+interface PersonalLifeReferenceSectionProps {
+  id?: string;
+}
+
+const PersonalLifeReferenceSection = ({ id = 'personal-life-reference' }: PersonalLifeReferenceSectionProps) => {
   const highlights = personalHighlights.map((highlight, index) => ({
     ...highlight,
     icon: highlightIcons[index],
@@ -36,18 +41,13 @@ const PersonalLifeReferenceSection = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <Typography
+        <SectionTitle
+          id={id}
+          title={personalLifeReferenceSectionContent.title}
           variant="h3"
-          component="h2"
-          sx={{
-            fontSize: { xs: '2rem', md: '2.5rem' },
-            fontWeight: 700,
-            mb: 2,
-            textAlign: 'center',
-          }}
-        >
-          {personalLifeReferenceSectionContent.title}
-        </Typography>
+          centered
+          sx={{ mb: 2 }}
+        />
         <Typography
           variant="h6"
           sx={{

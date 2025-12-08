@@ -4,9 +4,14 @@ import Link from 'next/link';
 import { Box, Typography, Button } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 import { motion } from 'framer-motion';
+import { SectionTitle } from '@/components/common';
 import { portfolioReferenceSectionContent } from './content';
 
-const PortfolioReferenceSection = () => {
+interface PortfolioReferenceSectionProps {
+  id?: string;
+}
+
+const PortfolioReferenceSection = ({ id = 'portfolio-reference' }: PortfolioReferenceSectionProps) => {
   return (
     <Box sx={{ py: 6 }}>
       <motion.div
@@ -15,18 +20,13 @@ const PortfolioReferenceSection = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
       >
-        <Typography
+        <SectionTitle
+          id={id}
+          title={portfolioReferenceSectionContent.title}
           variant="h3"
-          component="h2"
-          sx={{
-            fontSize: { xs: '2rem', md: '2.5rem' },
-            fontWeight: 700,
-            mb: 2,
-            textAlign: 'center',
-          }}
-        >
-          {portfolioReferenceSectionContent.title}
-        </Typography>
+          centered
+          sx={{ mb: 2 }}
+        />
         <Typography
           variant="h6"
           sx={{
