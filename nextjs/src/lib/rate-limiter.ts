@@ -156,3 +156,19 @@ export const SHARE_LINK_RATE_LIMIT: RateLimitConfig = {
   windowMs: 60 * 1000, // 1 minute
   prefix: 'share-link',
 };
+
+// Pre-configured rate limiter for AI generation endpoints
+// 10 requests per hour per IP (prevents API quota exhaustion and high costs)
+export const AI_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: 10,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  prefix: 'ai-gen',
+};
+
+// Pre-configured rate limiter for motivation letter PDF generation
+// Same as PDF rate limit: 10 per hour per IP
+export const MOTIVATION_LETTER_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: 10,
+  windowMs: 60 * 60 * 1000, // 1 hour
+  prefix: 'motivation-pdf',
+};
