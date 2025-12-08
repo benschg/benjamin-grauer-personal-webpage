@@ -4,6 +4,13 @@ import { createClient as createServerClient } from '@/lib/supabase/server';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
+// Email validation regex - matches most valid email addresses
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+function isValidEmail(email: string): boolean {
+  return EMAIL_REGEX.test(email);
+}
+
 // Admin client for write operations
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -57,6 +64,11 @@ export async function POST(request: NextRequest) {
 
     // Normalize email to lowercase
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Validate email format
+    if (!isValidEmail(normalizedEmail)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
 
     const { data, error } = await supabaseAdmin
       .from('whitelisted_emails')
