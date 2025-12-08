@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
+
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 // Public client for reading active references
 const supabase = createClient(
@@ -17,8 +20,18 @@ export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const fetchAll = searchParams.get('all') === 'true';
 
-  // If fetching all (admin view), return all fields including inactive
+  // If fetching all (admin view), require authentication
   if (fetchAll) {
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const { data, error } = await supabaseAdmin
       .from('cv_references')
       .select('id, name, title, company, email, phone, sort_order, is_active')
@@ -49,6 +62,17 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { name, title, company, email, phone, sort_order } = body;
 
@@ -87,6 +111,17 @@ export async function POST(request: NextRequest) {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { id, ...updates } = body;
 
@@ -125,6 +160,17 @@ export async function PUT(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { id } = body;
 
