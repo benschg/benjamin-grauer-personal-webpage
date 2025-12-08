@@ -1,14 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import crypto from 'crypto';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-// Generate a random 6-character alphanumeric code
+// Generate a cryptographically secure random 8-character alphanumeric code
 function generateShortCode(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+  const randomBytes = crypto.randomBytes(8);
   let code = '';
-  for (let i = 0; i < 6; i++) {
-    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  for (let i = 0; i < 8; i++) {
+    code += chars.charAt(randomBytes[i] % chars.length);
   }
   return code;
 }
