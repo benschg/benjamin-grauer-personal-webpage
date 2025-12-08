@@ -4,6 +4,22 @@ import { createClient as createServerClient } from '@/lib/supabase/server';
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
+// Validation constants
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+const MAX_EMAIL_LENGTH = 254; // RFC 5321
+const MAX_PHONE_LENGTH = 50;
+const MAX_ADDRESS_LENGTH = 500;
+
+// Validate email format
+function isValidEmail(email: string): boolean {
+  return email.length <= MAX_EMAIL_LENGTH && EMAIL_REGEX.test(email);
+}
+
+// Sanitize text to prevent XSS - strip HTML tags
+function sanitizeText(text: string): string {
+  return text.replace(/<[^>]*>/g, '').trim();
+}
+
 // Public client for reading settings
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -56,14 +72,55 @@ export async function PUT(request: NextRequest) {
     const body = await request.json();
     const { contact_email, contact_phone, contact_address, public_email, public_address } = body;
 
+    // Validate email formats
+    if (contact_email && !isValidEmail(contact_email)) {
+      return NextResponse.json(
+        { error: 'Invalid contact email format' },
+        { status: 400 }
+      );
+    }
+    if (public_email && !isValidEmail(public_email)) {
+      return NextResponse.json(
+        { error: 'Invalid public email format' },
+        { status: 400 }
+      );
+    }
+
+    // Validate phone length
+    if (contact_phone && contact_phone.length > MAX_PHONE_LENGTH) {
+      return NextResponse.json(
+        { error: `Phone number too long (max ${MAX_PHONE_LENGTH} characters)` },
+        { status: 400 }
+      );
+    }
+
+    // Validate address lengths
+    if (contact_address && contact_address.length > MAX_ADDRESS_LENGTH) {
+      return NextResponse.json(
+        { error: `Contact address too long (max ${MAX_ADDRESS_LENGTH} characters)` },
+        { status: 400 }
+      );
+    }
+    if (public_address && public_address.length > MAX_ADDRESS_LENGTH) {
+      return NextResponse.json(
+        { error: `Public address too long (max ${MAX_ADDRESS_LENGTH} characters)` },
+        { status: 400 }
+      );
+    }
+
+    // Sanitize text inputs to prevent XSS
+    const sanitizedPhone = contact_phone ? sanitizeText(contact_phone) : '';
+    const sanitizedContactAddress = contact_address ? sanitizeText(contact_address) : '';
+    const sanitizedPublicAddress = public_address ? sanitizeText(public_address) : null;
+
     const { data, error } = await supabaseAdmin
       .from('site_settings')
       .update({
         contact_email: contact_email ?? '',
-        contact_phone: contact_phone ?? '',
-        contact_address: contact_address ?? '',
+        contact_phone: sanitizedPhone,
+        contact_address: sanitizedContactAddress,
         public_email: public_email ?? null,
-        public_address: public_address ?? null,
+        public_address: sanitizedPublicAddress,
         updated_at: new Date().toISOString(),
       })
       .eq('id', 1)
