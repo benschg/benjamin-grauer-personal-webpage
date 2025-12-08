@@ -13,6 +13,25 @@ function hashIP(ip: string): string {
   return crypto.createHash('sha256').update(ip).digest('hex');
 }
 
+// Truncate and anonymize User-Agent for privacy while keeping useful analytics data
+function anonymizeUserAgent(userAgent: string | null): string | null {
+  if (!userAgent) return null;
+
+  // Truncate to 200 chars max and remove detailed version numbers
+  // This keeps browser/OS info but removes fingerprinting details
+  const truncated = userAgent.slice(0, 200);
+
+  // Simple category extraction for analytics (browser type + OS)
+  const browserMatch = truncated.match(/(Chrome|Firefox|Safari|Edge|Opera|MSIE|Trident)/i);
+  const osMatch = truncated.match(/(Windows|Macintosh|Linux|Android|iOS|iPhone|iPad)/i);
+
+  const browser = browserMatch ? browserMatch[1] : 'Unknown';
+  const os = osMatch ? osMatch[1] : 'Unknown';
+
+  // Return simplified format for privacy
+  return `${browser}/${os}`;
+}
+
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -74,9 +93,8 @@ export async function GET(
   const redirectPath = queryString ? `/working-life/cv?${queryString}` : '/working-life/cv';
 
   // Record the visit (don't await - fire and forget for speed)
-  const clientIP = getClientIP(request);
   const ipHash = hashIP(clientIP);
-  const userAgent = request.headers.get('user-agent') || null;
+  const userAgent = anonymizeUserAgent(request.headers.get('user-agent'));
   const referrer = request.headers.get('referer') || null;
 
   // Fire and forget - don't block the redirect
