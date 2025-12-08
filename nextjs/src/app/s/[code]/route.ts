@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { checkRateLimit, SHARE_LINK_RATE_LIMIT } from '@/lib/rate-limiter';
 
 // Create a service role client for inserting visits without auth
 const supabaseAdmin = createClient(
@@ -28,6 +29,19 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  // Rate limit to prevent brute-force enumeration of share link codes
+  const clientIP = getClientIP(request);
+  const rateLimitResult = checkRateLimit(clientIP, SHARE_LINK_RATE_LIMIT);
+
+  if (!rateLimitResult.allowed) {
+    return new NextResponse('Too many requests. Please try again later.', {
+      status: 429,
+      headers: {
+        'Retry-After': Math.ceil(rateLimitResult.resetIn / 1000).toString(),
+      },
+    });
+  }
+
   const { code } = await params;
 
   // Look up the short code with all settings

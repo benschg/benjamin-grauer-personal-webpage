@@ -148,3 +148,11 @@ export const PDF_RATE_LIMIT: RateLimitConfig = {
   windowMs: 60 * 60 * 1000, // 1 hour
   prefix: 'pdf-gen',
 };
+
+// Pre-configured rate limiter for share link redirects
+// 60 requests per minute per IP (prevents brute-force enumeration)
+export const SHARE_LINK_RATE_LIMIT: RateLimitConfig = {
+  maxRequests: 60,
+  windowMs: 60 * 1000, // 1 minute
+  prefix: 'share-link',
+};
