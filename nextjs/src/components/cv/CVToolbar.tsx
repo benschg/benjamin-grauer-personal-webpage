@@ -787,7 +787,7 @@ const CVToolbar = ({
           privacyLevel,
           showExperience,
           showAttachments,
-          showExport: false,
+          showExport: exportDialogOpen,
         }}
       />
     </>
