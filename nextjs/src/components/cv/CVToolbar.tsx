@@ -124,7 +124,7 @@ const CVToolbar = ({
     if (privacyLevel === "personal") return "white";
     return "#89665d"; // accent color for full
   };
-  const { user, signIn, signOut } = useAuth();
+  const { user, isAdmin, signIn, signOut } = useAuth();
   const { isEditing, activeContent } = useCVVersion();
   const [speedDialOpen, setSpeedDialOpen] = useState(false);
   const [internalExportDialogOpen, setInternalExportDialogOpen] =
@@ -345,7 +345,7 @@ const CVToolbar = ({
           </Tooltip>
 
           {/* Admin dashboard link - only for admins */}
-          {user?.email === process.env.NEXT_PUBLIC_ADMIN_EMAIL && (
+          {isAdmin && (
             <Tooltip title="Admin Dashboard">
               <IconButton
                 onClick={() => router.push("/admin")}
@@ -364,7 +364,7 @@ const CVToolbar = ({
               </IconButton>
             </Tooltip>
           ) : (
-            <Tooltip title="Admin Sign In">
+            <Tooltip title="Sign In">
               <IconButton onClick={signIn} sx={{ color: "#666" }}>
                 <LoginIcon />
               </IconButton>
