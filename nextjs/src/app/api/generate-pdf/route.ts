@@ -96,6 +96,34 @@ async function fixImageUrls(html: string, baseUrl: string): Promise<string> {
   return result;
 }
 
+// Allowed attachment paths (whitelist approach for security)
+const ALLOWED_ATTACHMENT_PATHS = [
+  '/working-life/documents/Certificates.pdf',
+  '/working-life/documents/CV.pdf',
+  '/working-life/documents/Recommendations.pdf',
+];
+
+// Validate attachment path to prevent path traversal attacks
+function isValidAttachmentPath(attachmentPath: string): boolean {
+  // Normalize the path
+  const normalizedPath = attachmentPath.startsWith('/') ? attachmentPath : '/' + attachmentPath;
+
+  // Check against allowlist
+  if (ALLOWED_ATTACHMENT_PATHS.includes(normalizedPath)) {
+    return true;
+  }
+
+  // Also allow paths that match the pattern /working-life/documents/*.pdf
+  // but block any path traversal attempts
+  if (attachmentPath.includes('..') || attachmentPath.includes('\\')) {
+    return false;
+  }
+
+  // Only allow PDF files from working-life/documents directory
+  const allowedPattern = /^\/working-life\/documents\/[a-zA-Z0-9_-]+\.pdf$/;
+  return allowedPattern.test(normalizedPath);
+}
+
 // Merge multiple PDFs into one (separator page is now rendered by Puppeteer with the main CV)
 async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promise<Uint8Array> {
   const fs = await import('fs/promises');
@@ -111,12 +139,26 @@ async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promis
 
   // Load and add each attachment PDF
   for (const attachmentPath of attachmentPaths) {
+    // Validate path to prevent path traversal attacks
+    if (!isValidAttachmentPath(attachmentPath)) {
+      console.warn(`Blocked invalid attachment path: ${attachmentPath}`);
+      continue;
+    }
+
     try {
       // Remove leading slash and resolve path from public folder
       const relativePath = attachmentPath.startsWith('/') ? attachmentPath.slice(1) : attachmentPath;
       const fullPath = path.join(process.cwd(), 'public', relativePath);
 
-      const attachmentBytes = await fs.readFile(fullPath);
+      // Additional security check: ensure resolved path is within public directory
+      const publicDir = path.join(process.cwd(), 'public');
+      const resolvedPath = path.resolve(fullPath);
+      if (!resolvedPath.startsWith(publicDir)) {
+        console.warn(`Blocked path traversal attempt: ${attachmentPath}`);
+        continue;
+      }
+
+      const attachmentBytes = await fs.readFile(resolvedPath);
       const attachmentDoc = await PDFDocument.load(attachmentBytes);
       const attachmentPages = await mergedPdf.copyPages(attachmentDoc, attachmentDoc.getPageIndices());
       attachmentPages.forEach((page) => mergedPdf.addPage(page));
@@ -127,6 +169,25 @@ async function mergePdfs(mainPdf: Uint8Array, attachmentPaths: string[]): Promis
   }
 
   return mergedPdf.save();
+}
+
+// Sanitize HTML by removing script tags and event handlers to prevent XSS in PDF
+function sanitizeHtmlForPdf(html: string): string {
+  let sanitized = html;
+
+  // Remove script tags and their contents
+  sanitized = sanitized.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+
+  // Remove javascript: URLs
+  sanitized = sanitized.replace(/href\s*=\s*["']javascript:[^"']*["']/gi, 'href="#"');
+
+  // Remove inline event handlers (onclick, onerror, onload, etc.)
+  sanitized = sanitized.replace(/\s+on\w+\s*=\s*["'][^"']*["']/gi, '');
+
+  // Remove data: URLs in iframes (potential XSS vector)
+  sanitized = sanitized.replace(/<iframe[^>]*src\s*=\s*["']data:[^"']*["'][^>]*>/gi, '');
+
+  return sanitized;
 }
 
 // Fix MUI SVG icons - they render with currentColor which doesn't work in static HTML
@@ -201,8 +262,11 @@ export async function POST(request: Request) {
     const url = new URL(request.url);
     const baseUrl = params.baseUrl || `${url.protocol}//${url.host}`;
 
+    // Sanitize HTML to prevent XSS in PDF (remove scripts, event handlers)
+    let fixedHtml = sanitizeHtmlForPdf(params.html);
+
     // Fix relative image URLs to base64 data URLs
-    let fixedHtml = await fixImageUrls(params.html, baseUrl);
+    fixedHtml = await fixImageUrls(fixedHtml, baseUrl);
 
     // Fix SVG icons for PDF rendering
     fixedHtml = fixSvgIcons(fixedHtml, params.theme);

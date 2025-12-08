@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
+import { validateUrl } from '@/lib/url-validator';
 
 interface JobInfoRequest {
   url: string;
@@ -173,6 +174,12 @@ export async function POST(request: Request) {
 
     if (!params.url) {
       return NextResponse.json({ error: 'URL is required' }, { status: 400 });
+    }
+
+    // Validate URL to prevent SSRF attacks
+    const urlValidation = validateUrl(params.url);
+    if (!urlValidation.isValid) {
+      return NextResponse.json({ error: urlValidation.error }, { status: 400 });
     }
 
     // Initialize Gemini with a fast model for this simple extraction

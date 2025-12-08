@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { checkRateLimit, SHARE_LINK_RATE_LIMIT } from '@/lib/rate-limiter';
 
 // Create a service role client for inserting visits without auth
 const supabaseAdmin = createClient(
@@ -10,6 +11,25 @@ const supabaseAdmin = createClient(
 
 function hashIP(ip: string): string {
   return crypto.createHash('sha256').update(ip).digest('hex');
+}
+
+// Truncate and anonymize User-Agent for privacy while keeping useful analytics data
+function anonymizeUserAgent(userAgent: string | null): string | null {
+  if (!userAgent) return null;
+
+  // Truncate to 200 chars max and remove detailed version numbers
+  // This keeps browser/OS info but removes fingerprinting details
+  const truncated = userAgent.slice(0, 200);
+
+  // Simple category extraction for analytics (browser type + OS)
+  const browserMatch = truncated.match(/(Chrome|Firefox|Safari|Edge|Opera|MSIE|Trident)/i);
+  const osMatch = truncated.match(/(Windows|Macintosh|Linux|Android|iOS|iPhone|iPad)/i);
+
+  const browser = browserMatch ? browserMatch[1] : 'Unknown';
+  const os = osMatch ? osMatch[1] : 'Unknown';
+
+  // Return simplified format for privacy
+  return `${browser}/${os}`;
 }
 
 function getClientIP(request: NextRequest): string {
@@ -28,6 +48,19 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ code: string }> }
 ) {
+  // Rate limit to prevent brute-force enumeration of share link codes
+  const clientIP = getClientIP(request);
+  const rateLimitResult = checkRateLimit(clientIP, SHARE_LINK_RATE_LIMIT);
+
+  if (!rateLimitResult.allowed) {
+    return new NextResponse('Too many requests. Please try again later.', {
+      status: 429,
+      headers: {
+        'Retry-After': Math.ceil(rateLimitResult.resetIn / 1000).toString(),
+      },
+    });
+  }
+
   const { code } = await params;
 
   // Look up the short code with all settings
@@ -60,9 +93,8 @@ export async function GET(
   const redirectPath = queryString ? `/working-life/cv?${queryString}` : '/working-life/cv';
 
   // Record the visit (don't await - fire and forget for speed)
-  const clientIP = getClientIP(request);
   const ipHash = hashIP(clientIP);
-  const userAgent = request.headers.get('user-agent') || null;
+  const userAgent = anonymizeUserAgent(request.headers.get('user-agent'));
   const referrer = request.headers.get('referer') || null;
 
   // Fire and forget - don't block the redirect

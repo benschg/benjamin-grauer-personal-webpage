@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
+import { validateUrl } from '@/lib/url-validator';
 
 // Types
 interface CompanyResearch {
@@ -75,6 +76,37 @@ interface CVGenerationRequest {
   profileData?: string;
   customInstructions?: string;
   modelId?: string;
+}
+
+// Maximum length for custom instructions to prevent abuse
+const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 2000;
+
+// Sanitize custom instructions to prevent prompt injection attacks
+function sanitizeCustomInstructions(instructions: string | undefined): string {
+  if (!instructions) return '';
+
+  // Truncate to max length
+  let sanitized = instructions.slice(0, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+
+  // Remove potential prompt injection patterns
+  // These patterns attempt to escape the current context or override instructions
+  const dangerousPatterns = [
+    /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+    /you\s+are\s+now\s+(a|an)\s+/gi,
+    /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+    /system\s*:\s*/gi,
+    /\[\[system\]\]/gi,
+    /<<system>>/gi,
+  ];
+
+  for (const pattern of dangerousPatterns) {
+    sanitized = sanitized.replace(pattern, '[REMOVED]');
+  }
+
+  return sanitized.trim();
 }
 
 // Prompt templates
@@ -318,13 +350,25 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
   let context = params.jobPosting || '';
 
   if (params.jobPostingUrl) {
-    const pageContent = await fetchWebPage(params.jobPostingUrl);
-    context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+    // Validate URL to prevent SSRF attacks
+    const validation = validateUrl(params.jobPostingUrl);
+    if (validation.isValid) {
+      const pageContent = await fetchWebPage(params.jobPostingUrl);
+      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+    } else {
+      context += `\n\n=== JOB POSTING URL SKIPPED: ${validation.error} ===`;
+    }
   }
 
   if (params.companyWebsite) {
-    const pageContent = await fetchWebPage(params.companyWebsite);
-    context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+    // Validate URL to prevent SSRF attacks
+    const validation = validateUrl(params.companyWebsite);
+    if (validation.isValid) {
+      const pageContent = await fetchWebPage(params.companyWebsite);
+      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+    } else {
+      context += `\n\n=== COMPANY WEBSITE URL SKIPPED: ${validation.error} ===`;
+    }
   }
 
   return context;
@@ -409,10 +453,13 @@ export async function POST(request: Request) {
       .replace('{profileData}', params.profileData || '(No additional profile data provided)')
       .replace('{whatLookingForSection}', ''); // Removed: now part of profileData
 
-    if (params.customInstructions) {
+    // Sanitize custom instructions to prevent prompt injection
+    const sanitizedInstructions = sanitizeCustomInstructions(params.customInstructions);
+
+    if (sanitizedInstructions) {
       cvPrompt = cvPrompt.replace(
         '{customInstructions}',
-        `Additional Instructions from User:\n${params.customInstructions}`
+        `Additional Instructions from User:\n${sanitizedInstructions}`
       );
     } else {
       cvPrompt = cvPrompt.replace('{customInstructions}', '');
@@ -430,10 +477,10 @@ export async function POST(request: Request) {
       .replace('{jobPosting}', jobPostingContext)
       .replace('{profileData}', params.profileData || '(No additional profile data provided)');
 
-    if (params.customInstructions) {
+    if (sanitizedInstructions) {
       motivationPrompt = motivationPrompt.replace(
         '{customInstructions}',
-        `Additional Instructions from User:\n${params.customInstructions}`
+        `Additional Instructions from User:\n${sanitizedInstructions}`
       );
     } else {
       motivationPrompt = motivationPrompt.replace('{customInstructions}', '');

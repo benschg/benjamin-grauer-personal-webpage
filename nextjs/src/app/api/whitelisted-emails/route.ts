@@ -1,11 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
 
-// Public client for reading
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+
+// Email validation regex - matches most valid email addresses
+const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+function isValidEmail(email: string): boolean {
+  return EMAIL_REGEX.test(email);
+}
 
 // Admin client for write operations
 const supabaseAdmin = createClient(
@@ -14,7 +18,18 @@ const supabaseAdmin = createClient(
 );
 
 export async function GET() {
-  const { data, error } = await supabase
+  // Check authentication - whitelist is sensitive data
+  const authClient = await createServerClient();
+  const { data: { user } } = await authClient.auth.getUser();
+
+  if (!user || user.email !== ADMIN_EMAIL) {
+    return NextResponse.json(
+      { error: 'Unauthorized - admin access required' },
+      { status: 401 }
+    );
+  }
+
+  const { data, error } = await supabaseAdmin
     .from('whitelisted_emails')
     .select('id, email, name, created_at')
     .order('created_at', { ascending: false });
@@ -29,6 +44,17 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { email, name } = body;
 
@@ -38,6 +64,11 @@ export async function POST(request: NextRequest) {
 
     // Normalize email to lowercase
     const normalizedEmail = email.toLowerCase().trim();
+
+    // Validate email format
+    if (!isValidEmail(normalizedEmail)) {
+      return NextResponse.json({ error: 'Invalid email format' }, { status: 400 });
+    }
 
     const { data, error } = await supabaseAdmin
       .from('whitelisted_emails')
@@ -65,6 +96,17 @@ export async function POST(request: NextRequest) {
 
 export async function DELETE(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
 

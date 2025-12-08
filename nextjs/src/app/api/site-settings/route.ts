@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createClient as createServerClient } from '@/lib/supabase/server';
+
+const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
 // Public client for reading settings
 const supabase = createClient(
@@ -39,6 +42,17 @@ export async function GET() {
 
 export async function PUT(request: NextRequest) {
   try {
+    // Check authentication
+    const authClient = await createServerClient();
+    const { data: { user } } = await authClient.auth.getUser();
+
+    if (!user || user.email !== ADMIN_EMAIL) {
+      return NextResponse.json(
+        { error: 'Unauthorized - admin access required' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { contact_email, contact_phone, contact_address, public_email, public_address } = body;
 

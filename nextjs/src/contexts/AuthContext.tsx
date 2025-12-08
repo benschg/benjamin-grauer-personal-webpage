@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import type { User } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
 
@@ -33,36 +33,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const supabase = createClient();
   const adminEmail = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
-  // Cache whitelisted emails from database
-  const whitelistedEmailsRef = useRef<string[]>([]);
-  const whitelistFetchedRef = useRef(false);
-
-  // Fetch whitelisted emails from database
-  const fetchWhitelistedEmails = useCallback(async () => {
-    if (whitelistFetchedRef.current) return whitelistedEmailsRef.current;
-
-    try {
-      const response = await fetch('/api/whitelisted-emails');
-      if (response.ok) {
-        const data = await response.json();
-        whitelistedEmailsRef.current = (data.emails || []).map((e: { email: string }) => e.email.toLowerCase());
-        whitelistFetchedRef.current = true;
-      }
-    } catch (err) {
-      console.error('Failed to fetch whitelisted emails:', err);
-    }
-    return whitelistedEmailsRef.current;
-  }, []);
-
+  // Check if current user is whitelisted via secure API endpoint
   const checkWhitelisted = useCallback(async (email: string | undefined): Promise<boolean> => {
     if (!email) return false;
-    const lowerEmail = email.toLowerCase();
-    // Admin is always whitelisted
-    if (lowerEmail === adminEmail?.toLowerCase()) return true;
 
-    const whitelistedEmails = await fetchWhitelistedEmails();
-    return whitelistedEmails.includes(lowerEmail);
-  }, [adminEmail, fetchWhitelistedEmails]);
+    // Admin is always whitelisted (client-side check for immediate feedback)
+    if (email.toLowerCase() === adminEmail?.toLowerCase()) return true;
+
+    // Check whitelist status via secure API (only checks current user's email)
+    try {
+      const response = await fetch('/api/check-whitelist');
+      if (response.ok) {
+        const data = await response.json();
+        return data.isWhitelisted === true;
+      }
+    } catch (err) {
+      console.error('Failed to check whitelist status:', err);
+    }
+    return false;
+  }, [adminEmail]);
 
   useEffect(() => {
     // Get initial session
