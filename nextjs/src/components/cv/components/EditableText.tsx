@@ -4,6 +4,7 @@ import { useState, useRef } from 'react';
 import { TextField, ClickAwayListener, Box, IconButton, CircularProgress, Popover, Button } from '@mui/material';
 import AutorenewIcon from '@mui/icons-material/Autorenew';
 import RestoreIcon from '@mui/icons-material/Restore';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Tooltip } from '@mui/material';
 
 interface EditableTextProps {
@@ -43,9 +44,15 @@ const EditableText = ({
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [customInstructions, setCustomInstructions] = useState('');
 
+  // Hard limit is 2.5x the soft limit (maxLength)
+  const hardLimit = maxLength ? Math.floor(maxLength * 2.5) : undefined;
+  const isOverSoftLimit = maxLength && value.length > maxLength;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const newValue = e.target.value;
-    if (maxLength && newValue.length > maxLength) return;
+    // Only block at the hard limit (2.5x soft limit)
+    // Allow any edits below that, even if over the soft limit
+    if (hardLimit && newValue.length > hardLimit && newValue.length > value.length) return;
     onChange(newValue);
   };
 
@@ -235,12 +242,29 @@ const EditableText = ({
             showCharacterCount
               ? `${value.length} characters`
               : maxLength
-                ? `${value.length}/${maxLength}`
+                ? (
+                    <Box component="span" sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 0.5 }}>
+                      {isOverSoftLimit && (
+                        <Tooltip title={`Recommended max: ${maxLength} characters. Hard limit: ${hardLimit}`} arrow>
+                          <WarningAmberIcon sx={{ fontSize: 14, color: 'warning.main' }} />
+                        </Tooltip>
+                      )}
+                      <span style={{ color: isOverSoftLimit ? '#ed6c02' : undefined }}>
+                        {value.length}/{maxLength}
+                      </span>
+                    </Box>
+                  )
                 : undefined
           }
           FormHelperTextProps={{
             sx: { textAlign: 'right', mr: 0 },
+            component: 'div',
           }}
+          sx={isOverSoftLimit ? {
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'warning.main !important',
+            },
+          } : undefined}
         />
       </Box>
     </ClickAwayListener>

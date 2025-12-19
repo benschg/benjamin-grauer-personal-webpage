@@ -37,32 +37,33 @@ const CVUSP = ({ data }: CVUSPProps) => {
   };
 
   const handleTitleChange = (index: number, newValue: string) => {
-    const keyCompetences = [...(activeContent.keyCompetences || data)];
+    // Always use data prop (what component renders from) to avoid context/prop mismatch
+    const keyCompetences = [...data];
     keyCompetences[index] = { ...keyCompetences[index], title: newValue };
     updateEditedContent({ keyCompetences });
   };
 
   const handleDescriptionChange = (index: number, newValue: string) => {
-    const keyCompetences = [...(activeContent.keyCompetences || data)];
+    const keyCompetences = [...data];
     keyCompetences[index] = { ...keyCompetences[index], description: newValue };
     updateEditedContent({ keyCompetences });
   };
 
   const handleDelete = (index: number) => {
-    const keyCompetences = [...(activeContent.keyCompetences || data)];
+    const keyCompetences = [...data];
     keyCompetences.splice(index, 1);
     updateEditedContent({ keyCompetences });
   };
 
   const handleAdd = () => {
-    const keyCompetences = [...(activeContent.keyCompetences || data)];
+    const keyCompetences = [...data];
     keyCompetences.push({ title: 'New Competence', description: 'Description of this competence...' });
     updateEditedContent({ keyCompetences });
   };
 
   const handleReset = (index: number) => {
     if (index < defaultData.length) {
-      const keyCompetences = [...(activeContent.keyCompetences || data)];
+      const keyCompetences = [...data];
       keyCompetences[index] = { ...defaultData[index] };
       updateEditedContent({ keyCompetences });
     }
