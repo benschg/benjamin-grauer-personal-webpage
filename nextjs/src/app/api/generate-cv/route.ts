@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
@@ -8,68 +8,76 @@ import {
   getRateLimitHeaders,
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
+import { z } from 'zod/v4';
 
-// Types
-interface CompanyResearch {
-  company: {
-    name: string;
-    industry: string;
-    culture: string[];
-    values: string[];
-    techStack: string[];
-  };
-  role: {
-    title: string;
-    level: string;
-    keyResponsibilities: string[];
-    requiredSkills: string[];
-    preferredSkills: string[];
-    keywords: string[];
-  };
-  insights: {
-    whatTheyValue: string;
-    toneGuidance: string;
-  };
-}
+// Zod schemas for AI response validation
+const CompanyResearchSchema = z.object({
+  company: z.object({
+    name: z.string(),
+    industry: z.string(),
+    culture: z.array(z.string()),
+    values: z.array(z.string()),
+    techStack: z.array(z.string()),
+  }),
+  role: z.object({
+    title: z.string(),
+    level: z.string(),
+    keyResponsibilities: z.array(z.string()),
+    requiredSkills: z.array(z.string()),
+    preferredSkills: z.array(z.string()),
+    keywords: z.array(z.string()),
+  }),
+  insights: z.object({
+    whatTheyValue: z.string(),
+    toneGuidance: z.string(),
+  }),
+});
 
-interface WorkExperienceEntry {
-  company: string;
-  title: string;
-  period: string;
-  bullets: string[];
-}
+const WorkExperienceEntrySchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  period: z.string(),
+  bullets: z.array(z.string()),
+});
 
-interface SkillCategory {
-  category: string;
-  skills: string[];
-}
+const SkillCategorySchema = z.object({
+  category: z.string(),
+  skills: z.array(z.string()),
+});
 
-interface KeyCompetence {
-  title: string;
-  description: string;
-}
+const KeyCompetenceSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
 
-interface MotivationLetter {
-  subject: string;
-  greeting: string;
-  opening: string;
-  body: string;
-  closing: string;
-  signoff: string;
-}
+const MotivationLetterSchema = z.object({
+  subject: z.string(),
+  greeting: z.string(),
+  opening: z.string(),
+  body: z.string(),
+  closing: z.string(),
+  signoff: z.string(),
+});
 
-interface GeneratedCVContent {
-  tagline: string;
-  profile: string;
-  slogan?: string;
-  workExperience?: WorkExperienceEntry[];
-  skills?: SkillCategory[];
-  keyCompetences?: KeyCompetence[];
-  keyAchievements?: string[]; // Legacy, kept for backwards compatibility
-  education?: string;
-  motivationLetter?: MotivationLetter;
-}
+const GeneratedCVContentSchema = z.object({
+  tagline: z.string(),
+  profile: z.string(),
+  slogan: z.string().optional(),
+  workExperience: z.array(WorkExperienceEntrySchema).optional(),
+  skills: z.array(SkillCategorySchema).optional(),
+  keyCompetences: z.array(KeyCompetenceSchema).optional(),
+  keyAchievements: z.array(z.string()).optional(), // Legacy, kept for backwards compatibility
+  education: z.string().optional(),
+  motivationLetter: MotivationLetterSchema.optional(),
+});
 
+// Types inferred from schemas
+type CompanyResearch = z.infer<typeof CompanyResearchSchema>;
+type GeneratedCVContent = z.infer<typeof GeneratedCVContentSchema>;
+type MotivationLetter = z.infer<typeof MotivationLetterSchema>;
+
+// Request type (not from AI)
 interface CVGenerationRequest {
   currentTagline: string;
   currentProfile: string;
@@ -86,33 +94,50 @@ interface CVGenerationRequest {
 
 // Maximum length for custom instructions to prevent abuse
 const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 2000;
+// Maximum length for fetched content
+const MAX_FETCHED_CONTENT_LENGTH = 15000;
 
-// Sanitize custom instructions to prevent prompt injection attacks
-function sanitizeCustomInstructions(instructions: string | undefined): string {
-  if (!instructions) return '';
+// Dangerous patterns for prompt injection detection
+const PROMPT_INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /you\s+are\s+now\s+(a|an)\s+/gi,
+  /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+  /system\s*:\s*/gi,
+  /\[\[system\]\]/gi,
+  /<<system>>/gi,
+  /assistant\s*:\s*/gi,
+  /human\s*:\s*/gi,
+  /\[INST\]/gi,
+  /<\|im_start\|>/gi,
+  /<\|im_end\|>/gi,
+];
+
+// Sanitize text to prevent prompt injection attacks
+function sanitizeForPromptInjection(text: string | undefined, maxLength: number): string {
+  if (!text) return '';
 
   // Truncate to max length
-  let sanitized = instructions.slice(0, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+  let sanitized = text.slice(0, maxLength);
 
   // Remove potential prompt injection patterns
-  // These patterns attempt to escape the current context or override instructions
-  const dangerousPatterns = [
-    /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /you\s+are\s+now\s+(a|an)\s+/gi,
-    /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
-    /system\s*:\s*/gi,
-    /\[\[system\]\]/gi,
-    /<<system>>/gi,
-  ];
-
-  for (const pattern of dangerousPatterns) {
+  for (const pattern of PROMPT_INJECTION_PATTERNS) {
     sanitized = sanitized.replace(pattern, '[REMOVED]');
   }
 
   return sanitized.trim();
+}
+
+// Sanitize custom instructions to prevent prompt injection attacks
+function sanitizeCustomInstructions(instructions: string | undefined): string {
+  return sanitizeForPromptInjection(instructions, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+}
+
+// Sanitize fetched content to prevent prompt injection attacks
+function sanitizeFetchedContent(content: string | undefined): string {
+  return sanitizeForPromptInjection(content, MAX_FETCHED_CONTENT_LENGTH);
 }
 
 // Prompt templates
@@ -303,11 +328,14 @@ const ALLOWED_MODELS = [
 
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
-// Helper to parse JSON from AI response
-function parseJsonResponse<T>(text: string): T {
+// Helper to parse and validate JSON from AI response
+function parseAndValidateResponse<T>(text: string, schema: z.ZodType<T>): T {
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
   const jsonStr = jsonMatch[1]?.trim() || text.trim();
-  return JSON.parse(jsonStr);
+  const parsed = JSON.parse(jsonStr);
+
+  // Validate against schema - throws ZodError if invalid
+  return schema.parse(parsed);
 }
 
 // Helper to fetch web page content
@@ -353,14 +381,17 @@ async function fetchWebPage(url: string): Promise<string> {
 
 // Build job posting context
 async function buildJobPostingContext(params: CVGenerationRequest): Promise<string> {
-  let context = params.jobPosting || '';
+  // Sanitize user-provided job posting text for prompt injection
+  let context = sanitizeFetchedContent(params.jobPosting);
 
   if (params.jobPostingUrl) {
     // Validate URL to prevent SSRF attacks
     const validation = validateUrl(params.jobPostingUrl);
     if (validation.isValid) {
       const pageContent = await fetchWebPage(params.jobPostingUrl);
-      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+      // Sanitize fetched content for prompt injection
+      const sanitizedContent = sanitizeFetchedContent(pageContent);
+      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${sanitizedContent}`;
     } else {
       context += `\n\n=== JOB POSTING URL SKIPPED: ${validation.error} ===`;
     }
@@ -371,7 +402,9 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
     const validation = validateUrl(params.companyWebsite);
     if (validation.isValid) {
       const pageContent = await fetchWebPage(params.companyWebsite);
-      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+      // Sanitize fetched content for prompt injection
+      const sanitizedContent = sanitizeFetchedContent(pageContent);
+      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${sanitizedContent}`;
     } else {
       context += `\n\n=== COMPANY WEBSITE URL SKIPPED: ${validation.error} ===`;
     }
@@ -380,10 +413,14 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
   return context;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {
@@ -457,7 +494,7 @@ export async function POST(request: Request) {
       );
     const researchResult = await model.generateContent(researchPrompt);
     const researchText = researchResult.response.text();
-    const companyResearch = parseJsonResponse<CompanyResearch>(researchText);
+    const companyResearch = parseAndValidateResponse(researchText, CompanyResearchSchema);
 
     // Override with user-provided values if available
     if (params.company) {
@@ -491,7 +528,7 @@ export async function POST(request: Request) {
 
     const cvResult = await model.generateContent(cvPrompt);
     const cvText = cvResult.response.text();
-    const content = parseJsonResponse<GeneratedCVContent>(cvText);
+    const content = parseAndValidateResponse(cvText, GeneratedCVContentSchema);
 
     // Step 3: Generate motivation letter
     let motivationPrompt = MOTIVATION_LETTER_PROMPT
@@ -512,7 +549,7 @@ export async function POST(request: Request) {
 
     const motivationResult = await model.generateContent(motivationPrompt);
     const motivationText = motivationResult.response.text();
-    const motivationLetter = parseJsonResponse<MotivationLetter>(motivationText);
+    const motivationLetter = parseAndValidateResponse(motivationText, MotivationLetterSchema);
     content.motivationLetter = motivationLetter;
 
     return NextResponse.json({
@@ -522,15 +559,48 @@ export async function POST(request: Request) {
       promptVersion: PROMPT_VERSION,
     }, { headers: rateLimitHeaders });
   } catch (error) {
+    // Log detailed error server-side for debugging
     console.error('Error generating CV:', error);
 
-    if (error instanceof Error) {
-      if (error.message.includes('429') || error.message.includes('quota')) {
-        return NextResponse.json({ error: 'API quota exceeded. Please try again later.' }, { status: 429, headers: rateLimitHeaders });
-      }
-      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
+    // Handle Zod validation errors (AI response didn't match expected schema)
+    if (error instanceof z.ZodError) {
+      console.error('AI response validation failed:', error.issues);
+      return NextResponse.json(
+        { error: 'AI response format was invalid. Please try again.' },
+        { status: 500, headers: rateLimitHeaders }
+      );
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500, headers: rateLimitHeaders });
+    if (error instanceof Error) {
+      const message = error.message.toLowerCase();
+
+      // Handle known error types with user-friendly messages
+      if (message.includes('429') || message.includes('quota') || message.includes('rate limit') || message.includes('resource_exhausted')) {
+        return NextResponse.json(
+          { error: 'AI service quota exceeded. Please try again later.' },
+          { status: 429, headers: rateLimitHeaders }
+        );
+      }
+
+      if (message.includes('api key') || message.includes('authentication') || message.includes('unauthorized')) {
+        return NextResponse.json(
+          { error: 'AI service configuration error. Please contact support.' },
+          { status: 500, headers: rateLimitHeaders }
+        );
+      }
+
+      if (message.includes('timeout') || message.includes('deadline')) {
+        return NextResponse.json(
+          { error: 'Request timed out. Please try again.' },
+          { status: 504, headers: rateLimitHeaders }
+        );
+      }
+    }
+
+    // Return generic error message to prevent information leakage
+    return NextResponse.json(
+      { error: 'An error occurred while generating the CV. Please try again.' },
+      { status: 500, headers: rateLimitHeaders }
+    );
   }
 }

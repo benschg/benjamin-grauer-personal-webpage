@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { CV_CHARACTER_LIMITS } from '@/config/cv.config';
@@ -8,6 +8,7 @@ import {
   getRateLimitHeaders,
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
 
 // Maximum length for custom instructions to prevent abuse
 const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 1000;
@@ -266,10 +267,14 @@ Respond with ONLY a JSON object in this exact format (no markdown, no code block
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {

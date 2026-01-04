@@ -13,6 +13,7 @@ import {
 } from '@/components/working-life/content';
 import { cvData } from '@/components/cv/data/cvConfig';
 import type { CVDataSourceSelection } from '@/types/database.types';
+import { sanitizeForPromptInjection } from '@/lib/prompt-sanitizer';
 
 export type { CVDataSourceSelection };
 
@@ -227,16 +228,21 @@ export function aggregateCVData(selection: CVDataSourceSelection): AggregatedCVD
 
   if (selection.recommendations) {
     data.recommendations = {
-      testimonials: recommendations.map((rec) => ({
-        recommenderName: rec.recommenderName,
-        recommenderTitle: rec.recommenderTitle,
-        company: rec.recommenderCompany,
-        highlight: rec.highlightText,
-        excerpt:
-          rec.recommendationText.length > 200
-            ? rec.recommendationText.substring(0, 200) + '...'
-            : rec.recommendationText,
-      })),
+      testimonials: recommendations.map((rec) => {
+        // Sanitize recommendation text to prevent prompt injection
+        const sanitizedHighlight = sanitizeForPromptInjection(rec.highlightText);
+        const sanitizedText = sanitizeForPromptInjection(rec.recommendationText);
+        return {
+          recommenderName: rec.recommenderName,
+          recommenderTitle: rec.recommenderTitle,
+          company: rec.recommenderCompany,
+          highlight: sanitizedHighlight,
+          excerpt:
+            sanitizedText.length > 200
+              ? sanitizedText.substring(0, 200) + '...'
+              : sanitizedText,
+        };
+      }),
     };
   }
 

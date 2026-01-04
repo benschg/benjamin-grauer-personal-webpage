@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { csrfProtection } from '@/lib/csrf';
+import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -61,6 +63,10 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     // Check authentication
     const authClient = await createServerClient();
@@ -102,6 +108,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to create reference' }, { status: 500 });
     }
 
+    // Audit log the reference creation
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'CREATE',
+      resourceType: 'cv_references',
+      resourceId: data.id,
+      details: { name, title, company },
+      request,
+    });
+
     return NextResponse.json({ reference: data });
   } catch (err) {
     console.error('Error creating reference:', err);
@@ -110,6 +127,10 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PUT(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     // Check authentication
     const authClient = await createServerClient();
@@ -151,6 +172,17 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to update reference' }, { status: 500 });
     }
 
+    // Audit log the reference update
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'UPDATE',
+      resourceType: 'cv_references',
+      resourceId: id,
+      details: { updatedFields: Object.keys(cleanUpdates) },
+      request,
+    });
+
     return NextResponse.json({ reference: data });
   } catch (err) {
     console.error('Error updating reference:', err);
@@ -159,6 +191,10 @@ export async function PUT(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     // Check authentication
     const authClient = await createServerClient();
@@ -187,6 +223,16 @@ export async function DELETE(request: NextRequest) {
       console.error('Failed to delete reference:', error);
       return NextResponse.json({ error: 'Failed to delete reference' }, { status: 500 });
     }
+
+    // Audit log the reference deletion
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'DELETE',
+      resourceType: 'cv_references',
+      resourceId: id,
+      request,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {

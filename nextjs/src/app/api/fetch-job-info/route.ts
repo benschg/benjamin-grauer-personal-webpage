@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
@@ -8,20 +8,54 @@ import {
   getRateLimitHeaders,
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
+import { z } from 'zod/v4';
 
 // Timeout for external URL fetches (30 seconds)
 const FETCH_TIMEOUT_MS = 30000;
+// Maximum length for fetched content
+const MAX_FETCHED_CONTENT_LENGTH = 8000;
+
+// Dangerous patterns for prompt injection detection
+const PROMPT_INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /you\s+are\s+now\s+(a|an)\s+/gi,
+  /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+  /system\s*:\s*/gi,
+  /\[\[system\]\]/gi,
+  /<<system>>/gi,
+  /assistant\s*:\s*/gi,
+  /human\s*:\s*/gi,
+  /\[INST\]/gi,
+  /<\|im_start\|>/gi,
+  /<\|im_end\|>/gi,
+];
+
+// Sanitize fetched content to prevent prompt injection attacks
+function sanitizeFetchedContent(content: string | undefined): string {
+  if (!content) return '';
+  let sanitized = content.slice(0, MAX_FETCHED_CONTENT_LENGTH);
+  for (const pattern of PROMPT_INJECTION_PATTERNS) {
+    sanitized = sanitized.replace(pattern, '[REMOVED]');
+  }
+  return sanitized.trim();
+}
 
 interface JobInfoRequest {
   url: string;
 }
 
-interface JobInfoResponse {
-  company: string;
-  jobTitle: string;
-  companyWebsite?: string;
-  jobPostingText?: string;
-}
+// Zod schema for AI response validation
+const JobInfoResponseSchema = z.object({
+  company: z.string(),
+  jobTitle: z.string(),
+  companyWebsite: z.string().nullable().optional(),
+});
+
+type JobInfoResponse = z.infer<typeof JobInfoResponseSchema>;
 
 const EXTRACT_JOB_INFO_PROMPT = `You are a job posting analyzer. Extract the company name and job title from the following job posting content.
 
@@ -167,17 +201,22 @@ async function fetchWebPage(url: string): Promise<string> {
   }
 }
 
-// Helper to parse JSON from AI response
-function parseJsonResponse<T>(text: string): T {
+// Helper to parse and validate JSON from AI response
+function parseAndValidateResponse<T>(text: string, schema: z.ZodType<T>): T {
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
   const jsonStr = jsonMatch[1]?.trim() || text.trim();
-  return JSON.parse(jsonStr);
+  const parsed = JSON.parse(jsonStr);
+  return schema.parse(parsed);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {
@@ -229,7 +268,9 @@ export async function POST(request: Request) {
     }
 
     // Fetch the job posting content
-    const pageContent = await fetchWebPage(params.url);
+    const rawPageContent = await fetchWebPage(params.url);
+    // Sanitize fetched content to prevent prompt injection attacks
+    const pageContent = sanitizeFetchedContent(rawPageContent);
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
@@ -241,15 +282,24 @@ export async function POST(request: Request) {
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    const jobInfo = parseJsonResponse<JobInfoResponse>(responseText);
+    const jobInfo = parseAndValidateResponse(responseText, JobInfoResponseSchema);
 
-    // Include the raw page content for the job posting text field
+    // Include the sanitized page content for the job posting text field
     return NextResponse.json({
       ...jobInfo,
       jobPostingText: pageContent,
     }, { headers: rateLimitHeaders });
   } catch (error) {
     console.error('Error fetching job info:', error);
+
+    // Handle Zod validation errors (AI response didn't match expected schema)
+    if (error instanceof z.ZodError) {
+      console.error('AI response validation failed:', error.issues);
+      return NextResponse.json(
+        { error: 'Failed to parse job information. The AI returned an invalid response format. Please try again.' },
+        { status: 500, headers: rateLimitHeaders }
+      );
+    }
 
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
@@ -310,9 +360,9 @@ export async function POST(request: Request) {
         );
       }
 
-      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
     }
 
+    // Return generic error message to prevent information leakage
     return NextResponse.json({ error: 'An unexpected error occurred while fetching job info.' }, { status: 500, headers: rateLimitHeaders });
   }
 }

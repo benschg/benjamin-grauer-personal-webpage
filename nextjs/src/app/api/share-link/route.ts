@@ -1,15 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import { csrfProtection } from '@/lib/csrf';
+import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-// Generate a cryptographically secure random 8-character alphanumeric code
+// Generate a cryptographically secure random 16-character alphanumeric code
+// 16 chars provides 36^16 ≈ 7.9 × 10^24 combinations, making brute-force impractical
 function generateShortCode(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  const randomBytes = crypto.randomBytes(8);
+  const codeLength = 16;
+  const randomBytes = crypto.randomBytes(codeLength);
   let code = '';
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < codeLength; i++) {
     code += chars.charAt(randomBytes[i] % chars.length);
   }
   return code;
@@ -17,6 +21,10 @@ function generateShortCode(): string {
 
 // POST: Create a new share link
 export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
@@ -117,6 +125,17 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Audit log the share link creation
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'CREATE',
+      resourceType: 'share_links',
+      resourceId: newLink.id,
+      details: { shortCode: newLink.short_code, cvVersionId: cvVersionId || null },
+      request,
+    });
 
     const baseUrl = new URL(request.url).origin;
     return NextResponse.json({
@@ -255,6 +274,10 @@ export async function GET(request: NextRequest) {
 
 // PATCH: Update a share link's settings
 export async function PATCH(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
@@ -306,6 +329,17 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Audit log the share link update
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'UPDATE',
+      resourceType: 'share_links',
+      resourceId: id,
+      details: { updatedFields: Object.keys(updates) },
+      request,
+    });
+
     return NextResponse.json({ success: true });
 
   } catch (error) {
@@ -319,6 +353,10 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE: Delete a share link
 export async function DELETE(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
@@ -354,6 +392,16 @@ export async function DELETE(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Audit log the share link deletion
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'DELETE',
+      resourceType: 'share_links',
+      resourceId: linkId,
+      request,
+    });
 
     return NextResponse.json({ success: true });
 

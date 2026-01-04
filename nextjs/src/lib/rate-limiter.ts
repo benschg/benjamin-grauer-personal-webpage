@@ -1,37 +1,16 @@
 /**
- * Simple in-memory rate limiter for API routes.
- * Uses a sliding window approach to track requests per IP.
+ * Supabase-based rate limiter for API routes.
+ * Uses sliding window approach with database storage for distributed environments.
+ * Works across serverless instances on Vercel.
  */
 
-interface RateLimitEntry {
-  count: number;
-  resetTime: number;
-}
+import { createClient } from '@supabase/supabase-js';
 
-// In-memory store for rate limiting
-// Note: This resets on server restart and doesn't share across serverless instances
-// For production with multiple instances, consider using Redis or similar
-const rateLimitStore = new Map<string, RateLimitEntry>();
-
-// Cleanup old entries periodically to prevent memory leaks
-const CLEANUP_INTERVAL = 60 * 1000; // 1 minute
-let cleanupInterval: NodeJS.Timeout | null = null;
-
-function startCleanup() {
-  if (cleanupInterval) return;
-
-  cleanupInterval = setInterval(() => {
-    const now = Date.now();
-    for (const [key, entry] of rateLimitStore.entries()) {
-      if (entry.resetTime < now) {
-        rateLimitStore.delete(key);
-      }
-    }
-  }, CLEANUP_INTERVAL);
-
-  // Don't prevent Node from exiting
-  cleanupInterval.unref();
-}
+// Create admin client for rate limiting (uses service role)
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export interface RateLimitConfig {
   /** Maximum number of requests allowed in the window */
@@ -82,52 +61,104 @@ export function getClientIdentifier(request: Request): string {
 }
 
 /**
- * Check rate limit for a given identifier.
+ * Check rate limit for a given identifier using Supabase.
+ * This works across serverless instances.
  */
-export function checkRateLimit(
+export async function checkRateLimit(
   identifier: string,
   config: RateLimitConfig
-): RateLimitResult {
-  startCleanup();
-
+): Promise<RateLimitResult> {
   const key = config.prefix ? `${config.prefix}:${identifier}` : identifier;
-  const now = Date.now();
-  const entry = rateLimitStore.get(key);
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + config.windowMs);
 
-  // If no entry or window has expired, create new entry
-  if (!entry || entry.resetTime < now) {
-    rateLimitStore.set(key, {
-      count: 1,
-      resetTime: now + config.windowMs,
-    });
+  try {
+    // First, cleanup any expired entries for this key
+    await supabaseAdmin
+      .from('rate_limits')
+      .delete()
+      .lt('expires_at', now.toISOString());
 
+    // Try to get existing entry
+    const { data: existing } = await supabaseAdmin
+      .from('rate_limits')
+      .select('*')
+      .eq('key', key)
+      .single();
+
+    if (!existing) {
+      // No existing entry, create new one
+      await supabaseAdmin.from('rate_limits').insert({
+        key,
+        count: 1,
+        window_start: now.toISOString(),
+        expires_at: expiresAt.toISOString(),
+      });
+
+      return {
+        allowed: true,
+        remaining: config.maxRequests - 1,
+        resetIn: config.windowMs,
+        limit: config.maxRequests,
+      };
+    }
+
+    // Check if window has expired
+    const windowExpiry = new Date(existing.expires_at);
+    if (windowExpiry < now) {
+      // Window expired, reset
+      await supabaseAdmin
+        .from('rate_limits')
+        .update({
+          count: 1,
+          window_start: now.toISOString(),
+          expires_at: expiresAt.toISOString(),
+        })
+        .eq('key', key);
+
+      return {
+        allowed: true,
+        remaining: config.maxRequests - 1,
+        resetIn: config.windowMs,
+        limit: config.maxRequests,
+      };
+    }
+
+    // Check if limit exceeded
+    if (existing.count >= config.maxRequests) {
+      const resetIn = windowExpiry.getTime() - now.getTime();
+      return {
+        allowed: false,
+        remaining: 0,
+        resetIn: Math.max(0, resetIn),
+        limit: config.maxRequests,
+      };
+    }
+
+    // Increment count
+    const newCount = existing.count + 1;
+    await supabaseAdmin
+      .from('rate_limits')
+      .update({ count: newCount })
+      .eq('key', key);
+
+    const resetIn = windowExpiry.getTime() - now.getTime();
     return {
       allowed: true,
-      remaining: config.maxRequests - 1,
+      remaining: config.maxRequests - newCount,
+      resetIn: Math.max(0, resetIn),
+      limit: config.maxRequests,
+    };
+  } catch (error) {
+    // On database error, fail open (allow request) but log the error
+    console.error('Rate limit check failed:', error);
+    return {
+      allowed: true,
+      remaining: config.maxRequests,
       resetIn: config.windowMs,
       limit: config.maxRequests,
     };
   }
-
-  // Check if limit exceeded
-  if (entry.count >= config.maxRequests) {
-    return {
-      allowed: false,
-      remaining: 0,
-      resetIn: entry.resetTime - now,
-      limit: config.maxRequests,
-    };
-  }
-
-  // Increment count
-  entry.count++;
-
-  return {
-    allowed: true,
-    remaining: config.maxRequests - entry.count,
-    resetIn: entry.resetTime - now,
-    limit: config.maxRequests,
-  };
 }
 
 /**

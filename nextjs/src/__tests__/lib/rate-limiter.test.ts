@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import {
-  checkRateLimit,
   getClientIdentifier,
   getRateLimitHeaders,
   PDF_RATE_LIMIT,
@@ -10,13 +9,42 @@ import {
   type RateLimitConfig,
 } from '@/lib/rate-limiter';
 
+// Mock Supabase client with proper method chaining
+const mockSingle = vi.fn();
+const mockInsert = vi.fn();
+const mockUpdateEq = vi.fn();
+
+vi.mock('@supabase/supabase-js', () => ({
+  createClient: () => ({
+    from: () => ({
+      // delete().lt() chain
+      delete: () => ({
+        lt: () => Promise.resolve({ error: null }),
+      }),
+      // select().eq().single() chain
+      select: () => ({
+        eq: () => ({
+          single: mockSingle,
+        }),
+      }),
+      // insert() direct call
+      insert: mockInsert,
+      // update().eq() chain
+      update: () => ({
+        eq: mockUpdateEq,
+      }),
+    }),
+  }),
+}));
+
+// Need to import after mocking
+const { checkRateLimit } = await import('@/lib/rate-limiter');
+
 describe('Rate Limiter', () => {
   beforeEach(() => {
-    vi.useFakeTimers();
-  });
-
-  afterEach(() => {
-    vi.useRealTimers();
+    vi.clearAllMocks();
+    mockInsert.mockResolvedValue({ error: null });
+    mockUpdateEq.mockResolvedValue({ error: null });
   });
 
   describe('checkRateLimit', () => {
@@ -26,84 +54,65 @@ describe('Rate Limiter', () => {
       prefix: 'test',
     };
 
-    it('should allow first request', () => {
-      const result = checkRateLimit('test-ip-1', testConfig);
+    it('should allow first request when no existing entry', async () => {
+      mockSingle.mockResolvedValue({ data: null, error: null });
+
+      const result = await checkRateLimit('test-ip-1', testConfig);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(4);
       expect(result.limit).toBe(5);
+      expect(mockInsert).toHaveBeenCalled();
     });
 
-    it('should track multiple requests', () => {
-      const ip = 'test-ip-2';
-      checkRateLimit(ip, testConfig);
-      checkRateLimit(ip, testConfig);
-      const result = checkRateLimit(ip, testConfig);
+    it('should allow request within limit', async () => {
+      const futureTime = new Date(Date.now() + 30000).toISOString();
+      mockSingle.mockResolvedValue({
+        data: { count: 2, expires_at: futureTime },
+        error: null,
+      });
+
+      const result = await checkRateLimit('test-ip-2', testConfig);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(2);
     });
 
-    it('should block requests after limit is reached', () => {
-      const ip = 'test-ip-3';
-      // Make 5 requests (the limit)
-      for (let i = 0; i < 5; i++) {
-        checkRateLimit(ip, testConfig);
-      }
-      // 6th request should be blocked
-      const result = checkRateLimit(ip, testConfig);
+    it('should block requests after limit is reached', async () => {
+      const futureTime = new Date(Date.now() + 30000).toISOString();
+      mockSingle.mockResolvedValue({
+        data: { count: 5, expires_at: futureTime },
+        error: null,
+      });
+
+      const result = await checkRateLimit('test-ip-3', testConfig);
       expect(result.allowed).toBe(false);
       expect(result.remaining).toBe(0);
     });
 
-    it('should reset after window expires', () => {
-      const ip = 'test-ip-4';
-      // Make 5 requests
-      for (let i = 0; i < 5; i++) {
-        checkRateLimit(ip, testConfig);
-      }
-      expect(checkRateLimit(ip, testConfig).allowed).toBe(false);
+    it('should reset when window has expired', async () => {
+      const pastTime = new Date(Date.now() - 1000).toISOString();
+      mockSingle.mockResolvedValue({
+        data: { count: 5, expires_at: pastTime },
+        error: null,
+      });
 
-      // Advance time past the window
-      vi.advanceTimersByTime(61000);
-
-      // Should be allowed again
-      const result = checkRateLimit(ip, testConfig);
+      const result = await checkRateLimit('test-ip-4', testConfig);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(4);
+      expect(mockUpdateEq).toHaveBeenCalled();
     });
 
-    it('should track different IPs separately', () => {
-      const ip1 = 'test-ip-5a';
-      const ip2 = 'test-ip-5b';
+    it('should fail open on database error', async () => {
+      mockSingle.mockRejectedValue(new Error('DB Error'));
 
-      // Exhaust ip1's limit
-      for (let i = 0; i < 5; i++) {
-        checkRateLimit(ip1, testConfig);
-      }
-      expect(checkRateLimit(ip1, testConfig).allowed).toBe(false);
-
-      // ip2 should still have full allowance
-      const result = checkRateLimit(ip2, testConfig);
+      const result = await checkRateLimit('test-ip-5', testConfig);
       expect(result.allowed).toBe(true);
-      expect(result.remaining).toBe(4);
+      expect(result.remaining).toBe(testConfig.maxRequests);
     });
 
-    it('should use prefix to separate rate limiters', () => {
-      const ip = 'test-ip-6';
-      const config1: RateLimitConfig = { maxRequests: 2, windowMs: 60000, prefix: 'api1' };
-      const config2: RateLimitConfig = { maxRequests: 2, windowMs: 60000, prefix: 'api2' };
+    it('should return correct resetIn time', async () => {
+      mockSingle.mockResolvedValue({ data: null, error: null });
 
-      // Exhaust config1
-      checkRateLimit(ip, config1);
-      checkRateLimit(ip, config1);
-      expect(checkRateLimit(ip, config1).allowed).toBe(false);
-
-      // config2 should still work
-      expect(checkRateLimit(ip, config2).allowed).toBe(true);
-    });
-
-    it('should return correct resetIn time', () => {
-      const ip = 'test-ip-7';
-      const result = checkRateLimit(ip, testConfig);
+      const result = await checkRateLimit('test-ip-6', testConfig);
       expect(result.resetIn).toBe(60000);
     });
   });
@@ -213,42 +222,17 @@ describe('Rate Limiter', () => {
       expect(MOTIVATION_LETTER_RATE_LIMIT.prefix).toBe('motivation-pdf');
     });
   });
-
-  describe('Brute force protection', () => {
-    it('should effectively limit share link enumeration attempts', () => {
-      const config = SHARE_LINK_RATE_LIMIT;
-      const attackerIp = 'attacker-ip';
-
-      // Simulate 60 requests (the limit)
-      for (let i = 0; i < 60; i++) {
-        const result = checkRateLimit(attackerIp, config);
-        expect(result.allowed).toBe(true);
-      }
-
-      // 61st request should be blocked
-      const blocked = checkRateLimit(attackerIp, config);
-      expect(blocked.allowed).toBe(false);
-
-      // This limits enumeration to 60 attempts per minute per IP
-      // With 36^8 possible codes, this makes brute force impractical
-    });
-  });
 });
 
 describe('Crypto-secure Random for Share Links', () => {
-  // Test the concept of crypto-secure random vs Math.random
   describe('randomness security', () => {
     it('should use crypto.randomBytes for generating share codes (concept test)', () => {
-      // The actual implementation uses crypto.randomBytes(8)
-      // This test verifies the concept
       const generateSecureCode = (): string => {
         const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        // Simulating crypto.randomBytes behavior
-        const randomValues = new Uint8Array(8);
-        // In the actual code, this uses crypto.randomBytes()
-        // Here we just verify the structure
+        const codeLength = 16;
+        const randomValues = new Uint8Array(codeLength);
         let code = '';
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < codeLength; i++) {
           randomValues[i] = Math.floor(Math.random() * 256);
           code += chars.charAt(randomValues[i] % chars.length);
         }
@@ -256,18 +240,16 @@ describe('Crypto-secure Random for Share Links', () => {
       };
 
       const code = generateSecureCode();
-      expect(code.length).toBe(8);
+      expect(code.length).toBe(16);
       expect(code).toMatch(/^[a-z0-9]+$/);
     });
 
     it('should generate codes with sufficient entropy', () => {
-      // 8 characters from 36 possible values = 36^8 = ~2.8 trillion combinations
+      // 16 chars from 36 possible values = 36^16 ≈ 7.9 × 10^24 combinations
       const possibleChars = 36;
-      const codeLength = 8;
+      const codeLength = 16;
       const totalCombinations = Math.pow(possibleChars, codeLength);
-
-      // Should be effectively impossible to brute force
-      expect(totalCombinations).toBeGreaterThan(2.8e12);
+      expect(totalCombinations).toBeGreaterThan(7.9e24);
     });
   });
 });

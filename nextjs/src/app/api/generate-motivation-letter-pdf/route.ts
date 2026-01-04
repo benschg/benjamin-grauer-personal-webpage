@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
 import {
   checkRateLimit,
@@ -6,6 +6,7 @@ import {
   getRateLimitHeaders,
   MOTIVATION_LETTER_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
 
 interface MotivationLetter {
   subject: string;
@@ -198,10 +199,14 @@ function generateLetterHtml(letter: MotivationLetter, candidateName: string, the
   `.trim();
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, MOTIVATION_LETTER_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, MOTIVATION_LETTER_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {
