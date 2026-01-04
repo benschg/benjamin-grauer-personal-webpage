@@ -24,9 +24,11 @@ export function validateOrigin(request: NextRequest): boolean {
   // For same-origin requests, Origin might not be set
   // In that case, check the Referer
   if (!origin && !referer) {
-    // No origin info - could be a same-origin request or non-browser client
-    // For API routes, we'll be lenient here but log for monitoring
-    return true;
+    // No origin info - reject request for CSRF protection
+    // Modern browsers always send Origin on cross-origin requests
+    // Same-origin POST/PUT/DELETE should also include Origin or Referer
+    console.warn('[CSRF] Request blocked: missing Origin and Referer headers');
+    return false;
   }
 
   // Check Origin header first
