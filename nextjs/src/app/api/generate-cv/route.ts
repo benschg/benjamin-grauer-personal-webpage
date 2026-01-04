@@ -549,15 +549,39 @@ export async function POST(request: NextRequest) {
       promptVersion: PROMPT_VERSION,
     }, { headers: rateLimitHeaders });
   } catch (error) {
+    // Log detailed error server-side for debugging
     console.error('Error generating CV:', error);
 
     if (error instanceof Error) {
-      if (error.message.includes('429') || error.message.includes('quota')) {
-        return NextResponse.json({ error: 'API quota exceeded. Please try again later.' }, { status: 429, headers: rateLimitHeaders });
+      const message = error.message.toLowerCase();
+
+      // Handle known error types with user-friendly messages
+      if (message.includes('429') || message.includes('quota') || message.includes('rate limit') || message.includes('resource_exhausted')) {
+        return NextResponse.json(
+          { error: 'AI service quota exceeded. Please try again later.' },
+          { status: 429, headers: rateLimitHeaders }
+        );
       }
-      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
+
+      if (message.includes('api key') || message.includes('authentication') || message.includes('unauthorized')) {
+        return NextResponse.json(
+          { error: 'AI service configuration error. Please contact support.' },
+          { status: 500, headers: rateLimitHeaders }
+        );
+      }
+
+      if (message.includes('timeout') || message.includes('deadline')) {
+        return NextResponse.json(
+          { error: 'Request timed out. Please try again.' },
+          { status: 504, headers: rateLimitHeaders }
+        );
+      }
     }
 
-    return NextResponse.json({ error: 'An unexpected error occurred' }, { status: 500, headers: rateLimitHeaders });
+    // Return generic error message to prevent information leakage
+    return NextResponse.json(
+      { error: 'An error occurred while generating the CV. Please try again.' },
+      { status: 500, headers: rateLimitHeaders }
+    );
   }
 }
