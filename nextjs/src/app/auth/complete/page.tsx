@@ -10,10 +10,11 @@ export default function AuthCompletePage() {
   const router = useRouter();
 
   useEffect(() => {
-    // Get the stored redirect path
-    const redirectPath = localStorage.getItem(AUTH_REDIRECT_KEY) || '/working-life/cv';
-    localStorage.removeItem(AUTH_REDIRECT_KEY);
-    
+    // Get the stored redirect path from sessionStorage
+    // Using sessionStorage for security - cleared on tab close, not shared across tabs
+    const redirectPath = sessionStorage.getItem(AUTH_REDIRECT_KEY) || '/working-life/cv';
+    sessionStorage.removeItem(AUTH_REDIRECT_KEY);
+
     // Redirect to the stored path
     router.replace(redirectPath);
   }, [router]);

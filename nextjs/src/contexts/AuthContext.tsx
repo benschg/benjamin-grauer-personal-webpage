@@ -111,9 +111,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signIn = useCallback(async () => {
     setState(prev => ({ ...prev, loading: true, error: null }));
 
-    // Store current path in localStorage for retrieval after OAuth callback
+    // Store current path in sessionStorage for retrieval after OAuth callback
+    // Using sessionStorage instead of localStorage for security:
+    // - Cleared when tab closes, reducing XSS attack window
+    // - Not shared across tabs, limiting exposure
     const currentPath = window.location.pathname;
-    localStorage.setItem(AUTH_REDIRECT_KEY, currentPath);
+    sessionStorage.setItem(AUTH_REDIRECT_KEY, currentPath);
 
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -123,7 +126,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
 
     if (error) {
-      localStorage.removeItem(AUTH_REDIRECT_KEY);
+      sessionStorage.removeItem(AUTH_REDIRECT_KEY);
       setState(prev => ({ ...prev, loading: false, error: error.message }));
     }
   }, [supabase]);

@@ -119,9 +119,9 @@ describe('CSRF Protection', () => {
     });
 
     describe('no origin info', () => {
-      it('should allow requests with no origin or referer (same-origin)', () => {
+      it('should block requests with no origin or referer (security hardening)', () => {
         const request = createMockRequest('POST', 'https://benjamingrauer.com/api/test');
-        expect(validateOrigin(request)).toBe(true);
+        expect(validateOrigin(request)).toBe(false);
       });
     });
 

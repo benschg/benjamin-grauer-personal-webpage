@@ -63,10 +63,15 @@ export function getClientIdentifier(request: Request): string {
 /**
  * Check rate limit for a given identifier using Supabase.
  * This works across serverless instances.
+ *
+ * @param identifier - Client identifier (usually IP address)
+ * @param config - Rate limit configuration
+ * @param failClosed - If true, deny requests when database errors occur (default: false for backwards compatibility)
  */
 export async function checkRateLimit(
   identifier: string,
-  config: RateLimitConfig
+  config: RateLimitConfig,
+  failClosed: boolean = false
 ): Promise<RateLimitResult> {
   const key = config.prefix ? `${config.prefix}:${identifier}` : identifier;
   const now = new Date();
@@ -150,8 +155,21 @@ export async function checkRateLimit(
       limit: config.maxRequests,
     };
   } catch (error) {
-    // On database error, fail open (allow request) but log the error
+    // On database error, behavior depends on failClosed parameter
     console.error('Rate limit check failed:', error);
+
+    if (failClosed) {
+      // Fail closed: deny request on database error (more secure for admin endpoints)
+      console.warn('[RATE_LIMIT] Fail-closed mode: blocking request due to database error');
+      return {
+        allowed: false,
+        remaining: 0,
+        resetIn: config.windowMs,
+        limit: config.maxRequests,
+      };
+    }
+
+    // Fail open: allow request but log (backwards-compatible default)
     return {
       allowed: true,
       remaining: config.maxRequests,

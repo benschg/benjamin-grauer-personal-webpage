@@ -101,12 +101,20 @@ describe('Rate Limiter', () => {
       expect(mockUpdateEq).toHaveBeenCalled();
     });
 
-    it('should fail open on database error', async () => {
+    it('should fail open on database error (default behavior)', async () => {
       mockSingle.mockRejectedValue(new Error('DB Error'));
 
       const result = await checkRateLimit('test-ip-5', testConfig);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(testConfig.maxRequests);
+    });
+
+    it('should fail closed on database error when failClosed=true', async () => {
+      mockSingle.mockRejectedValue(new Error('DB Error'));
+
+      const result = await checkRateLimit('test-ip-5', testConfig, true);
+      expect(result.allowed).toBe(false);
+      expect(result.remaining).toBe(0);
     });
 
     it('should return correct resetIn time', async () => {
