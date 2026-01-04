@@ -82,11 +82,24 @@ export async function logAuditEvent(entry: AuditLogEntry): Promise<void> {
     });
 
     if (error) {
-      // Log error but don't throw - audit logging shouldn't break the main operation
-      console.error('Failed to write audit log:', error);
+      // Structured error logging for monitoring systems (Vercel, Datadog, etc.)
+      // Use a specific prefix so alerts can be configured
+      console.error('[AUDIT_LOG_FAILURE]', JSON.stringify({
+        action: entry.action,
+        resourceType: entry.resourceType,
+        resourceId: entry.resourceId,
+        error: error.message || 'Unknown database error',
+        timestamp: new Date().toISOString(),
+      }));
     }
   } catch (err) {
-    // Silent fail - audit logging is secondary to the main operation
-    console.error('Audit logging error:', err);
+    // Structured error logging for monitoring
+    console.error('[AUDIT_LOG_FAILURE]', JSON.stringify({
+      action: entry.action,
+      resourceType: entry.resourceType,
+      resourceId: entry.resourceId,
+      error: err instanceof Error ? err.message : 'Unknown error',
+      timestamp: new Date().toISOString(),
+    }));
   }
 }
