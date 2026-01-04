@@ -222,7 +222,7 @@ function fixSvgIcons(html: string, theme: 'dark' | 'light'): string {
 export async function POST(request: Request) {
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, PDF_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, PDF_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {

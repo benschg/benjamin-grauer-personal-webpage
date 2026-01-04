@@ -383,7 +383,7 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
 export async function POST(request: Request) {
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, AI_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {

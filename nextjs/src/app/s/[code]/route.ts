@@ -50,7 +50,7 @@ export async function GET(
 ) {
   // Rate limit to prevent brute-force enumeration of share link codes
   const clientIP = getClientIP(request);
-  const rateLimitResult = checkRateLimit(clientIP, SHARE_LINK_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientIP, SHARE_LINK_RATE_LIMIT);
 
   if (!rateLimitResult.allowed) {
     return new NextResponse('Too many requests. Please try again later.', {

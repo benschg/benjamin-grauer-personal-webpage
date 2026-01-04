@@ -201,7 +201,7 @@ function generateLetterHtml(letter: MotivationLetter, candidateName: string, the
 export async function POST(request: Request) {
   // Check rate limit first
   const clientId = getClientIdentifier(request);
-  const rateLimitResult = checkRateLimit(clientId, MOTIVATION_LETTER_RATE_LIMIT);
+  const rateLimitResult = await checkRateLimit(clientId, MOTIVATION_LETTER_RATE_LIMIT);
   const rateLimitHeaders = getRateLimitHeaders(rateLimitResult);
 
   if (!rateLimitResult.allowed) {
