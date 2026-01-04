@@ -226,9 +226,10 @@ describe('Crypto-secure Random for Share Links', () => {
     it('should use crypto.randomBytes for generating share codes (concept test)', () => {
       const generateSecureCode = (): string => {
         const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-        const randomValues = new Uint8Array(8);
+        const codeLength = 16;
+        const randomValues = new Uint8Array(codeLength);
         let code = '';
-        for (let i = 0; i < 8; i++) {
+        for (let i = 0; i < codeLength; i++) {
           randomValues[i] = Math.floor(Math.random() * 256);
           code += chars.charAt(randomValues[i] % chars.length);
         }
@@ -236,15 +237,16 @@ describe('Crypto-secure Random for Share Links', () => {
       };
 
       const code = generateSecureCode();
-      expect(code.length).toBe(8);
+      expect(code.length).toBe(16);
       expect(code).toMatch(/^[a-z0-9]+$/);
     });
 
     it('should generate codes with sufficient entropy', () => {
+      // 16 chars from 36 possible values = 36^16 ≈ 7.9 × 10^24 combinations
       const possibleChars = 36;
-      const codeLength = 8;
+      const codeLength = 16;
       const totalCombinations = Math.pow(possibleChars, codeLength);
-      expect(totalCombinations).toBeGreaterThan(2.8e12);
+      expect(totalCombinations).toBeGreaterThan(7.9e24);
     });
   });
 });

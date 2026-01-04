@@ -5,12 +5,14 @@ import { csrfProtection } from '@/lib/csrf';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-// Generate a cryptographically secure random 8-character alphanumeric code
+// Generate a cryptographically secure random 16-character alphanumeric code
+// 16 chars provides 36^16 ≈ 7.9 × 10^24 combinations, making brute-force impractical
 function generateShortCode(): string {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
-  const randomBytes = crypto.randomBytes(8);
+  const codeLength = 16;
+  const randomBytes = crypto.randomBytes(codeLength);
   let code = '';
-  for (let i = 0; i < 8; i++) {
+  for (let i = 0; i < codeLength; i++) {
     code += chars.charAt(randomBytes[i] % chars.length);
   }
   return code;
