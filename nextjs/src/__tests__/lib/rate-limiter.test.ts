@@ -9,25 +9,30 @@ import {
   type RateLimitConfig,
 } from '@/lib/rate-limiter';
 
-// Mock Supabase client
-const mockDelete = vi.fn().mockReturnThis();
-const mockLt = vi.fn().mockResolvedValue({ error: null });
-const mockSelect = vi.fn().mockReturnThis();
-const mockEq = vi.fn().mockReturnThis();
+// Mock Supabase client with proper method chaining
 const mockSingle = vi.fn();
-const mockInsert = vi.fn().mockResolvedValue({ error: null });
-const mockUpdate = vi.fn().mockReturnThis();
+const mockInsert = vi.fn();
+const mockUpdateEq = vi.fn();
 
 vi.mock('@supabase/supabase-js', () => ({
   createClient: () => ({
     from: () => ({
-      delete: mockDelete,
-      lt: mockLt,
-      select: mockSelect,
-      eq: mockEq,
-      single: mockSingle,
+      // delete().lt() chain
+      delete: () => ({
+        lt: () => Promise.resolve({ error: null }),
+      }),
+      // select().eq().single() chain
+      select: () => ({
+        eq: () => ({
+          single: mockSingle,
+        }),
+      }),
+      // insert() direct call
       insert: mockInsert,
-      update: mockUpdate,
+      // update().eq() chain
+      update: () => ({
+        eq: mockUpdateEq,
+      }),
     }),
   }),
 }));
@@ -38,10 +43,8 @@ const { checkRateLimit } = await import('@/lib/rate-limiter');
 describe('Rate Limiter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockLt.mockResolvedValue({ error: null });
     mockInsert.mockResolvedValue({ error: null });
-    mockUpdate.mockReturnThis();
-    mockEq.mockResolvedValue({ error: null });
+    mockUpdateEq.mockResolvedValue({ error: null });
   });
 
   describe('checkRateLimit', () => {
@@ -95,7 +98,7 @@ describe('Rate Limiter', () => {
       const result = await checkRateLimit('test-ip-4', testConfig);
       expect(result.allowed).toBe(true);
       expect(result.remaining).toBe(4);
-      expect(mockUpdate).toHaveBeenCalled();
+      expect(mockUpdateEq).toHaveBeenCalled();
     });
 
     it('should fail open on database error', async () => {
