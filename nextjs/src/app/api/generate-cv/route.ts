@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
@@ -8,6 +8,7 @@ import {
   getRateLimitHeaders,
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
 
 // Types
 interface CompanyResearch {
@@ -380,7 +381,11 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
   return context;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
   const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);

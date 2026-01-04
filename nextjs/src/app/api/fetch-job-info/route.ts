@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { createClient } from '@/lib/supabase/server';
 import { validateUrl } from '@/lib/url-validator';
@@ -8,6 +8,7 @@ import {
   getRateLimitHeaders,
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
 
 // Timeout for external URL fetches (30 seconds)
 const FETCH_TIMEOUT_MS = 30000;
@@ -174,7 +175,11 @@ function parseJsonResponse<T>(text: string): T {
   return JSON.parse(jsonStr);
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
   const rateLimitResult = await checkRateLimit(clientId, AI_RATE_LIMIT);

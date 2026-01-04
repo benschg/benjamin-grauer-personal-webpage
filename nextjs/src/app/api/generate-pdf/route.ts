@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import type { Browser } from 'puppeteer-core';
 import { PDFDocument } from 'pdf-lib';
 import { createClient } from '@/lib/supabase/server';
@@ -8,6 +8,7 @@ import {
   getRateLimitHeaders,
   PDF_RATE_LIMIT,
 } from '@/lib/rate-limiter';
+import { csrfProtection } from '@/lib/csrf';
 
 interface PdfGenerationRequest {
   html: string;
@@ -219,7 +220,11 @@ function fixSvgIcons(html: string, theme: 'dark' | 'light'): string {
   return fixed;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   // Check rate limit first
   const clientId = getClientIdentifier(request);
   const rateLimitResult = await checkRateLimit(clientId, PDF_RATE_LIMIT);

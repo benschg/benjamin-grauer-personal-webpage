@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
+import { csrfProtection } from '@/lib/csrf';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -57,6 +58,10 @@ export async function GET() {
 }
 
 export async function PUT(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     // Check authentication
     const authClient = await createServerClient();

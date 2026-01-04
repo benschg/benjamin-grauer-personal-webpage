@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
+import { csrfProtection } from '@/lib/csrf';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -17,6 +18,10 @@ function generateShortCode(): string {
 
 // POST: Create a new share link
 export async function POST(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
@@ -255,6 +260,10 @@ export async function GET(request: NextRequest) {
 
 // PATCH: Update a share link's settings
 export async function PATCH(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
@@ -319,6 +328,10 @@ export async function PATCH(request: NextRequest) {
 
 // DELETE: Delete a share link
 export async function DELETE(request: NextRequest) {
+  // CSRF protection
+  const csrfError = csrfProtection(request);
+  if (csrfError) return csrfError;
+
   try {
     const supabase = await createClient();
 
