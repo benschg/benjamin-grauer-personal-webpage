@@ -1,4 +1,4 @@
-import { updateSession } from '@/lib/supabase/proxy';
+import { updateSession } from './src/lib/supabase/proxy';
 import { NextResponse, type NextRequest } from 'next/server';
 
 export async function middleware(request: NextRequest) {
