@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import crypto from 'crypto';
 import { csrfProtection } from '@/lib/csrf';
+import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -124,6 +125,17 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Audit log the share link creation
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'CREATE',
+      resourceType: 'share_links',
+      resourceId: newLink.id,
+      details: { shortCode: newLink.short_code, cvVersionId: cvVersionId || null },
+      request,
+    });
 
     const baseUrl = new URL(request.url).origin;
     return NextResponse.json({
@@ -317,6 +329,17 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Audit log the share link update
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'UPDATE',
+      resourceType: 'share_links',
+      resourceId: id,
+      details: { updatedFields: Object.keys(updates) },
+      request,
+    });
+
     return NextResponse.json({ success: true });
 
   } catch (error) {
@@ -369,6 +392,16 @@ export async function DELETE(request: NextRequest) {
         { status: 500 }
       );
     }
+
+    // Audit log the share link deletion
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'DELETE',
+      resourceType: 'share_links',
+      resourceId: linkId,
+      request,
+    });
 
     return NextResponse.json({ success: true });
 

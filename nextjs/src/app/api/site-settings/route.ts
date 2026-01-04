@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { csrfProtection } from '@/lib/csrf';
+import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -136,6 +137,23 @@ export async function PUT(request: NextRequest) {
       console.error('Failed to update settings:', error);
       return NextResponse.json({ error: 'Failed to update settings' }, { status: 500 });
     }
+
+    // Audit log the settings update
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'UPDATE',
+      resourceType: 'site_settings',
+      details: {
+        contact_email: contact_email ?? '',
+        public_email: public_email ?? null,
+        // Don't log full address/phone for privacy
+        has_contact_phone: !!contact_phone,
+        has_contact_address: !!contact_address,
+        has_public_address: !!public_address,
+      },
+      request,
+    });
 
     return NextResponse.json({ settings: data });
   } catch (err) {

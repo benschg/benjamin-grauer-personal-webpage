@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { csrfProtection } from '@/lib/csrf';
+import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -92,6 +93,17 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to add email' }, { status: 500 });
     }
 
+    // Audit log the addition
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'CREATE',
+      resourceType: 'whitelisted_emails',
+      resourceId: data.id,
+      details: { email: normalizedEmail, name: name || null },
+      request,
+    });
+
     return NextResponse.json({ email: data });
   } catch (err) {
     console.error('Error adding whitelisted email:', err);
@@ -132,6 +144,16 @@ export async function DELETE(request: NextRequest) {
       console.error('Failed to delete whitelisted email:', error);
       return NextResponse.json({ error: 'Failed to delete email' }, { status: 500 });
     }
+
+    // Audit log the deletion
+    logAuditEvent({
+      userEmail: user.email!,
+      userId: user.id,
+      action: 'DELETE',
+      resourceType: 'whitelisted_emails',
+      resourceId: id,
+      request,
+    });
 
     return NextResponse.json({ success: true });
   } catch (err) {
