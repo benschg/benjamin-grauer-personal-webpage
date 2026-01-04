@@ -9,6 +9,7 @@ import {
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
 import { csrfProtection } from '@/lib/csrf';
+import { z } from 'zod/v4';
 
 // Timeout for external URL fetches (30 seconds)
 const FETCH_TIMEOUT_MS = 30000;
@@ -47,12 +48,14 @@ interface JobInfoRequest {
   url: string;
 }
 
-interface JobInfoResponse {
-  company: string;
-  jobTitle: string;
-  companyWebsite?: string;
-  jobPostingText?: string;
-}
+// Zod schema for AI response validation
+const JobInfoResponseSchema = z.object({
+  company: z.string(),
+  jobTitle: z.string(),
+  companyWebsite: z.string().nullable().optional(),
+});
+
+type JobInfoResponse = z.infer<typeof JobInfoResponseSchema>;
 
 const EXTRACT_JOB_INFO_PROMPT = `You are a job posting analyzer. Extract the company name and job title from the following job posting content.
 
@@ -198,11 +201,12 @@ async function fetchWebPage(url: string): Promise<string> {
   }
 }
 
-// Helper to parse JSON from AI response
-function parseJsonResponse<T>(text: string): T {
+// Helper to parse and validate JSON from AI response
+function parseAndValidateResponse<T>(text: string, schema: z.ZodType<T>): T {
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
   const jsonStr = jsonMatch[1]?.trim() || text.trim();
-  return JSON.parse(jsonStr);
+  const parsed = JSON.parse(jsonStr);
+  return schema.parse(parsed);
 }
 
 export async function POST(request: NextRequest) {
@@ -278,7 +282,7 @@ export async function POST(request: NextRequest) {
 
     const result = await model.generateContent(prompt);
     const responseText = result.response.text();
-    const jobInfo = parseJsonResponse<JobInfoResponse>(responseText);
+    const jobInfo = parseAndValidateResponse(responseText, JobInfoResponseSchema);
 
     // Include the sanitized page content for the job posting text field
     return NextResponse.json({
@@ -287,6 +291,15 @@ export async function POST(request: NextRequest) {
     }, { headers: rateLimitHeaders });
   } catch (error) {
     console.error('Error fetching job info:', error);
+
+    // Handle Zod validation errors (AI response didn't match expected schema)
+    if (error instanceof z.ZodError) {
+      console.error('AI response validation failed:', error.issues);
+      return NextResponse.json(
+        { error: 'Failed to parse job information. The AI returned an invalid response format. Please try again.' },
+        { status: 500, headers: rateLimitHeaders }
+      );
+    }
 
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
@@ -347,9 +360,9 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      return NextResponse.json({ error: error.message }, { status: 500, headers: rateLimitHeaders });
     }
 
+    // Return generic error message to prevent information leakage
     return NextResponse.json({ error: 'An unexpected error occurred while fetching job info.' }, { status: 500, headers: rateLimitHeaders });
   }
 }

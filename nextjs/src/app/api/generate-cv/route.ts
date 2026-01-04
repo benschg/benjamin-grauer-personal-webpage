@@ -9,68 +9,75 @@ import {
   AI_RATE_LIMIT,
 } from '@/lib/rate-limiter';
 import { csrfProtection } from '@/lib/csrf';
+import { z } from 'zod/v4';
 
-// Types
-interface CompanyResearch {
-  company: {
-    name: string;
-    industry: string;
-    culture: string[];
-    values: string[];
-    techStack: string[];
-  };
-  role: {
-    title: string;
-    level: string;
-    keyResponsibilities: string[];
-    requiredSkills: string[];
-    preferredSkills: string[];
-    keywords: string[];
-  };
-  insights: {
-    whatTheyValue: string;
-    toneGuidance: string;
-  };
-}
+// Zod schemas for AI response validation
+const CompanyResearchSchema = z.object({
+  company: z.object({
+    name: z.string(),
+    industry: z.string(),
+    culture: z.array(z.string()),
+    values: z.array(z.string()),
+    techStack: z.array(z.string()),
+  }),
+  role: z.object({
+    title: z.string(),
+    level: z.string(),
+    keyResponsibilities: z.array(z.string()),
+    requiredSkills: z.array(z.string()),
+    preferredSkills: z.array(z.string()),
+    keywords: z.array(z.string()),
+  }),
+  insights: z.object({
+    whatTheyValue: z.string(),
+    toneGuidance: z.string(),
+  }),
+});
 
-interface WorkExperienceEntry {
-  company: string;
-  title: string;
-  period: string;
-  bullets: string[];
-}
+const WorkExperienceEntrySchema = z.object({
+  company: z.string(),
+  title: z.string(),
+  period: z.string(),
+  bullets: z.array(z.string()),
+});
 
-interface SkillCategory {
-  category: string;
-  skills: string[];
-}
+const SkillCategorySchema = z.object({
+  category: z.string(),
+  skills: z.array(z.string()),
+});
 
-interface KeyCompetence {
-  title: string;
-  description: string;
-}
+const KeyCompetenceSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+});
 
-interface MotivationLetter {
-  subject: string;
-  greeting: string;
-  opening: string;
-  body: string;
-  closing: string;
-  signoff: string;
-}
+const MotivationLetterSchema = z.object({
+  subject: z.string(),
+  greeting: z.string(),
+  opening: z.string(),
+  body: z.string(),
+  closing: z.string(),
+  signoff: z.string(),
+});
 
-interface GeneratedCVContent {
-  tagline: string;
-  profile: string;
-  slogan?: string;
-  workExperience?: WorkExperienceEntry[];
-  skills?: SkillCategory[];
-  keyCompetences?: KeyCompetence[];
-  keyAchievements?: string[]; // Legacy, kept for backwards compatibility
-  education?: string;
-  motivationLetter?: MotivationLetter;
-}
+const GeneratedCVContentSchema = z.object({
+  tagline: z.string(),
+  profile: z.string(),
+  slogan: z.string().optional(),
+  workExperience: z.array(WorkExperienceEntrySchema).optional(),
+  skills: z.array(SkillCategorySchema).optional(),
+  keyCompetences: z.array(KeyCompetenceSchema).optional(),
+  keyAchievements: z.array(z.string()).optional(), // Legacy, kept for backwards compatibility
+  education: z.string().optional(),
+  motivationLetter: MotivationLetterSchema.optional(),
+});
 
+// Types inferred from schemas
+type CompanyResearch = z.infer<typeof CompanyResearchSchema>;
+type GeneratedCVContent = z.infer<typeof GeneratedCVContentSchema>;
+type MotivationLetter = z.infer<typeof MotivationLetterSchema>;
+
+// Request type (not from AI)
 interface CVGenerationRequest {
   currentTagline: string;
   currentProfile: string;
@@ -321,11 +328,14 @@ const ALLOWED_MODELS = [
 
 const DEFAULT_MODEL = 'gemini-2.5-flash';
 
-// Helper to parse JSON from AI response
-function parseJsonResponse<T>(text: string): T {
+// Helper to parse and validate JSON from AI response
+function parseAndValidateResponse<T>(text: string, schema: z.ZodType<T>): T {
   const jsonMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/) || [null, text];
   const jsonStr = jsonMatch[1]?.trim() || text.trim();
-  return JSON.parse(jsonStr);
+  const parsed = JSON.parse(jsonStr);
+
+  // Validate against schema - throws ZodError if invalid
+  return schema.parse(parsed);
 }
 
 // Helper to fetch web page content
@@ -484,7 +494,7 @@ export async function POST(request: NextRequest) {
       );
     const researchResult = await model.generateContent(researchPrompt);
     const researchText = researchResult.response.text();
-    const companyResearch = parseJsonResponse<CompanyResearch>(researchText);
+    const companyResearch = parseAndValidateResponse(researchText, CompanyResearchSchema);
 
     // Override with user-provided values if available
     if (params.company) {
@@ -518,7 +528,7 @@ export async function POST(request: NextRequest) {
 
     const cvResult = await model.generateContent(cvPrompt);
     const cvText = cvResult.response.text();
-    const content = parseJsonResponse<GeneratedCVContent>(cvText);
+    const content = parseAndValidateResponse(cvText, GeneratedCVContentSchema);
 
     // Step 3: Generate motivation letter
     let motivationPrompt = MOTIVATION_LETTER_PROMPT
@@ -539,7 +549,7 @@ export async function POST(request: NextRequest) {
 
     const motivationResult = await model.generateContent(motivationPrompt);
     const motivationText = motivationResult.response.text();
-    const motivationLetter = parseJsonResponse<MotivationLetter>(motivationText);
+    const motivationLetter = parseAndValidateResponse(motivationText, MotivationLetterSchema);
     content.motivationLetter = motivationLetter;
 
     return NextResponse.json({
@@ -551,6 +561,15 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     // Log detailed error server-side for debugging
     console.error('Error generating CV:', error);
+
+    // Handle Zod validation errors (AI response didn't match expected schema)
+    if (error instanceof z.ZodError) {
+      console.error('AI response validation failed:', error.issues);
+      return NextResponse.json(
+        { error: 'AI response format was invalid. Please try again.' },
+        { status: 500, headers: rateLimitHeaders }
+      );
+    }
 
     if (error instanceof Error) {
       const message = error.message.toLowerCase();
