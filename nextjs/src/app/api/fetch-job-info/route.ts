@@ -12,6 +12,36 @@ import { csrfProtection } from '@/lib/csrf';
 
 // Timeout for external URL fetches (30 seconds)
 const FETCH_TIMEOUT_MS = 30000;
+// Maximum length for fetched content
+const MAX_FETCHED_CONTENT_LENGTH = 8000;
+
+// Dangerous patterns for prompt injection detection
+const PROMPT_INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /you\s+are\s+now\s+(a|an)\s+/gi,
+  /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+  /system\s*:\s*/gi,
+  /\[\[system\]\]/gi,
+  /<<system>>/gi,
+  /assistant\s*:\s*/gi,
+  /human\s*:\s*/gi,
+  /\[INST\]/gi,
+  /<\|im_start\|>/gi,
+  /<\|im_end\|>/gi,
+];
+
+// Sanitize fetched content to prevent prompt injection attacks
+function sanitizeFetchedContent(content: string | undefined): string {
+  if (!content) return '';
+  let sanitized = content.slice(0, MAX_FETCHED_CONTENT_LENGTH);
+  for (const pattern of PROMPT_INJECTION_PATTERNS) {
+    sanitized = sanitized.replace(pattern, '[REMOVED]');
+  }
+  return sanitized.trim();
+}
 
 interface JobInfoRequest {
   url: string;
@@ -234,7 +264,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Fetch the job posting content
-    const pageContent = await fetchWebPage(params.url);
+    const rawPageContent = await fetchWebPage(params.url);
+    // Sanitize fetched content to prevent prompt injection attacks
+    const pageContent = sanitizeFetchedContent(rawPageContent);
 
     const genAI = new GoogleGenerativeAI(apiKey);
     const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash-lite' });
@@ -248,7 +280,7 @@ export async function POST(request: NextRequest) {
     const responseText = result.response.text();
     const jobInfo = parseJsonResponse<JobInfoResponse>(responseText);
 
-    // Include the raw page content for the job posting text field
+    // Include the sanitized page content for the job posting text field
     return NextResponse.json({
       ...jobInfo,
       jobPostingText: pageContent,

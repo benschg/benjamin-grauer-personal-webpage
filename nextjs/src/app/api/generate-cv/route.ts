@@ -87,33 +87,50 @@ interface CVGenerationRequest {
 
 // Maximum length for custom instructions to prevent abuse
 const MAX_CUSTOM_INSTRUCTIONS_LENGTH = 2000;
+// Maximum length for fetched content
+const MAX_FETCHED_CONTENT_LENGTH = 15000;
 
-// Sanitize custom instructions to prevent prompt injection attacks
-function sanitizeCustomInstructions(instructions: string | undefined): string {
-  if (!instructions) return '';
+// Dangerous patterns for prompt injection detection
+const PROMPT_INJECTION_PATTERNS = [
+  /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
+  /you\s+are\s+now\s+(a|an)\s+/gi,
+  /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
+  /system\s*:\s*/gi,
+  /\[\[system\]\]/gi,
+  /<<system>>/gi,
+  /assistant\s*:\s*/gi,
+  /human\s*:\s*/gi,
+  /\[INST\]/gi,
+  /<\|im_start\|>/gi,
+  /<\|im_end\|>/gi,
+];
+
+// Sanitize text to prevent prompt injection attacks
+function sanitizeForPromptInjection(text: string | undefined, maxLength: number): string {
+  if (!text) return '';
 
   // Truncate to max length
-  let sanitized = instructions.slice(0, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+  let sanitized = text.slice(0, maxLength);
 
   // Remove potential prompt injection patterns
-  // These patterns attempt to escape the current context or override instructions
-  const dangerousPatterns = [
-    /ignore\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /disregard\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /forget\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /override\s+(all\s+)?(previous|above|prior)\s+(instructions?|prompts?|context)/gi,
-    /you\s+are\s+now\s+(a|an)\s+/gi,
-    /your\s+new\s+(role|purpose|instructions?)\s+(is|are)/gi,
-    /system\s*:\s*/gi,
-    /\[\[system\]\]/gi,
-    /<<system>>/gi,
-  ];
-
-  for (const pattern of dangerousPatterns) {
+  for (const pattern of PROMPT_INJECTION_PATTERNS) {
     sanitized = sanitized.replace(pattern, '[REMOVED]');
   }
 
   return sanitized.trim();
+}
+
+// Sanitize custom instructions to prevent prompt injection attacks
+function sanitizeCustomInstructions(instructions: string | undefined): string {
+  return sanitizeForPromptInjection(instructions, MAX_CUSTOM_INSTRUCTIONS_LENGTH);
+}
+
+// Sanitize fetched content to prevent prompt injection attacks
+function sanitizeFetchedContent(content: string | undefined): string {
+  return sanitizeForPromptInjection(content, MAX_FETCHED_CONTENT_LENGTH);
 }
 
 // Prompt templates
@@ -354,14 +371,17 @@ async function fetchWebPage(url: string): Promise<string> {
 
 // Build job posting context
 async function buildJobPostingContext(params: CVGenerationRequest): Promise<string> {
-  let context = params.jobPosting || '';
+  // Sanitize user-provided job posting text for prompt injection
+  let context = sanitizeFetchedContent(params.jobPosting);
 
   if (params.jobPostingUrl) {
     // Validate URL to prevent SSRF attacks
     const validation = validateUrl(params.jobPostingUrl);
     if (validation.isValid) {
       const pageContent = await fetchWebPage(params.jobPostingUrl);
-      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${pageContent}`;
+      // Sanitize fetched content for prompt injection
+      const sanitizedContent = sanitizeFetchedContent(pageContent);
+      context += `\n\n=== JOB POSTING FROM URL (${params.jobPostingUrl}) ===\n${sanitizedContent}`;
     } else {
       context += `\n\n=== JOB POSTING URL SKIPPED: ${validation.error} ===`;
     }
@@ -372,7 +392,9 @@ async function buildJobPostingContext(params: CVGenerationRequest): Promise<stri
     const validation = validateUrl(params.companyWebsite);
     if (validation.isValid) {
       const pageContent = await fetchWebPage(params.companyWebsite);
-      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${pageContent}`;
+      // Sanitize fetched content for prompt injection
+      const sanitizedContent = sanitizeFetchedContent(pageContent);
+      context += `\n\n=== COMPANY WEBSITE (${params.companyWebsite}) ===\n${sanitizedContent}`;
     } else {
       context += `\n\n=== COMPANY WEBSITE URL SKIPPED: ${validation.error} ===`;
     }
