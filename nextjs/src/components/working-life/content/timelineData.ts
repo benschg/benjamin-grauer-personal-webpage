@@ -13,6 +13,33 @@ export interface TimelineEvent {
 
 export const timelineEvents: TimelineEvent[] = [
   {
+    id: "2026-lakera-red-team",
+    year: "2026",
+    title: "Engineering Manager Red Team",
+    company: "Lakera AI, a Checkpoint company",
+    description:
+      "Leading the Red Team focused on discovering and exploiting vulnerabilities in AI systems. Building tools and methodologies to validate the security and robustness of AI chatbots, agents, and RAG systems. Establishing team processes, product development strategies, and hiring practices to deliver value to customers protecting their AI implementations.",
+    shortDescription:
+      "Leading Red Team to discover AI vulnerabilities and build security validation tools for chatbots, agents, and RAG systems. Establishing team processes and product strategies from ground up.",
+    type: "work",
+    skills: [
+      "People Leadership",
+      "AI Security",
+      "LLM Red Teaming",
+      "User Experience",
+      "Product Management",
+      "Lifecycle Management",
+      "AI Toolsets",
+    ],
+    achievements: [
+      "Building Red Team from ground up",
+      "Developing AI security testing methodologies",
+      "Creating product roadmap for AI validation tools",
+      "Establishing team hiring and growth strategy",
+    ],
+    image: "/working-life/lakera-a-checkpoint-company.webp",
+  },
+  {
     id: "2025-mosaic-studio",
     year: "2025",
     title: "AI Mosaic Studio",
