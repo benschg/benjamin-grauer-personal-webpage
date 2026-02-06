@@ -65,7 +65,13 @@ export const timelineEvents: TimelineEvent[] = [
     shortDescription:
       "Built full-stack infrastructure for AI document comparison platform with smart change detection and dual viewing modes.",
     type: "project",
-    skills: ["Next.js", "TRPC", "TypeScript", "Full-Stack Development", "API Design"],
+    skills: [
+      "Next.js",
+      "TRPC",
+      "TypeScript",
+      "Full-Stack Development",
+      "API Design",
+    ],
     achievements: [
       "Developed complete frontend and backend architecture",
       "Implemented dual viewing modes (side-by-side and redline)",
@@ -111,7 +117,7 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Customized solutions for 10+ clients in aerospace, medical, luxury, and ground transport domains. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations. Built and mentored a team of software engineers from scratch, establishing coding standards and development practices. Drove the adoption of modern DevOps practices including CI/CD pipelines, infrastructure as code, and automated testing. Collaborated closely with mechanical engineers and material scientists to translate complex manufacturing requirements into intuitive software solutions.",
     shortDescription:
-      "Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers from scratch, establishing coding standards and DevOps practices including CI/CD pipelines. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.",
+      "Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.",
     type: "work",
     skills: [
       "Cloud Platform Development",
