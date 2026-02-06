@@ -23,6 +23,9 @@ export interface Project {
     demo?: string;
     documentation?: string;
   };
+  credits?: {
+    design?: { name: string; url: string };
+  };
   images?: {
     thumbnail: string;
     gallery?: string[];
@@ -353,6 +356,45 @@ export const portfolioProjects: Project[] = [
     ],
     teamSize: 2,
     impact: 'Created a unique way to display time for Garmin smartwatch enthusiasts',
+    featured: false,
+  },
+  {
+    id: 'avec-plaisir-website',
+    title: 'Avec Plaisir - Florist Website',
+    description:
+      'Modern website for my wife\'s florist shop in Zurich, featuring elegant design and Firebase backend integration.',
+    longDescription:
+      'A clean, modern website for Avec Plaisir, my wife\'s florist shop located in Zurich\'s third district. The site showcases floral arrangements and services with an elegant design that reflects the business\'s French-inspired name meaning "with pleasure". Built with React and TypeScript using Vite for fast development, with Firebase providing backend services including Firestore database and cloud storage.',
+    category: 'Web Development',
+    technologies: ['React', 'TypeScript', 'Vite', 'Firebase', 'Firestore'],
+    features: [
+      'Elegant responsive design',
+      'Firebase backend integration',
+      'Cloud storage for images',
+      'Contact information display',
+      'Business hours and location',
+    ],
+    role: 'Developer',
+    year: '2025-2026',
+    duration: '3 months',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/avec-plaisir.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://avecplaisir-zuerich.ch/',
+      github: 'https://github.com/benschg/avec-plaisir-website',
+    },
+    credits: {
+      design: { name: 'webLotse', url: 'https://www.weblotse.ch/' },
+    },
+    highlights: [
+      'Family business project',
+      'Clean, elegant visual design',
+      'Firebase-powered backend',
+    ],
+    impact: 'Provides a professional online presence for my wife\'s florist business',
     featured: false,
   },
   {

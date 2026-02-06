@@ -370,6 +370,27 @@ const ProjectDetail = () => {
                         {project.longDescription}
                       </Typography>
                     )}
+                    {project.credits?.design && (
+                      <Typography
+                        variant="body2"
+                        sx={{ color: 'text.secondary', mt: 2, fontStyle: 'italic' }}
+                      >
+                        Design by{' '}
+                        <Box
+                          component="a"
+                          href={project.credits.design.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          sx={{
+                            color: 'primary.main',
+                            textDecoration: 'none',
+                            '&:hover': { textDecoration: 'underline' },
+                          }}
+                        >
+                          {project.credits.design.name}
+                        </Box>
+                      </Typography>
+                    )}
                   </CardContent>
                 </Card>
 
