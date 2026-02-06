@@ -32,10 +32,15 @@ export const cvPageLayouts: CVPageLayout[] = [
     sidebar: [],
     main: [{ type: "experience", start: 0, end: 2 }],
   },
-  // Page 4 - Entries 3-5 (excluding oldest internship)
+  // Page 4 - Entries 3-4
   {
     sidebar: [],
-    main: [{ type: "experience", start: 2, end: 5, showTitle: false }],
+    main: [{ type: "experience", start: 2, end: 4, showTitle: false }],
+  },
+  // Page 5 - Engineering Manager at VirtaMed
+  {
+    sidebar: [],
+    main: [{ type: "experience", start: 4, end: 5, showTitle: false }],
   },
 ];
 

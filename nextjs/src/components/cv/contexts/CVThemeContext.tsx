@@ -48,7 +48,7 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
     parsePrivacyParam(searchParams.get('privacy'))
   );
   const [showExperience, setShowExperience] = useState(() =>
-    parseBoolParam(searchParams.get('experience'), true)
+    parseBoolParam(searchParams.get('experience'), false)
   );
   const [showAttachments, setShowAttachments] = useState(() =>
     parseBoolParam(searchParams.get('attachments'), false)
@@ -85,8 +85,8 @@ export const CVThemeProvider = ({ children }: CVThemeProviderProps) => {
     if (privacyLevel === 'none') params.delete('privacy');
     else params.set('privacy', privacyLevel);
 
-    if (showExperience) params.delete('experience');
-    else params.set('experience', '0');
+    if (!showExperience) params.delete('experience');
+    else params.set('experience', '1');
 
     if (!showAttachments) params.delete('attachments');
     else params.set('attachments', '1');

@@ -13,6 +13,33 @@ export interface TimelineEvent {
 
 export const timelineEvents: TimelineEvent[] = [
   {
+    id: "2026-lakera-red-team",
+    year: "2026",
+    title: "Engineering Manager Red Team",
+    company: "Lakera AI, a Checkpoint company",
+    description:
+      "Leading the Red Team focused on discovering and exploiting vulnerabilities in AI systems. Building tools and methodologies to validate the security and robustness of AI chatbots, agents, and RAG systems. Establishing team processes, product development strategies, and hiring practices to deliver value to customers protecting their AI implementations.",
+    shortDescription:
+      "Leading Red Team to discover AI vulnerabilities and build security validation tools for chatbots, agents, and RAG systems. Establishing team processes and product strategies from ground up.",
+    type: "work",
+    skills: [
+      "People Leadership",
+      "AI Security",
+      "LLM Red Teaming",
+      "User Experience",
+      "Product Management",
+      "Lifecycle Management",
+      "AI Toolsets",
+    ],
+    achievements: [
+      "Building Red Team from ground up",
+      "Developing AI security testing methodologies",
+      "Creating product roadmap for AI validation tools",
+      "Establishing team hiring and growth strategy",
+    ],
+    image: "/working-life/lakera-a-checkpoint-company.webp",
+  },
+  {
     id: "2025-mosaic-studio",
     year: "2025",
     title: "AI Mosaic Studio",
@@ -38,7 +65,13 @@ export const timelineEvents: TimelineEvent[] = [
     shortDescription:
       "Built full-stack infrastructure for AI document comparison platform with smart change detection and dual viewing modes.",
     type: "project",
-    skills: ["Next.js", "TRPC", "TypeScript", "Full-Stack Development", "API Design"],
+    skills: [
+      "Next.js",
+      "TRPC",
+      "TypeScript",
+      "Full-Stack Development",
+      "API Design",
+    ],
     achievements: [
       "Developed complete frontend and backend architecture",
       "Implemented dual viewing modes (side-by-side and redline)",
@@ -84,7 +117,7 @@ export const timelineEvents: TimelineEvent[] = [
     description:
       "Software Lead for CAD Solutions, Cloud App Development, Architecture, DevOps and IT Services. Responsible for planning and development of fibirfy Production cloud platform and fibirfy Design Suite 3D manufacturing design tool. Customized solutions for 10+ clients in aerospace, medical, luxury, and ground transport domains. Improved workflows from team collaboration to planning tools, retrospectives, and managed service integrations. Built and mentored a team of software engineers from scratch, establishing coding standards and development practices. Drove the adoption of modern DevOps practices including CI/CD pipelines, infrastructure as code, and automated testing. Collaborated closely with mechanical engineers and material scientists to translate complex manufacturing requirements into intuitive software solutions.",
     shortDescription:
-      "Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers from scratch, establishing coding standards and DevOps practices including CI/CD pipelines. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.",
+      "Built fibirfy Production cloud platform and fibirfy Design Suite for carbon fiber manufacturing. Mentored a team of software engineers. Collaborated with mechanical engineers and material scientists to translate complex requirements into intuitive solutions.",
     type: "work",
     skills: [
       "Cloud Platform Development",

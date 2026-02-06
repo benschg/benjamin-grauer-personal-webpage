@@ -41,7 +41,7 @@ export const DEFAULT_DISPLAY_SETTINGS: DisplaySettings = {
   theme: 'dark',
   showPhoto: true,
   privacyLevel: 'none',
-  showExperience: true,
+  showExperience: false,
   showAttachments: false,
   showExport: false,
 };
