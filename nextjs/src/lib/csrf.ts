@@ -5,13 +5,20 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 
-// List of allowed origins (production and local development)
+// List of allowed origins (production)
 const ALLOWED_ORIGINS = [
   'https://benjamingrauer.com',
   'https://www.benjamingrauer.com',
-  'http://localhost:3000',
-  'http://localhost:3001',
 ];
+
+function isAllowedOrigin(origin: string): boolean {
+  if (ALLOWED_ORIGINS.includes(origin)) return true;
+  // Vercel preview deployments
+  if (origin.endsWith('.vercel.app')) return true;
+  // Local development on any port
+  if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) return true;
+  return false;
+}
 
 /**
  * Validates the Origin header for CSRF protection.
@@ -33,27 +40,13 @@ export function validateOrigin(request: NextRequest): boolean {
 
   // Check Origin header first
   if (origin) {
-    if (ALLOWED_ORIGINS.includes(origin)) {
-      return true;
-    }
-    // Check if it's a Vercel preview deployment
-    if (origin.endsWith('.vercel.app')) {
-      return true;
-    }
-    return false;
+    return isAllowedOrigin(origin);
   }
 
   // Fall back to Referer check
   if (referer) {
     try {
-      const refererUrl = new URL(referer);
-      const refererOrigin = refererUrl.origin;
-      if (ALLOWED_ORIGINS.includes(refererOrigin)) {
-        return true;
-      }
-      if (refererOrigin.endsWith('.vercel.app')) {
-        return true;
-      }
+      return isAllowedOrigin(new URL(referer).origin);
     } catch {
       return false;
     }
