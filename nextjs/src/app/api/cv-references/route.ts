@@ -6,13 +6,7 @@ import { logAuditEvent } from '@/lib/audit-logger';
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
-// Public client for reading active references
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-// Admin client for write operations
+// Admin client for all DB access (RLS is locked down; service role bypasses it)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -48,7 +42,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Public view: only active references with limited fields
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin
     .from('cv_references')
     .select('name, title, company, email, phone')
     .eq('is_active', true)

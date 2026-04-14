@@ -22,21 +22,20 @@ function sanitizeText(text: string): string {
   return text.replace(/<[^>]*>/g, '').trim();
 }
 
-// Public client for reading settings
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
-// Admin client for write operations
+// Admin client for all DB access (RLS is locked down; service role bypasses it)
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
 );
 
 export async function GET() {
-  // Fetch the single settings row
-  const { data, error } = await supabase
+  // Gate private contact fields behind authentication. Anonymous callers only
+  // get the public_* fields; logged-in users get the full row. This matches
+  // the CV privacy model (canShowPrivateInfo = !!user).
+  const authClient = await createServerClient();
+  const { data: { user } } = await authClient.auth.getUser();
+
+  const { data, error } = await supabaseAdmin
     .from('site_settings')
     .select('contact_email, contact_phone, contact_address, public_email, public_address')
     .eq('id', 1)
@@ -51,6 +50,18 @@ export async function GET() {
         contact_address: '',
         public_email: null,
         public_address: null,
+      },
+    });
+  }
+
+  if (!user) {
+    return NextResponse.json({
+      settings: {
+        contact_email: '',
+        contact_phone: '',
+        contact_address: '',
+        public_email: data.public_email,
+        public_address: data.public_address,
       },
     });
   }
