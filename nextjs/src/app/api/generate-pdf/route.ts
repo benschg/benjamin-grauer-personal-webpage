@@ -469,7 +469,7 @@ export async function POST(request: NextRequest) {
 
     // Set content and wait for fonts and images to load
     await page.setContent(fullHtml, {
-      waitUntil: ['networkidle0', 'domcontentloaded', 'load'],
+      waitUntil: ['domcontentloaded', 'load'],
     });
 
     // Wait for fonts to load

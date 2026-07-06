@@ -242,7 +242,7 @@ export async function POST(request: NextRequest) {
     await page.setViewport({ width: 794, height: 1123 });
 
     await page.setContent(html, {
-      waitUntil: ['networkidle0', 'domcontentloaded', 'load'],
+      waitUntil: ['domcontentloaded', 'load'],
     });
 
     // Wait for fonts to load
