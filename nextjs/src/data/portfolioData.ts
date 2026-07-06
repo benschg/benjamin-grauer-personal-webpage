@@ -398,6 +398,76 @@ export const portfolioProjects: Project[] = [
     featured: false,
   },
   {
+    id: 'slow-surface',
+    title: 'Slow Surface - Textile Artist Website',
+    description:
+      'Bilingual portfolio website for textile artist Marisa Wieland, showcasing large-format wool reliefs at the intersection of art, craft and spatial design.',
+    longDescription:
+      'A calm, elegant website for Slow Surface, the studio of Swiss textile artist Marisa Wieland. The site presents her large-format textile reliefs in wool through generous imagery, with sections on her works, artistic approach, and material and process. Built with Next.js and deployed on Vercel, it features full German/English localization, image hosting via Vercel Blob storage, and structured data (JSON-LD) for search engine visibility. The design language mirrors the artwork itself: quiet, tactile and atmospheric.',
+    category: 'Web Development',
+    technologies: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel', 'Vercel Blob'],
+    features: [
+      'Bilingual content (German/English)',
+      'Image-driven works gallery',
+      'Vercel Blob image hosting',
+      'SEO with JSON-LD structured data',
+      'Inquiry contact flow',
+      'Responsive, typography-focused design',
+    ],
+    role: 'Developer',
+    year: '2026',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/slow-surface.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://slowsurface.ch',
+    },
+    highlights: [
+      'Design language matching the tactile artwork',
+      'Full German/English localization',
+      'Optimized image delivery for large-format photography',
+    ],
+    impact: 'Gives a textile artist a professional online presence to showcase and sell bespoke works',
+    featured: false,
+  },
+  {
+    id: 'portuguese-tune',
+    title: 'Portuguese Tune - Language Learning Platform',
+    description:
+      'Website for a European Portuguese teacher, featuring lesson booking, lesson bundles, custom services and bilingual content.',
+    longDescription:
+      'Portuguese Tune is the online home of language teacher Vitória Maurício, who teaches European Portuguese through comprehensible input and story-based lessons. The site presents her private lessons, lesson bundles and custom services, integrates testimonials and her YouTube channel, and lets students book lessons directly. Built with Next.js and deployed on Vercel, it supports English/Portuguese language switching, user accounts, and analytics with cookie consent.',
+    category: 'Web Development',
+    technologies: ['Next.js', 'TypeScript', 'React', 'Tailwind CSS', 'Vercel'],
+    features: [
+      'Lesson booking and lesson bundles',
+      'Bilingual interface (English/Portuguese)',
+      'User authentication',
+      'Testimonials integration',
+      'YouTube channel integration',
+      'Cookie consent and analytics',
+    ],
+    role: 'Developer',
+    year: '2026',
+    status: 'Completed',
+    images: {
+      thumbnail: '/portfolio/projects/portuguese-tune.png',
+      gallery: [],
+    },
+    links: {
+      live: 'https://portuguesetune.com/',
+    },
+    highlights: [
+      'Complete online presence for a language teaching business',
+      'Booking flow for lessons and bundles',
+      'Warm, story-driven visual design',
+    ],
+    impact: 'Helps students worldwide find and book European Portuguese lessons',
+    featured: false,
+  },
+  {
     id: 'personal-website',
     title: 'Personal Portfolio Website',
     description:

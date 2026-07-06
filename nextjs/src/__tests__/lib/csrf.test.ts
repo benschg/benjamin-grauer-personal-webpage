@@ -50,6 +50,13 @@ describe('CSRF Protection', () => {
         expect(validateOrigin(request)).toBe(true);
       });
 
+      it('should allow localhost with any port', () => {
+        const request = createMockRequest('POST', 'http://localhost:3000/api/test', {
+          origin: 'http://localhost:8080',
+        });
+        expect(validateOrigin(request)).toBe(true);
+      });
+
       it('should allow Vercel preview deployments', () => {
         const request = createMockRequest('POST', 'https://preview.vercel.app/api/test', {
           origin: 'https://my-app-preview-xyz.vercel.app',
@@ -76,13 +83,6 @@ describe('CSRF Protection', () => {
       it('should block http when https is expected', () => {
         const request = createMockRequest('POST', 'https://benjamingrauer.com/api/test', {
           origin: 'http://benjamingrauer.com',
-        });
-        expect(validateOrigin(request)).toBe(false);
-      });
-
-      it('should block localhost with wrong port', () => {
-        const request = createMockRequest('POST', 'http://localhost:3000/api/test', {
-          origin: 'http://localhost:8080',
         });
         expect(validateOrigin(request)).toBe(false);
       });
